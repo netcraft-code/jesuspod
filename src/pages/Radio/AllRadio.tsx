@@ -45,7 +45,7 @@ export default function AllRadio() {
       <main className="all-radio-content">
         {/* TITLE + SEARCH */}
         <div className="top-bar">
-          <h2>All Radio</h2>
+          <h2 className="sub-title">All Radio</h2>
 
           <input
              className="search-input"

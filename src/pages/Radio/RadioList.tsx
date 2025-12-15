@@ -76,7 +76,7 @@ export default function RadioList() {
         {/* MOST LISTENER */}
         <div className="section">
           <div className="section-header">
-            <h1>Most Listener Radio</h1>
+            <h1 className="sub-title">Most Listener Radio</h1>
             <span
               onClick={() => navigate("/all-radio")}
               className="view-all"
@@ -99,7 +99,7 @@ export default function RadioList() {
         {/* TOP 10 USA */}
         <div className="section">
           <div className="section-header">
-            <h1>Top 10 in USA</h1>
+            <h1 className="sub-title">Top 10 in USA</h1>
             <span
               onClick={() => navigate("/all-radio")}
               className="view-all"
@@ -122,7 +122,7 @@ export default function RadioList() {
         {/* RADIO TO LOVE */}
         <div className="section">
           <div className="section-header">
-            <h1>Radio To Love</h1>
+            <h1 className="sub-title">Radio To Love</h1>
             <span
               onClick={() => navigate("/all-radio")}
               className="view-all"
