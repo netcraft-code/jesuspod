@@ -1,0 +1,126 @@
+.radio-card {
+  width: 100%;
+  cursor: pointer;
+  transition: 0.25s ease;
+
+}
+
+.radio-card:hover {
+  transform: translateY(-6px);
+}
+
+.radio-img-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #111;
+  transition: 0.25s ease;
+}
+
+.radio-card:hover .radio-img-wrapper {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+}
+
+.radio-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.radio-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to top, rgba(255, 0, 0, 0.9), transparent);
+}
+
+.radio-title {
+  position: absolute;
+  bottom: 10px;
+  /* 🔥 sirf 3px gap */
+  left: 8px;
+  right: 8px;
+
+  margin: 0;
+  /* 🔥 default margin remove */
+  padding: 0;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  z-index: 2;
+}
+
+
+.country-card {
+  background: linear-gradient(145deg, #ff2d2d, #d80000);
+  border-radius: 14px;
+
+  height: 100px;
+ 
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.25s;
+
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+.country-card:hover {
+  transform: translateY(-4px);
+  /* thoda kam hover */
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
+}
+
+
+.flag-circle {
+  width: 60px;
+  /* ⬅️ smaller */
+  height: 60px;
+
+  background: #fff;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 6px;
+}
+
+.flag-circle img {
+  width: 36px;
+  /* ⬅️ inner circle size */
+  height: 36px;
+
+  border-radius: 50%;
+  /* 🔥 image round */
+  object-fit: cover;
+  /* proper crop */
+
+  background: #f1f1f1;
+  /* white flags edge visible */
+}
+
+
+.country-title {
+  color: #fff;
+  font-size: 13px;
+  /* ⬅️ smaller text */
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+  /* extra gap remove */
+}

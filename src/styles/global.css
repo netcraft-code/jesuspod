@@ -8,8 +8,13 @@
 }
 
 * { box-sizing: border-box; }
-html,body,#root { height: 100%; margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--main-bg); color: var(--text-light); }
-
+html,body,#root { scrollbar-width: none; height: 100%; margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--main-bg); color: var(--text-light); }
+.header {
+  position: sticky;  /* ya fixed, agar hamesha top par rehna hai */
+  top: 0;
+  width: 100%;
+  z-index: 999;
+}
 a { color: inherit; text-decoration: none; }
 
 .card {
@@ -41,3 +46,4 @@ a { color: inherit; text-decoration: none; }
   font-weight: 600;
 }
 .small-muted { color: var(--red); font-size: 0.9rem; }
+

@@ -1,10 +1,14 @@
 // import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import ForgotPassword from "../pages/ForgotPassword";
-import Home from "../pages/Home";
+import Login from "../pages/auth/Login";
+import Signup from "../pages/auth/Signup";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+
 import PrivateRoute from "./PrivateRoute";
+import Home from "../pages/home/Home";
+import RadioList from "../pages/Radio/RadioList";
+import RadioPlayer from "../pages/Radio/RadioPlayer";
+import AllRadio from "../pages/Radio/AllRadio";
 
 export default function AllRoutes() {
   return (
@@ -13,6 +17,9 @@ export default function AllRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot" element={<ForgotPassword />} />
+      <Route path="/radio" element={<RadioList />} />
+      <Route path="/radio-player" element={<RadioPlayer />} />
+      <Route path="/all-radio" element={<AllRadio />} />
 
       <Route
         path="/home/*"

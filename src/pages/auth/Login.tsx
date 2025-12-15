@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
-import GoogleButton from "../components/UI/GoogleButton";
-import colors from "../theme/colors";
+import GoogleButton from "../../components/UI/GoogleButton";
+import colors from "../../theme/colors";
 import { useDispatch } from "react-redux";
-import { authStart, authSuccess, authFailure } from "../redux/authSlice";
-import { loginWithEmail } from "../services/authService";
-import { loginWithGoogle as loginGoogleFn } from "../services/authService";
-import logo from "../assets/logo.png";
-import InputField from "../components/UI/InputField";
-import usePageTitle from "../hooks/usePageTitle";
+import { authStart, authSuccess, authFailure } from "../../redux/authSlice";
+import { loginWithEmail } from "../../services/authService";
+import { loginWithGoogle as loginGoogleFn } from "../../services/authService";
+import logo from "../../assets/logo.png";
+import InputField from "../../components/UI/InputField";
+import usePageTitle from "../../hooks/usePageTitle";
+import { fetchInitialData } from "../../redux/dataSlice";
+import type { AppDispatch } from "../../redux/store";
 type FormType = {
     email: string;
     password: string;
 };
 export default function Login() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     usePageTitle("Login");
 
@@ -86,7 +88,7 @@ export default function Login() {
             const token = await user.getIdToken();
             localStorage.setItem("token", token);
             dispatch(authSuccess({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL, }));
-
+            dispatch(fetchInitialData());
             navigate("/home");
         } catch (err: any) {
             alert("Invalid Credential")
@@ -95,6 +97,8 @@ export default function Login() {
 
         setLoading(false);
     };
+
+
 
     const handleGoogle = async () => {
         dispatch(authStart());
@@ -137,6 +141,33 @@ export default function Login() {
             setShowValue: setShowPwd,
         },
     ];
+
+    // const handleApple = async () => {
+    //     dispatch(authStart());
+    //     try {
+    //         const res = await loginWithApple();
+    //         const user = res.user;
+    //         const token = await user.getIdToken();
+
+    //         localStorage.setItem("token", token);
+
+    //         dispatch(
+    //             authSuccess({
+    //                 uid: user.uid,
+    //                 email: user.email,
+    //                 displayName: user.displayName,
+    //                 photoURL: user.photoURL,
+    //             })
+    //         );
+
+    //         navigate("/home");
+    //     } catch (err) {
+    //         alert("Login failed");
+    //         console.error(err.message)
+    //         dispatch(authFailure(err.message));
+    //     }
+    // };
+
     // Disable button if any field empty OR has errors
     const isFormInvalid: boolean =
         !form.email.trim() ||
@@ -204,6 +235,13 @@ export default function Login() {
                     <div className="small-muted">Or</div>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
                 </div>
+                {/* <button
+                    onClick={handleApple}
+                    className="btn-primary"
+                    style={{ background: "#000", marginTop: 12 }}
+                >
+                     Sign in with Apple
+                </button> */}
 
                 <GoogleButton onClick={handleGoogle} />
 

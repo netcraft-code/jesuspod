@@ -1,0 +1,190 @@
+/* ------------------------
+   HEADER MAIN WRAPPER
+-------------------------*/
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  background: #000;
+  padding: 16px 20px;
+
+  z-index: 999;
+
+  /* 🔥 MOST IMPORTANT */
+  flex-wrap: wrap;
+}
+
+
+/* LOGO */
+.logo {
+  color: white;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ------------------------
+        HEADER LAYOUT
+-------------------------*/
+
+.header-left {
+  flex-shrink: 0;
+}
+
+.header-middle {
+  flex: 1;
+  min-width: 0; /* 🔥 overflow fix */
+}
+/* ------------------------
+        TABS
+-------------------------*/
+.tab-container {
+  display: flex;
+  gap: 10px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 6px 4px;
+  scroll-behavior: smooth;
+}
+
+.tab-container::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  background: #222;
+  border: 1px solid #222;
+
+  padding: 10px 26px;
+  border-radius: 18px;
+
+  color: white;
+  font-weight: 600;
+  font-size: clamp(14px, 1.2vw, 16px);
+
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-btn:hover {
+  background: red;
+}
+
+.tab-btn.active {
+  background: #e43434;
+  border-color: #e43434;
+}
+
+/* ------------------------
+       RIGHT SIDE
+-------------------------*/
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ------------------------
+   PROFILE CIRCLE BUTTON
+-------------------------*/
+.profile-circle {
+  width: clamp(42px, 5vw, 56px);
+  height: clamp(42px, 5vw, 56px);
+
+  border-radius: 50%;
+  background: #e43434;
+  color: white;
+
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 700;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-circle:hover {
+  transform: scale(1.05);
+}
+
+
+/* ------------------------
+   COUNTRY SELECT BOX
+-------------------------*/
+.country-wrapper {
+  position: relative;
+  color: white;
+}
+
+.country-selected {
+  padding: 10px 20px;
+  border: 1px solid #555;
+  border-radius: 12px;
+
+  background: #111;
+  color: #fff;
+
+  font-size: clamp(14px, 1.2vw, 16px);
+  white-space: nowrap;
+}
+
+
+.country-selected:hover {
+  background: #222;
+}
+
+
+/* COUNTRY POPUP */
+.country-popup {
+  position: absolute;
+
+  background: #000;
+  right: 150px;
+  width: 300px;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #444;
+  z-index: 20;
+}
+
+.country-popup div {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+  color: #ddd;
+}
+
+.country-popup div:hover {
+  background: #222;
+  color: white;
+}
+
+/* ------------------------
+         RED OVERLAY
+-------------------------*/
+.red-overlay {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px);
+
+  background: rgba(243, 7, 7, 0.7);
+  backdrop-filter: blur(2px);
+
+  z-index: 2;
+}

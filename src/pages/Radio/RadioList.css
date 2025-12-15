@@ -1,0 +1,72 @@
+.radio-page {
+  width: 100%;
+}
+
+.radio-container {
+  margin-top: var(--header-height, 14vh);
+  padding: 20px 18px;
+}
+
+/* Title + Search row */
+.page-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 25px;
+}
+
+/* All Radio Title */
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+.search-input {
+  width: 340px;                /* thodi aur width */
+  height: 48px;                /* comfortable height */
+  padding: 0 16px;
+  border-radius: 14px;         /* smooth edges */
+  border: none;                /* no default border */
+  background: rgba(255, 255, 255, 0.08); /* subtle light overlay */
+  color: #fff;                 /* text whiteish */
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s ease;
+  backdrop-filter: blur(5px);  /* optional: glass effect */
+}
+
+/* Focus state */
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 2px rgba(255, 45, 45, 0.3); /* subtle red focus */
+}
+
+/* Placeholder */
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6); /* slightly faded white */
+}
+
+.sub-title {
+  font-size: 22px;
+  margin: 22px 0 12px;
+}
+
+
+.search-radio-section {
+  margin-top: 30px;
+}
+
+.search-radio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.country-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(125px, max-content));
+  gap: 12px;
+
+}

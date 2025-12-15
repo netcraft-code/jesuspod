@@ -1,0 +1,78 @@
+.profile-menu {
+    position: fixed;  /* absolute -> fixed */
+    right: 40px;
+    width: 400px;
+    background: #000;  /* double quotes hata do */
+    border-radius: 12px;
+    padding: 15px;
+    z-index: 9999;    /* red-overlay (z-index 2) se upar */
+    box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+    .profile-menu {
+        right: 10px;
+        width: 90%;
+        padding: 16px;
+    }
+}
+
+.profile-header {
+    text-align: center;
+}
+
+.profile-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ff3b30;
+}
+
+.profile-name {
+    color: #fff;
+    margin-top: 10px;
+}
+
+.menu-list {
+    /* margin-top: 20px; */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-red {
+    color: #ff3b30;
+}
+
+.menu-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-icon {
+    font-size: 18px;
+}
+
+.menu-arrow {
+    opacity: 0.6;
+    font-size: 14px;
+}

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { fetchUserFromToken } from "./redux/authSlice";
 import AllRoutes from "./routes/AllRoutes";
 import type { AppDispatch } from "./redux/store"; // <- add this
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>(); // <- typed dispatch
@@ -15,5 +16,11 @@ export default function App() {
     }
   }, []);
 
-  return <AllRoutes />;
+ return (
+  <>
+    <ScrollToTop />
+    <AllRoutes />
+  </>
+);
+
 }

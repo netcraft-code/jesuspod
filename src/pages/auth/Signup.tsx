@@ -1,18 +1,18 @@
-import  { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock, FaUser, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import colors from "../theme/colors";
+import colors from "../../theme/colors";
 import { useDispatch } from "react-redux";
-import { authStart, authSuccess, authFailure } from "../redux/authSlice";
-import { signupWithEmail } from "../services/authService";
-import { loginWithGoogle as loginGoogleFn } from "../services/authService";
-import InputField from "../components/UI/InputField";
-import GoogleButton from "../components/UI/GoogleButton";
-import defaultAvatar from "../assets/default-avatar.svg";
+import { authStart, authSuccess, authFailure } from "../../redux/authSlice";
+import { signupWithEmail } from "../../services/authService";
+import { loginWithGoogle as loginGoogleFn } from "../../services/authService";
+import InputField from "../../components/UI/InputField";
+import GoogleButton from "../../components/UI/GoogleButton";
+import defaultAvatar from "../../assets/default-avatar.svg";
 import { updateProfile } from "firebase/auth";
-import { uploadUserImage } from "../services/uploadService";
-import usePageTitle from "../hooks/usePageTitle";
+import { uploadUserImage } from "../../services/uploadService";
+import usePageTitle from "../../hooks/usePageTitle";
 
 
 export default function Signup() {
@@ -158,6 +158,7 @@ export default function Signup() {
         setLoading(false);
     };
 
+    
     const handleGoogle = async () => {
         dispatch(authStart());
         try {
@@ -221,7 +222,12 @@ export default function Signup() {
                         onChange={handleChange}
                         placeholder="Full Name"
                     />
-                    {errors.username && <p style={{ color: "red", fontSize: 13 }}>{errors.username}</p>}
+                    {errors.username && (
+                        <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0 }}>
+                            {errors.username}
+                        </p>
+                    )}
+
 
                     {/* EMAIL */}
                     <InputField
@@ -231,7 +237,7 @@ export default function Signup() {
                         onChange={handleChange}
                         placeholder="john@gmail.com"
                     />
-                    {errors.email && <p style={{ color: "red", fontSize: 13 }}>{errors.email}</p>}
+                    {errors.email && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.email}</p>}
 
                     {/* PASSWORD */}
                     <div style={{ position: "relative" }}>
@@ -250,7 +256,7 @@ export default function Signup() {
                             {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                         </span>
                     </div>
-                    {errors.password && <p style={{ color: "red", fontSize: 13 }}>{errors.password}</p>}
+                    {errors.password && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.password}</p>}
 
                     {/* CONFIRM PASSWORD */}
                     <div style={{ position: "relative" }}>
@@ -269,7 +275,7 @@ export default function Signup() {
                             {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                         </span>
                     </div>
-                    {errors.confirmPassword && <p style={{ color: "red", fontSize: 13 }}>{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.confirmPassword}</p>}
                     <button
                         className="btn-primary"
                         type="submit"

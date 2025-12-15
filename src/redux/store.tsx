@@ -1,6 +1,7 @@
-// store.js
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
+import dataReducer from "./dataSlice";
+
 import {
   persistStore,
   persistReducer,
@@ -13,18 +14,21 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+const rootReducer = combineReducers({
+  auth: authReducer,
+  data: dataReducer
+});
+
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "data"], // ✅ ab dono persist honge
 };
 
-const persistedAuth = persistReducer(persistConfig, authReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    auth: persistedAuth,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -34,5 +38,6 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
-import { sendResetEmail } from "../services/authService";
-import colors from "../theme/colors";
+import { sendResetEmail } from "../../services/authService";
+import colors from "../../theme/colors";
 import { useNavigate } from "react-router-dom";
-import usePageTitle from "../hooks/usePageTitle";
+import usePageTitle from "../../hooks/usePageTitle";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
