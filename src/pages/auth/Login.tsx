@@ -115,6 +115,9 @@ export default function Login() {
                     photoURL: user.photoURL,
                 })
             );
+
+            dispatch(fetchInitialData());
+
             navigate("/home");
         } catch (err: any) {
             alert("Invalid Credential")
