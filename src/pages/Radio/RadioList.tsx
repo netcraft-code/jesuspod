@@ -1,11 +1,12 @@
 import { useState } from "react";
-import RadioCard from "../../components/Cards/RadioCard";
 import Header from "../../components/Header/Header";
-import "./RadioList.css";
+import Footer from "../../components/Footer/Footer";
+import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
-import CountryCard from "../../components/Cards/CountryCard";
+import Section from "../../components/Section/Section";
+import CircleImageCard from "../../components/Cards/CircleImageCard";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -38,7 +39,7 @@ export default function RadioList() {
   const countries = useSelector<RootState, CountryItem[]>(
     (state) => state.data.Countries
   );
-
+  console.log("countries", countries)
 
 
   const filteredCountries = countries.filter((c) =>
@@ -72,77 +73,29 @@ export default function RadioList() {
 
       <div className="radio-container">
 
+        {/* ================= MOST LISTENER ================= */}
+        <Section
+          title="Most Listener Radio"
+          data={radio.slice(20, 40)}
+          onViewAll={() => navigate("/all-radio")}
+          onCardClick={handleRadioClick}
+        />
 
-        {/* MOST LISTENER */}
-        <div className="section">
-          <div className="section-header">
-            <h1 className="sub-title">Most Listener Radio</h1>
-            <span
-              onClick={() => navigate("/all-radio")}
-              className="view-all"
-            >
-              View All
-            </span>
-          </div>
+        {/* ================= TOP 10 USA ================= */}
+        <Section
+          title="Top 10 in USA"
+          data={radio.slice(50, 60)}
+          onViewAll={() => navigate("/all-radio")}
+          onCardClick={handleRadioClick}
+        />
 
-          <div className="radio-row">
-            {radio.slice(20, 40).map((item) => (
-              <RadioCard
-                key={item.id}
-                item={item}
-                onClick={() => handleRadioClick(item)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* TOP 10 USA */}
-        <div className="section">
-          <div className="section-header">
-            <h1 className="sub-title">Top 10 in USA</h1>
-            <span
-              onClick={() => navigate("/all-radio")}
-              className="view-all"
-            >
-              View All
-            </span>
-          </div>
-
-          <div className="radio-row">
-            {radio.slice(50, 60).map((item) => (
-              <RadioCard
-                key={item.id}
-                item={item}
-                onClick={() => handleRadioClick(item)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* RADIO TO LOVE */}
-        <div className="section">
-          <div className="section-header">
-            <h1 className="sub-title">Radio To Love</h1>
-            <span
-              onClick={() => navigate("/all-radio")}
-              className="view-all"
-            >
-              View All
-            </span>
-          </div>
-
-          <div className="radio-row">
-            {radio.slice(110, 120).map((item) => (
-              <RadioCard
-                key={item.id}
-                item={item}
-                onClick={() => handleRadioClick(item)}
-              />
-            ))}
-          </div>
-        </div>
-
-
+        {/* ================= RADIO TO LOVE ================= */}
+        <Section
+          title="Radio To Love"
+          data={radio.slice(110, 120)}
+          onViewAll={() => navigate("/all-radio")}
+          onCardClick={handleRadioClick}
+        />
         <div className="search-radio-section">
 
           <div className="search-radio-header">
@@ -161,9 +114,9 @@ export default function RadioList() {
 
           <div className="country-grid">
             {filteredCountries.map((item) => (
-              <CountryCard
-                key={item.id}
-                item={item}
+              <CircleImageCard
+                title={item.title}
+                imageUrl={item.imageUrl}
                 onClick={() => {
                   // Country title ko type ke basis pe filter
                   const sameTypeList = radio.filter(
@@ -191,6 +144,7 @@ export default function RadioList() {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }

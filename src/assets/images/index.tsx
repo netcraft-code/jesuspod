@@ -24,6 +24,7 @@ import gradient from "./gradient.png";
 import placeholder from "./placeholder.png";
 
 import warning from "./warning.png";
+import plus from "./plus.png";
 import down from "./icons/downloading.png";
 import radio from "./radio.png";
 import font from "./front.png";
@@ -40,7 +41,14 @@ import podcast_home from "./podcast_home.png";
 import radio_home from "./radio_home.png";
 import read_home from "./read_home.png";
 import vide_home from "./video_home.png";
-import share from "./icons/share.png";
+import share from "./share.png";
+import download from "./download.png";
+
+import forward10 from "./forward-10-seconds.png";
+import repeateone from "./repeate-one.png";
+import valumehigh from "./volume-high.png";
+import valumeslash from "./volume-slash.png";
+
 import cam from "./icons/cam.png";
 import liked from "./icons/like.png";
 import channels from "./channels.webp";
@@ -55,6 +63,10 @@ import earth from "./earth.png";
 export const images = {
   appIcon,
   camera,
+  forward10,
+  repeateone,
+  valumehigh,
+  valumeslash,
   gallery,
   appLogo,
   tabHome,
@@ -64,6 +76,7 @@ export const images = {
   tabRead,
   tabDiscover,
   social,
+  plus,
   tabLive,
   tabCollection,
   filter,
@@ -79,6 +92,7 @@ export const images = {
   placeholder,
   warning,
   down,
+  download,
   radio,
   font,
   play,

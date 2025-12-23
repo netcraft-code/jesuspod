@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash, FaTwitter, FaFacebookF } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleButton from "../../components/UI/GoogleButton";
 import colors from "../../theme/colors";
@@ -180,76 +181,142 @@ export default function Login() {
 
 
     return (
-        <div className="center-page" style={{ background: colors.mainBg }}>
-            <div className="card" style={{ width: "100%", maxWidth: 450 }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-                    <img src={logo} alt="logo" style={{ width: 110 }} />
+        <div className="center-page" style={{ background: "#000000", color: "#ffffff" }}>
+            <div className="login-card" style={{
+                width: "100%",
+                maxWidth: 480,
+                backgroundColor: "#1a1a1a",
+                padding: "48px 40px",
+                borderRadius: "32px",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
+            }}>
+                <div style={{ textAlign: "center", marginBottom: 32 }}>
+                    <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Login to Account</h1>
+                    <p style={{ color: "#9ca3af", fontSize: 16 }}>Login now and access all features now</p>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {inputs.map((input) => (
-                        <div key={input.name} style={{ position: "relative" }}>
-                            <InputField
-                                name={input.name}
-                                value={form[input.name as keyof FormType]}
+                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                    <div className="input-group">
+                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>Email Address</label>
+                        <div style={{ position: "relative" }}>
+                            <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: colors.red }}>
+                                <FaEnvelope size={18} />
+                            </span>
+                            <input
+                                name="email"
+                                type="text"
+                                value={form.email}
                                 onChange={handleChange}
-                                placeholder={input.placeholder}
-                                icon={input.icon}
-                                type={input.type}
+                                placeholder="johndoe@gmai.com"
+                                style={{
+                                    width: "100%",
+                                    backgroundColor: "transparent",
+                                    border: "1px solid #374151",
+                                    borderRadius: "16px",
+                                    padding: "16px 16px 16px 48px",
+                                    color: "#ffffff",
+                                    fontSize: 15,
+                                    outline: "none"
+                                }}
                             />
-                            {input.eyeToggle && (
-                                <span
-                                    onClick={() => input.setShowValue((prev) => !prev)}
-                                    style={{
-                                        position: "absolute",
-                                        right: 12,
-                                        top: "50%",
-                                        transform: "translateY(-50%)",
-                                        color: colors.red,
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    {input.showValue ? <FaRegEye /> : <FaRegEyeSlash />}
-                                </span>
-                            )}
-                            {input.error && <p style={{ color: "red", marginTop: 8, fontSize: 13 }}>{input.error}</p>}
                         </div>
-                    ))}
+                        {errors.email && <p style={{ color: "red", marginTop: 4, fontSize: 12 }}>{errors.email}</p>}
+                    </div>
 
-                    <div style={{ textAlign: "right" }}>
-                        <Link to="/forgot" className="small-muted">Forgot Password?</Link>
+                    <div className="input-group">
+                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>Password</label>
+                        <div style={{ position: "relative" }}>
+                            <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: colors.red }}>
+                                <FaLock size={18} />
+                            </span>
+                            <input
+                                name="password"
+                                type={showPwd ? "text" : "password"}
+                                value={form.password}
+                                onChange={handleChange}
+                                placeholder="*****************"
+                                style={{
+                                    width: "100%",
+                                    backgroundColor: "transparent",
+                                    border: "1px solid #374151",
+                                    borderRadius: "16px",
+                                    padding: "16px 48px",
+                                    color: "#ffffff",
+                                    fontSize: 15,
+                                    outline: "none"
+                                }}
+                            />
+                            <span
+                                onClick={() => setShowPwd(!showPwd)}
+                                style={{
+                                    position: "absolute",
+                                    right: 16,
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    color: "#4b5563",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {showPwd ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
+                            </span>
+                        </div>
+                        {errors.password && <p style={{ color: "red", marginTop: 4, fontSize: 12 }}>{errors.password}</p>}
+                    </div>
+
+                    <div style={{ textAlign: "right", marginTop: -8 }}>
+                        <Link to="/forgot" style={{ color: colors.red, fontSize: 14, fontWeight: 500, textDecoration: "none" }}>Forgot Password?</Link>
                     </div>
 
                     <button
-                        className="btn-primary"
+                        className="login-btn"
                         type="submit"
                         disabled={loading || isFormInvalid}
                         style={{
-                            background: isFormInvalid ? "#9ca3af" : colors.red,
+                            background: isFormInvalid ? "#374151" : "#ff2b2b",
+                            color: isFormInvalid ? "#9ca3af" : "#ffffff",
+                            padding: "16px",
+                            borderRadius: "16px",
+                            border: "none",
+                            fontSize: 18,
+                            fontWeight: 700,
                             cursor: isFormInvalid ? "not-allowed" : "pointer",
+                            marginTop: 12,
+                            boxShadow: isFormInvalid ? "none" : "0 4px 14px rgba(255, 43, 43, 0.3)"
                         }}
                     >
                         {loading ? "Logging..." : "Login"}
                     </button>
                 </form>
 
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "32px 0" }}>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
-                    <div className="small-muted">Or</div>
+                    <div style={{ color: "#ffffff", fontSize: 14 }}>Or</div>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
                 </div>
-                {/* <button
-                    onClick={handleApple}
-                    className="btn-primary"
-                    style={{ background: "#000", marginTop: 12 }}
-                >
-                     Sign in with Apple
-                </button> */}
 
-                <GoogleButton onClick={handleGoogle} />
+                <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
+                    <div onClick={handleGoogle} style={{
+                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
+                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
+                    }}>
+                        <FcGoogle size={28} />
+                    </div>
+                    <div style={{
+                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
+                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
+                    }}>
+                        <FaTwitter size={24} color="#1DA1F2" />
+                    </div>
+                    <div style={{
+                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
+                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
+                    }}>
+                        <FaFacebookF size={24} color="#1877F2" />
+                    </div>
+                </div>
 
-                <div style={{ textAlign: "center", marginTop: 6 }}>
-                    Don’t have an account? <Link to="/signup" style={{ color: colors.red }}>Signup</Link>
+                <div style={{ textAlign: "center", marginTop: 24, fontSize: 14, color: "#9ca3af" }}>
+                    Don’t have an account? <Link to="/signup" style={{ color: colors.red, fontWeight: 600, textDecoration: "none" }}>Signup</Link>
                 </div>
             </div>
         </div>

@@ -1,78 +1,115 @@
 .profile-menu {
-    position: fixed;  /* absolute -> fixed */
+    position: fixed;
     right: 40px;
-    width: 400px;
-    background: #000;  /* double quotes hata do */
-    border-radius: 12px;
-    padding: 15px;
-    z-index: 9999;    /* red-overlay (z-index 2) se upar */
-    box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.4);
+    width: 320px;
+    /* narrowed slightly for cleaner look */
+    background: #000;
+    border-radius: 20px;
+    padding: 24px 16px;
+    z-index: 9999;
+    box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #1a1a1a;
 }
 
-
-/* MOBILE RESPONSIVE */
 @media (max-width: 480px) {
     .profile-menu {
         right: 10px;
         width: 90%;
-        padding: 16px;
     }
 }
 
 .profile-header {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.avatar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 12px;
 }
 
 .profile-image {
-    width: 70px;
-    height: 70px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ff3b30;
+    border: 2px solid #333;
+}
+
+.camera-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #ff2b2b;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
 }
 
 .profile-name {
     color: #fff;
-    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .menu-list {
-    /* margin-top: 20px; */
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
 }
 
 .menu-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 12px 8px;
+    border-radius: 12px;
     cursor: pointer;
     color: #fff;
     transition: 0.2s;
 }
 
 .menu-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.menu-red {
-    color: #ff3b30;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .menu-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
 .menu-icon {
-    font-size: 18px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(5437%) hue-rotate(352deg) brightness(98%) contrast(106%);
+    /* Red filter for icons */
 }
 
-.menu-arrow {
-    opacity: 0.6;
-    font-size: 14px;
+.menu-icon img {
+    max-width: 22px;
+}
+
+.menu-label {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.menu-arrow-right {
+    opacity: 0.4;
+    filter: invert(1);
+    /* white arrow */
+}
+
+.menu-red .menu-label {
+    /* color: #ff2b2b; */
 }

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Header from "../../components/Header/Header";
-import RadioCard from "../../components/Cards/RadioCard";
-import "./AllRadio.css";
+import Footer from "../../components/Footer/Footer";
+import Card from "../../components/Cards/Card";
+import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -25,14 +26,14 @@ export default function AllRadio() {
   const radioList = useSelector<RootState, RadioItem[]>(
     (state) => state.data.radio
   );
-  console.log("radio",radioList)
+  console.log("radio", radioList)
 
   const filtered = radioList.filter((r) =>
     r.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="all-radio-wrapper">
+    <div className="main-content">
       {/* HEADER */}
       <Header
         active={active}
@@ -42,13 +43,13 @@ export default function AllRadio() {
       />
 
       {/* PAGE CONTENT */}
-      <main className="all-radio-content">
+      <main className="content">
         {/* TITLE + SEARCH */}
         <div className="top-bar">
           <h2 className="sub-title">All Radio</h2>
 
           <input
-             className="search-input"
+            className="search-input"
             type="text"
             placeholder="Search radio..."
             value={search}
@@ -59,7 +60,7 @@ export default function AllRadio() {
         </div>
 
         {/* RADIO GRID */}
-        <div className="radio-grid">
+        <div className="card-grid">
           {filtered.map((item) => {
             const sameTypeList = radioList.filter(
               (r) =>
@@ -67,7 +68,7 @@ export default function AllRadio() {
             );
 
             return (
-              <RadioCard
+              <Card
                 key={item.id}
                 item={item}
                 onClick={() =>
@@ -84,6 +85,7 @@ export default function AllRadio() {
           })}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

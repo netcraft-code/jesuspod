@@ -8,16 +8,329 @@
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  /* Ensure spacing */
   gap: 16px;
 
   background: #000;
-  padding: 16px 20px;
-
+  padding: 10px 20px;
+  /* Reduced vertical padding */
   z-index: 999;
 
-  /* 🔥 MOST IMPORTANT */
-  flex-wrap: wrap;
+  /* No wrap for single bar look, overflow handled in middle */
+  flex-wrap: nowrap;
 }
+
+
+/* LOGO */
+.logo {
+  color: white;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ------------------------
+        HEADER LAYOUT
+-------------------------*/
+
+.header-left {
+  flex-shrink: 0;
+}
+
+.header-middle {
+  flex: 1;
+  min-width: 0;
+  /* allows shrinking for scroll */
+  display: flex;
+  justify-content: flex-start;
+  /* items start from left near logo */
+  margin-left: 20px;
+}
+
+/* ------------------------
+        TABS
+-------------------------*/
+.tab-container {
+  display: flex;
+  gap: 8px;
+  /* tighter gap */
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE 10+ */
+
+  padding: 4px 0;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+}
+
+.tab-container::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+.tab-btn {
+  background: #1a1a1a;
+  /* slightly lighter than black */
+  border: 1px solid #333;
+  /* subtle border */
+
+  padding: 8px 18px;
+  /* matching pill shape */
+  border-radius: 99px;
+  /* full pill */
+
+  color: #ccc;
+  font-weight: 500;
+  font-size: 14px;
+
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: #ff2b2b;
+  /* vivid red */
+  border-color: #ff2b2b;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ------------------------
+       RIGHT SIDE
+-------------------------*/
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+/* ------------------------
+   PROFILE CIRCLE BUTTON
+-------------------------*/
+.profile-circle {
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+  background: #ff2b2b;
+  color: white;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-circle:hover {
+  transform: scale(1.05);
+}
+
+
+/* ------------------------
+   COUNTRY SELECT BOX
+-------------------------*/
+/* ------------------------
+   COUNTRY PILL & DROPDOWN
+-------------------------*/
+.country-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1b1b1f;
+  /* dark gray from screenshots */
+  padding: 10px 14px;
+  /* Slightly tighter vertical */
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  /* min-width: 120px; */
+}
+
+.country-pill:hover {
+  background: #252529;
+}
+
+.pill-flag {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pill-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.pill-arrow {
+  color: #ff2b2b;
+  /* Red arrow */
+  font-size: 10px;
+  transition: 0.3s;
+}
+
+.pill-arrow.open {
+  transform: rotate(180deg);
+}
+
+.country-dropdown {
+  position: fixed;
+  /* Match ProfileMenu */
+  top: 100px;
+  /* same as overlay top */
+  right: 80px;
+  /* Match ProfileMenu offset */
+  width: 320px;
+  /* Match ProfileMenu width */
+  background: #000;
+  border-radius: 20px;
+  /* Match ProfileMenu */
+  border: 1px solid #1a1a1a;
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  overflow: hidden;
+  padding: 24px 16px;
+  /* Match ProfileMenu padding */
+}
+
+.dropdown-scroll {
+  max-height: 450px;
+  overflow-y: auto;
+  /* padding: 10px; */
+  scrollbar-width: none;
+  /* Hide scrollbar */
+  -ms-overflow-style: none;
+  /* Hide scrollbar for IE/Edge */
+}
+
+.dropdown-scroll::-webkit-scrollbar {
+  display: none;
+  /* Hide scrollbar for Chrome/Safari */
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #111;
+}
+
+.dropdown-item.active {
+  background: #111;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-flag {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-name {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.radio-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.radio-indicator.checked {
+  background: #ff2b2b;
+  border-color: #ff2b2b;
+}
+
+.checkmark {
+  color: #fff;
+  font-size: 12px;
+}
+
+/* ------------------------
+         RED OVERLAY
+-------------------------*/
+.red-overlay {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px);
+
+  background: rgba(243, 7, 7, 0.7);
+  /* Match the bright red overlay user mentioned */
+  backdrop-filter: blur(2px);
+
+  z-index: 2;
+}
+
+/* RESPONSIVE TWEAKS */
+@media (max-width: 768px) {
+  .logo {
+    display: none;
+    /* Often hidden on very small screens if tabs take priority, or make tabs slide under */
+  }
+
+  .main-header {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .header-middle {
+    margin-left: 0;
+  }
+
+  .country-selected span {
+    display: none;
+    /* hide text keep flag maybe? */
+  }
+}
+
+@media (min-width: 769px) {
+  /* keep logo visible */
+}
+
 
 
 /* LOGO */
@@ -39,8 +352,10 @@
 
 .header-middle {
   flex: 1;
-  min-width: 0; /* 🔥 overflow fix */
+  min-width: 0;
+  /* 🔥 overflow fix */
 }
+
 /* ------------------------
         TABS
 -------------------------*/

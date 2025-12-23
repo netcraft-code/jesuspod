@@ -56,7 +56,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  z-index: 2;
+  z-index: 1;
 }
 
 
@@ -65,7 +65,7 @@
   border-radius: 14px;
 
   height: 100px;
- 
+
 
   display: flex;
   flex-direction: column;

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./style.css";
 import Tabs from "./Tabs";
 import ProfileButton from "./ProfileButton";
 import CountryMenu from "./CountryMenu";
@@ -34,7 +33,6 @@ export default function Header({
   );
 
   const [countryOpen, setCountryOpen] = useState<boolean>(false);
-  // const [country, setCountry] = useState<string>("India 🇮🇳");
 
   const firstLetter =
     user?.displayName?.[0]?.toUpperCase() ||
@@ -65,9 +63,7 @@ export default function Header({
         </div>
 
         <div className="header-right">
-          <div onClick={() => setCountryOpen(!countryOpen)}>
-            <CountryMenu />
-          </div>
+          <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
 
           <ProfileButton
             letter={firstLetter}
@@ -79,14 +75,6 @@ export default function Header({
       {profileOpen && user && (
         <div className="profile-menu-container">
           <ProfileMenu user={user} />
-        </div>
-      )}
-
-      {countryOpen && (
-        <div className="country-popup">
-          <div >India 🇮🇳</div>
-          <div >USA 🇺🇸</div>
-          <div>UK 🇬🇧</div>
         </div>
       )}
     </>

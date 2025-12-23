@@ -3,39 +3,45 @@
 }
 
 .home-content {
-  margin-top: 15vh;  /* header height */
+  margin-top: 15vh;
+  /* header height */
   padding: 0px 0;
 }
+
 .section {
-  margin-bottom: 40px; /* bottom me thoda space */
+  margin-bottom: 40px;
+  /* bottom me thoda space */
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; /* header aur row ke beech ka gap */
+  margin-bottom: 16px;
+  /* header aur row ke beech ka gap */
 }
 
 .section-header h1 {
   color: #fff;
   font-weight: 600;
-  margin: 0; /* title ka start align properly */
+  margin: 0;
+  /* title ka start align properly */
 }
 
 .view-all {
-  color: #9ea3a8;       /* soft gray */
+  color: #9ea3a8;
+  /* soft gray */
   cursor: pointer;
-  font-size: 18px;      
+  font-size: 18px;
   font-weight: 500;
   opacity: 0.95;
 }
 
-.radio-row {
+.section-row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 16px; /* cards ke beech thoda gap */
-  margin-bottom: 10px; /* bottom me thoda space */
+  gap: 16px;
+  /* cards ke beech thoda gap */
+  margin-bottom: 10px;
+  /* bottom me thoda space */
 }
-
-

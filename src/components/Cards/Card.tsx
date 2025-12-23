@@ -1,7 +1,7 @@
 import "./card.css";
 
 /* 🔹 Types */
-export interface RadioItem {
+export interface Item {
   id: string;
   title: string;
   imageUrl?: string;
@@ -9,15 +9,15 @@ export interface RadioItem {
 }
 
 
-interface RadioCardProps {
-  item: RadioItem;
-  onClick: (item: RadioItem) => void;
+interface Card {
+  item: Item;
+  onClick: (item: Item) => void;
 }
 
-export default function RadioCard({
+export default function Card({
   item,
   onClick,
-}: RadioCardProps) {
+}: Card) {
   return (
     <div
       className="radio-card"

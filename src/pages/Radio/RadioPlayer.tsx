@@ -1,16 +1,10 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Header from "../../components/Header/Header";
-import "./RadioPlayer.css";
-import { Oval } from "react-loader-spinner";
-import {
-  FaPlay,
-  FaPause,
-  FaVolumeUp,
-  FaVolumeMute,
-  FaForward,
-  FaBookmark
-} from "react-icons/fa";
+import Footer from "../../components/Footer/Footer";
+import "./Radio.css";
+import { images } from "../../assets/images";
+import { FaPause } from "react-icons/fa";
 
 /* ================= TYPES ================= */
 
@@ -43,14 +37,22 @@ export default function RadioPlayer() {
 
   const [playing, setPlaying] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [muted, setMuted] = useState<boolean>(false);
-  const [volume, setVolume] = useState<number>(1);
+  const [volume, setVolume] = useState<number>(80); // 0-100
   const [saved, setSaved] = useState<boolean>(false);
+  const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
+  const [showVolumeMsg, setShowVolumeMsg] = useState(false);
 
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
+  const { play, forward10, repeateone, valumehigh, valumeslash } = images;
 
   /* ================= EFFECT ================= */
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
 
   useEffect(() => {
     if (!audioRef.current || !current) return;
@@ -81,18 +83,26 @@ export default function RadioPlayer() {
     audioRef.current.currentTime += 10;
   };
 
-  const toggleMute = (): void => {
-    if (!audioRef.current) return;
-    audioRef.current.muted = !muted;
-    setMuted(!muted);
+  const increaseVolume = () => {
+    setVolume((prev) => {
+      const next = Math.min(prev + 10, 100);
+      showVolumeFeedback(`+10 (${next}%)`);
+      return next;
+    });
   };
 
-  const handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const v = Number(e.target.value);
-    if (!audioRef.current) return;
+  const decreaseVolume = () => {
+    setVolume((prev) => {
+      const next = Math.max(prev - 10, 0);
+      showVolumeFeedback(`-10 (${next}%)`);
+      return next;
+    });
+  };
 
-    audioRef.current.volume = v;
-    setVolume(v);
+  const showVolumeFeedback = (msg: string) => {
+    setVolumeMsg(msg);
+    setShowVolumeMsg(true);
+    setTimeout(() => setShowVolumeMsg(false), 800);
   };
 
   const saveMusic = (): void => {
@@ -133,9 +143,8 @@ export default function RadioPlayer() {
                     alt={item.title}
                     className="radio-img"
                   />
-                  <div className="radio-overlay"></div>
-                  <h3 className="radio-title">{item.title}</h3>
                 </div>
+                <h3 className="radio-card-title">{item.title}</h3>
               </div>
             ))}
           </div>
@@ -168,59 +177,57 @@ export default function RadioPlayer() {
           />
 
           {/* CONTROLS */}
-          <div className="control-bar">
+          <div className="player-box">
+            <h3 className="player-title">{current.title}</h3>
+            <p className="player-desc">Live Music Streaming</p>
 
-            {/* MUTE */}
-            <button className="ctrl-btn" onClick={toggleMute}>
-              {muted ? <FaVolumeMute size={26} /> : <FaVolumeUp size={26} />}
-            </button>
+            <div className="player-controls">
+              {/* VOLUME DOWN */}
+              <div className="volume-feedback-wrapper">
+                <button className="podcast-ctrl-btn" onClick={decreaseVolume}>
+                  <img src={valumeslash} alt="volume down" />
+                </button>
+                {showVolumeMsg && volumeMsg?.startsWith("-") && <div className="volume-popup show">{volumeMsg}</div>}
+              </div>
 
-            {/* SAVE (ROUND + 1 STYLE) */}
-            <button
-              className={`ctrl-btn save-btn ${saved ? "active" : ""}`}
-              onClick={saveMusic}
-            >
-              <FaBookmark size={24} />
-              <span className="save-count">1</span>
-            </button>
+              {/* REPEAT/BACK */}
+              <button className="podcast-ctrl-btn" onClick={() => { if (audioRef.current) audioRef.current.currentTime -= 1 }}>
+                <img src={repeateone} alt="repeat" />
+              </button>
 
-            {/* PLAY / PAUSE */}
-            <button className="ctrl-btn main" onClick={togglePlay}>
-              {loading ? (
-                <Oval
-                  height={40}
-                  width={40}
-                  color="#fff"
-                  secondaryColor="rgba(255,255,255,0.4)"
-                />
-              ) : playing ? (
-                <FaPause size={34} />
-              ) : (
-                <FaPlay size={34} />
-              )}
-            </button>
+              {/* PLAY / PAUSE */}
+              <button
+                className={`podcast-ctrl-btn play-main-btn ${playing ? 'playing' : ''}`}
+                onClick={togglePlay}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="btn-spinner"></div>
+                ) : playing ? (
+                  <FaPause size={25} />
+                ) : (
+                  <img src={play} alt="play" />
+                )}
+              </button>
 
-            {/* 10s FORWARD */}
-            <button className="ctrl-btn" onClick={seekForward}>
-              <FaForward size={26} />
-            </button>
+              {/* 10s FORWARD */}
+              <button className="podcast-ctrl-btn" onClick={seekForward}>
+                <img src={forward10} alt="forward" />
+              </button>
 
-            {/* VOLUME */}
-            <div className="volume-box">
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolume}
-              />
+              {/* VOLUME UP */}
+              <div className="volume-feedback-wrapper">
+                <button className="podcast-ctrl-btn" onClick={increaseVolume}>
+                  <img src={valumehigh} alt="volume high" />
+                </button>
+                {showVolumeMsg && volumeMsg?.startsWith("+") && <div className="volume-popup show">{volumeMsg}</div>}
+              </div>
             </div>
-
           </div>
 
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

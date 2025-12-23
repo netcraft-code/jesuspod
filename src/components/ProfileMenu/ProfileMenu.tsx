@@ -43,11 +43,16 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
         <div className="profile-menu">
             {/* PROFILE IMAGE */}
             <div className="profile-header">
-                <img
-                    src={user?.photoURL ?? defaultAvatar}
-                    alt="profile"
-                    className="profile-image"
-                />
+                <div className="avatar-container">
+                    <img
+                        src={user?.photoURL ?? defaultAvatar}
+                        alt="profile"
+                        className="profile-image"
+                    />
+                    <div className="camera-overlay">
+                        <img src={images.camera} alt="camera" width={16} />
+                    </div>
+                </div>
                 <h3 className="profile-name">{user?.displayName || "No Name"}</h3>
             </div>
 
@@ -76,7 +81,7 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
 
                 <MenuItem
                     icon={<img src={share} alt="share" width={25} />}
-                    label="Share App with friends"
+                    label="Share App with Friends"
                     onClick={() => alert("Share")}
                 />
 
@@ -111,15 +116,15 @@ function MenuItem({ icon, label, arrow = false, onClick, red = false }: MenuItem
         >
             <div className="menu-left">
                 <span className="menu-icon">{icon}</span>
-                <span style={{ fontSize: 18 }}>{label}</span>
+                <span className="menu-label">{label}</span>
             </div>
 
             {arrow && (
                 <img
                     src={images.arrowLeft}
                     alt="arrow"
-                    width={20}
-                // className="menu-arrow"
+                    width={18}
+                    className="menu-arrow-right"
                 />
             )}
         </div>

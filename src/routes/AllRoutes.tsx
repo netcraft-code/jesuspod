@@ -9,6 +9,13 @@ import Home from "../pages/home/Home";
 import RadioList from "../pages/Radio/RadioList";
 import RadioPlayer from "../pages/Radio/RadioPlayer";
 import AllRadio from "../pages/Radio/AllRadio";
+import PodcastHome from "../pages/Podcast/PodcastHome";
+import AllPodcast from "../pages/Podcast/AllPodcast";
+import PodcastCategory from "../pages/Podcast/PodcastCategory";
+import PodcastDetail from "../pages/Podcast/PodcastDetail";
+import BooksHome from "../pages/Books/BooksHome";
+import AllBooks from "../pages/Books/AllBooks";
+import BooksCategory from "../pages/Books/BooksCategory";
 
 export default function AllRoutes() {
   return (
@@ -20,6 +27,15 @@ export default function AllRoutes() {
       <Route path="/radio" element={<RadioList />} />
       <Route path="/radio-player" element={<RadioPlayer />} />
       <Route path="/all-radio" element={<AllRadio />} />
+      <Route path="/podcast" element={<PodcastHome />} />
+      <Route path="/all-podcast" element={<AllPodcast />} />
+      <Route path="/podcast-category" element={<PodcastCategory />} />
+
+      <Route path="/podcastplayer/:id" element={<PodcastDetail />} />
+
+      <Route path="/books" element={<BooksHome />} />
+      <Route path="/all-books" element={<AllBooks />} />
+      <Route path="/books-category" element={<BooksCategory />} />
 
       <Route
         path="/home/*"
