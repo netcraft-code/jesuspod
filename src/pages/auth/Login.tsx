@@ -2,14 +2,12 @@ import { useState } from "react";
 import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash, FaTwitter, FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
-import GoogleButton from "../../components/UI/GoogleButton";
 import colors from "../../theme/colors";
 import { useDispatch } from "react-redux";
 import { authStart, authSuccess, authFailure } from "../../redux/authSlice";
 import { loginWithEmail } from "../../services/authService";
 import { loginWithGoogle as loginGoogleFn } from "../../services/authService";
-import logo from "../../assets/logo.png";
-import InputField from "../../components/UI/InputField";
+
 import usePageTitle from "../../hooks/usePageTitle";
 import { fetchInitialData } from "../../redux/dataSlice";
 import type { AppDispatch } from "../../redux/store";
@@ -126,25 +124,7 @@ export default function Login() {
         }
     };
 
-    const inputs = [
-        {
-            name: "email",
-            placeholder: "john@gmail.com",
-            icon: FaEnvelope,
-            type: "text",
-            error: errors.email,
-        },
-        {
-            name: "password",
-            placeholder: "*******",
-            icon: FaLock,
-            type: showPwd ? "text" : "password",
-            error: errors.password,
-            eyeToggle: true,
-            showValue: showPwd,
-            setShowValue: setShowPwd,
-        },
-    ];
+
 
     // const handleApple = async () => {
     //     dispatch(authStart());

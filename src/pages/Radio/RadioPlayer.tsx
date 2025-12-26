@@ -1,10 +1,10 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio, setSelectedCountry, refreshSavedRadios } from "../../redux/dataSlice";
+import { refreshSavedRadios } from "../../redux/dataSlice";
 import { trackRadioPlay } from "../../services/radioAnalytics";
-import { getDocWithQuery, updateDocument } from "../../services/firestoreService";
+import { updateDocument } from "../../services/firestoreService";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../../services/firebase";
 import Header from "../../components/Header/Header";
@@ -43,14 +43,14 @@ interface CountryItem {
 
 export default function RadioPlayer() {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
   const state = location.state as LocationState | null;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Redux selectors - use filtered radio
-  const radio = useSelector(getFilteredRadio);
+  // const radio = useSelector(getFilteredRadio);
   // Get ALL radios (unfiltered) for country click
   const allRadios = useSelector((state: RootState) => state.data.radio);
   const countries = useSelector<RootState, CountryItem[]>(
@@ -197,7 +197,7 @@ export default function RadioPlayer() {
   // Check if current radio is favorited
   useEffect(() => {
     if (current && user) {
-      const radioId = current._id || current.id;
+      // const radioId = current._id || current.id;
       const userId = user.uid;
       const stars = current.star || [];
       setIsFavorite(stars.includes(userId));

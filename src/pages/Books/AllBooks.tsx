@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Card from "../../components/Cards/Card";
 import type { RootState } from "../../redux/store";
 
 export default function AllBooks() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const location = useLocation();
     const categoryFilter = location.state?.category;
 

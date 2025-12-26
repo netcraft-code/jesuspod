@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import YouTubePlayer from "./YouTubePlayer";
 import { FaHeart, FaRegHeart, FaBookmark, FaRegBookmark, FaShare } from "react-icons/fa";
 import type { ShortItemProps } from "../../types/shorts";

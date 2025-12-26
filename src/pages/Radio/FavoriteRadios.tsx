@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../redux/store";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import Card from "../../components/Cards/Card";
+
 import "./Radio.css";
 
 export default function FavoriteRadios() {

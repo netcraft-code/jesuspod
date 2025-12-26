@@ -1,4 +1,3 @@
-import React from "react";
 import "./SkeletonCard.css";
 import "../Cards/card.css"; // Reuse existing card styles
 

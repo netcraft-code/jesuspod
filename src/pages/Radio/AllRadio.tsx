@@ -5,7 +5,6 @@ import Card from "../../components/Cards/Card";
 import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store";
 import { getFilteredRadio } from "../../redux/dataSlice";
 
 /** 🔹 Radio item type */
@@ -27,7 +26,7 @@ export default function AllRadio() {
   const radioList = useSelector(getFilteredRadio);
   console.log("radio", radioList)
 
-  const filtered = radioList.filter((r) =>
+  const filtered = radioList.filter((r: RadioItem) =>
     r.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -60,9 +59,9 @@ export default function AllRadio() {
 
         {/* RADIO GRID */}
         <div className="card-grid">
-          {filtered.map((item) => {
+          {filtered.map((item: RadioItem) => {
             const sameTypeList = radioList.filter(
-              (r) =>
+              (r: RadioItem) =>
                 r.type?.toLowerCase() === item.type?.toLowerCase()
             );
 

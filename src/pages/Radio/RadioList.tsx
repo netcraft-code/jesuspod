@@ -66,7 +66,7 @@ export default function RadioList() {
     console.log("📻 Radio type/country:", item.type);
 
     const sameTypeList = radio.filter(
-      (r) => r.type?.toLowerCase() === item.type?.toLowerCase()
+      (r: RadioItem) => r.type?.toLowerCase() === item.type?.toLowerCase()
     );
 
     console.log("📋 Filtered playlist:", sameTypeList.length, "radios");

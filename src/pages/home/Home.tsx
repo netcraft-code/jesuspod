@@ -71,7 +71,7 @@ export default function Home() {
           onViewAll={() => navigate("/all-radio")}
           onCardClick={(item) => {
             const sameTypeList = radioList.filter(
-              (r) =>
+              (r: MediaItem) =>
                 r.type?.toLowerCase() === item.type?.toLowerCase()
             );
 

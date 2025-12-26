@@ -21,7 +21,7 @@ import { FaPause } from "react-icons/fa";
 export default function PodcastDetail() {
     const { state } = useLocation();
     const channel = state?.channel;
-    const { play, share, download, warning, plus, forward10, repeateone, valumehigh, valumeslash } = images
+    const { play, share, download, plus, forward10, repeateone, valumehigh, valumeslash } = images
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const [description, setDescription] = useState<string>("");
@@ -30,8 +30,8 @@ export default function PodcastDetail() {
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [volume, setVolume] = useState(80); // 0 – 100
-    const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
-    const [showVolumeMsg, setShowVolumeMsg] = useState(false);
+    // const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
+    // const [showVolumeMsg, setShowVolumeMsg] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [subscribeLoading, setSubscribeLoading] = useState(false);
     const [downloadingEpisode, setDownloadingEpisode] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export default function PodcastDetail() {
     const increaseVolume = () => {
         setVolume((prev) => {
             const next = Math.min(prev + 10, 100);
-            showVolumeFeedback(`+10 (${next}%)`);
+            // showVolumeFeedback(`+10 (${next}%)`);
             return next;
         });
     };
@@ -80,16 +80,16 @@ export default function PodcastDetail() {
     const decreaseVolume = () => {
         setVolume((prev) => {
             const next = Math.max(prev - 10, 0);
-            showVolumeFeedback(`-10 (${next}%)`);
+            // showVolumeFeedback(`-10 (${next}%)`);
             return next;
         });
     };
 
-    const showVolumeFeedback = (msg: string) => {
-        setVolumeMsg(msg);
-        setShowVolumeMsg(true);
-        setTimeout(() => setShowVolumeMsg(false), 800);
-    };
+    // const showVolumeFeedback = (msg: string) => {
+    //     // setVolumeMsg(msg);
+    //     // setShowVolumeMsg(true);
+    //     // setTimeout(() => setShowVolumeMsg(false), 800);
+    // };
 
 
 
@@ -516,10 +516,32 @@ export default function PodcastDetail() {
                             <button
                                 className="icon-btn"
                                 onClick={() => currentEpisode && handleDownloadEpisode(currentEpisode)}
-                                disabled={!currentEpisode}
-                                title={currentEpisode ? "Download current episode" : "Select an episode first"}
+                                disabled={!currentEpisode || downloadingEpisode !== null}
+                                title={
+                                    downloadingEpisode !== null
+                                        ? "Downloading..."
+                                        : currentEpisode
+                                            ? "Download current episode"
+                                            : "Select an episode first"
+                                }
+                                style={{
+                                    opacity: downloadingEpisode !== null ? 0.5 : 1,
+                                    cursor: downloadingEpisode !== null ? 'not-allowed' : 'pointer'
+                                }}
                             >
                                 <img src={download} alt="download" />
+                                {downloadingEpisode !== null && (
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        fontSize: '10px',
+                                        color: '#FB4A4A',
+                                        fontWeight: 'bold',
+                                        whiteSpace: 'nowrap'
+                                    }}>...</span>
+                                )}
                             </button>
 
 
