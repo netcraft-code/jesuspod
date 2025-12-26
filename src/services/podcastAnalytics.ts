@@ -1,0 +1,221 @@
+import { firestore, analytics } from "./firebase";
+import {
+    collection,
+    doc,
+    setDoc,
+    getDoc,
+    getDocs,
+    query,
+    orderBy,
+    limit,
+    increment,
+    serverTimestamp
+} from "firebase/firestore";
+import { logEvent } from "firebase/analytics";
+import { getDocWithQuery, getDocumentsByIds } from "./firestoreService";
+
+const ANALYTICS_COLLECTION = "podcastAnalytics";
+const CHANNELS_COLLECTION = "Newchannels";
+
+/**
+ * Track podcast play event
+ * Logs to Firebase Analytics and increments Firestore counter
+ */
+export const trackPodcastPlay = async (
+    channelId: string,
+    channelTitle: string,
+    episodeTitle?: string
+) => {
+    try {
+        console.log("🎧 Tracking podcast play:", { channelId, channelTitle, episodeTitle });
+
+        // Log to Firebase Analytics
+        logEvent(analytics, "Podcast_Play", {
+            channelId: channelId,
+            channelTitle: channelTitle,
+            episodeTitle: episodeTitle || "Unknown",
+            description: "Podcast_Play_Event",
+        });
+        console.log("✅ Analytics event logged");
+
+        // Update Firestore analytics
+        const podcastDocRef = doc(firestore, ANALYTICS_COLLECTION, channelId);
+        console.log("📄 Document reference created:", ANALYTICS_COLLECTION, channelId);
+
+        const podcastDoc = await getDoc(podcastDocRef);
+        console.log("📊 Document exists:", podcastDoc.exists());
+
+        if (podcastDoc.exists()) {
+            // Increment play count
+            await setDoc(
+                podcastDocRef,
+                {
+                    playCount: increment(1),
+                    lastPlayed: serverTimestamp(),
+                },
+                { merge: true }
+            );
+            console.log("✅ Play count incremented");
+        } else {
+            // Create new analytics document
+            await setDoc(podcastDocRef, {
+                channelId,
+                title: channelTitle,
+                playCount: 1,
+                lastPlayed: serverTimestamp(),
+                createdAt: serverTimestamp(),
+            });
+            console.log("✅ New analytics document created");
+        }
+
+        console.log(`✅ Podcast play tracked successfully: ${channelTitle}`);
+    } catch (error) {
+        console.error("❌ Error tracking podcast play:", error);
+        console.error("Error details:", {
+            message: error instanceof Error ? error.message : "Unknown error",
+            channelId,
+            channelTitle,
+            episodeTitle
+        });
+    }
+};
+
+/**
+ * Get most listened podcasts
+ * @param limitCount - Number of podcasts to fetch
+ */
+export const getMostListenedPodcasts = async (
+    limitCount: number = 20
+): Promise<any[]> => {
+    try {
+        console.log("📊 Fetching most listened podcasts...", { limitCount });
+
+        const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
+
+        const q = query(
+            analyticsRef,
+            orderBy("playCount", "desc"),
+            limit(limitCount)
+        );
+
+        const querySnapshot = await getDocs(q);
+        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+
+        // Filter out undefined/null channelIds
+        const channelIds = querySnapshot.docs
+            .map((doc) => doc.data().channelId)
+            .filter((id) => id !== undefined && id !== null && id !== "");
+
+        console.log("🎧 Channel IDs:", channelIds);
+
+        // Fetch actual channel objects from Newchannels collection
+        if (channelIds.length === 0) {
+            console.log("⚠️ No analytics data found");
+            return [];
+        }
+
+        const channels = await getDocumentsByIds(CHANNELS_COLLECTION, channelIds);
+        console.log("📻 Channel objects fetched:", channels.length);
+
+        // Sort channels by playCount order
+        const analyticsMap = new Map();
+        querySnapshot.docs.forEach((doc) => {
+            const data = doc.data();
+            if (data.channelId) {
+                analyticsMap.set(data.channelId, data.playCount);
+            }
+        });
+
+        channels.sort((a, b) => {
+            const aCount = analyticsMap.get(a.id) || analyticsMap.get(a._id) || 0;
+            const bCount = analyticsMap.get(b.id) || analyticsMap.get(b._id) || 0;
+            return bCount - aCount;
+        });
+
+        console.log("✅ Most listened podcasts fetched successfully:", channels.length);
+        return channels;
+    } catch (error) {
+        console.error("❌ Error fetching most listened podcasts:", error);
+        return [];
+    }
+};
+
+/**
+ * Get new & noteworthy podcasts
+ * Recent podcasts with some play activity
+ */
+export const getNewNoteworthyPodcasts = async (
+    limitCount: number = 15
+): Promise<any[]> => {
+    try {
+        console.log("📊 Fetching new & noteworthy podcasts...", { limitCount });
+
+        const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
+
+        // Get podcasts ordered by last played (recent activity)
+        const q = query(
+            analyticsRef,
+            orderBy("lastPlayed", "desc"),
+            limit(limitCount * 2) // Fetch more to filter
+        );
+
+        const querySnapshot = await getDocs(q);
+        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+
+        // Filter: playCount between 1-50 (not too popular, not brand new)
+        const recentChannelIds = querySnapshot.docs
+            .map((doc) => {
+                const data = doc.data();
+                const playCount = data.playCount || 0;
+                // New & noteworthy: some plays but not top tier
+                if (playCount >= 1 && playCount <= 100) {
+                    return data.channelId;
+                }
+                return null;
+            })
+            .filter((id) => id !== null && id !== undefined && id !== "")
+            .slice(0, limitCount);
+
+        console.log("🎧 New & Noteworthy Channel IDs:", recentChannelIds);
+
+        if (recentChannelIds.length === 0) {
+            console.log("⚠️ No new & noteworthy data found");
+            return [];
+        }
+
+        const channels = await getDocumentsByIds(CHANNELS_COLLECTION, recentChannelIds);
+        console.log("📻 Channel objects fetched:", channels.length);
+
+        console.log("✅ New & noteworthy podcasts fetched successfully:", channels.length);
+        return channels;
+    } catch (error) {
+        console.error("❌ Error fetching new & noteworthy podcasts:", error);
+        return [];
+    }
+};
+
+/**
+ * Get user's subscribed podcasts
+ * @param userId - User ID to fetch subscribed podcasts for
+ */
+export const getSubscribedPodcasts = async (userId?: string): Promise<any[]> => {
+    try {
+        if (!userId) {
+            console.log("No user ID provided for subscribed podcasts");
+            return [];
+        }
+
+        // Query Newchannels collection where sub array contains userId
+        const subscribedPodcasts = await getDocWithQuery(CHANNELS_COLLECTION, [
+            "sub",
+            "array-contains",
+            userId,
+        ]);
+
+        console.log("✅ Subscribed podcasts fetched:", subscribedPodcasts.length);
+        return subscribedPodcasts;
+    } catch (error) {
+        console.error("Error fetching subscribed podcasts:", error);
+        return [];
+    }
+};

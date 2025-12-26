@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
+import { getFilteredRadio } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 
 /** 🔹 Radio / Podcast common type */
@@ -28,10 +29,8 @@ export default function Home() {
   const navigate = useNavigate();
   usePageTitle("Home");
 
-  /** RADIO */
-  const radioList = useSelector<RootState, MediaItem[]>(
-    (state) => state.data.radio
-  );
+  /** RADIO - Use filtered selector */
+  const radioList = useSelector(getFilteredRadio);
 
   /** BOOKS */
   const books = useSelector<RootState, BookItem[]>(

@@ -2,7 +2,9 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { logEvent } from "firebase/analytics";
-import { analytics } from "../../services/firebase";
+import { analytics, firestore } from "../../services/firebase";
+import { collection, query, where, getDocs, doc, updateDoc, setDoc, Timestamp } from "firebase/firestore";
+import { useSelector } from "react-redux";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Podcast.css";
@@ -12,6 +14,7 @@ import { formatDuration } from "../../helper/formatDuration";
 import { images } from "../../assets/images";
 import { convertSecond } from "../../helper/convertSecond";
 import { incrementHits } from "../../services/firestoreService";
+import { trackPodcastPlay } from "../../services/podcastAnalytics";
 import { FaPause } from "react-icons/fa";
 
 
@@ -29,6 +32,19 @@ export default function PodcastDetail() {
     const [volume, setVolume] = useState(80); // 0 – 100
     const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
     const [showVolumeMsg, setShowVolumeMsg] = useState(false);
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const [subscribeLoading, setSubscribeLoading] = useState(false);
+    const [downloadingEpisode, setDownloadingEpisode] = useState<string | null>(null);
+    const [downloadedEpisodeIds, setDownloadedEpisodeIds] = useState<string[]>([]);
+    const [expandedEpisodes, setExpandedEpisodes] = useState<Set<number>>(new Set());
+    const [channelDescExpanded, setChannelDescExpanded] = useState(false);
+    const [playerDescExpanded, setPlayerDescExpanded] = useState(false);
+    const [channelTitleExpanded, setChannelTitleExpanded] = useState(false);
+    const [playerTitleExpanded, setPlayerTitleExpanded] = useState(false);
+    const [expandedTitles, setExpandedTitles] = useState<Set<number>>(new Set());
+
+    // Get user from Redux store
+    const user = useSelector((state: any) => state.auth.user);
 
 
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -118,12 +134,22 @@ export default function PodcastDetail() {
             setPage(1);
             setHasMore(true);
             fetchEpisodes(1);
+            checkSubscriptionStatus();
+            fetchDownloadedEpisodes();
 
             // Log Channel View Event
             logEvent(analytics, "PodcastChannel", {
                 item: JSON.stringify(channel),
                 description: "PodcastChannel_event",
             });
+
+            // Track podcast analytics (channel view)
+            if (channel?.id && channel?.title) {
+                trackPodcastPlay(
+                    channel.id,
+                    channel.title
+                );
+            }
 
             // Increment Hits in Firestore
             if (channel?.id) {
@@ -220,6 +246,184 @@ export default function PodcastDetail() {
         }, 0);
     };
 
+    // Check if user is subscribed to this channel
+    const checkSubscriptionStatus = async () => {
+        const channelIdToQuery = channel?._id || channel?.id;
+        if (!user?.uid || !channelIdToQuery) return;
+
+        try {
+            const channelsRef = collection(firestore, "Newchannels");
+            const q = query(channelsRef, where("_id", "==", channelIdToQuery));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const channelData = snapshot.docs[0].data();
+                const subscribers = channelData?.sub || [];
+                setIsSubscribed(subscribers.includes(user.uid));
+            }
+        } catch (error) {
+            console.error("Error checking subscription status:", error);
+        }
+    };
+
+    // Fetch downloaded episodes
+    const fetchDownloadedEpisodes = async () => {
+        if (!user?.uid) return;
+
+        try {
+            const downloadsRef = collection(firestore, `users/${user.uid}/downloads`);
+            const snapshot = await getDocs(downloadsRef);
+            const downloadedIds = snapshot.docs.map(doc => doc.id);
+            setDownloadedEpisodeIds(downloadedIds);
+        } catch (error) {
+            console.error("Error fetching downloaded episodes:", error);
+        }
+    };
+
+    // Handle subscribe/unsubscribe
+    const handleSubscribe = async () => {
+        if (!user?.uid) {
+            alert("Please login to subscribe to this podcast");
+            return;
+        }
+
+        console.log("Channel data:", channel);
+        const channelIdToQuery = channel?._id || channel?.id;
+
+        if (!channelIdToQuery) {
+            console.error("No channel ID found");
+            alert("Channel ID not found");
+            return;
+        }
+
+        console.log("Querying with _id:", channelIdToQuery);
+
+        setSubscribeLoading(true);
+        try {
+            const channelsRef = collection(firestore, "Newchannels");
+            const q = query(channelsRef, where("_id", "==", channelIdToQuery));
+            const snapshot = await getDocs(q);
+
+            console.log("Query result:", snapshot.empty ? "No docs found" : `Found ${snapshot.docs.length} docs`);
+
+            if (!snapshot.empty) {
+                const docRef = doc(firestore, "Newchannels", snapshot.docs[0].id);
+                const channelData = snapshot.docs[0].data();
+                const currentSubs = channelData?.sub || [];
+
+                let updatedSubs;
+                if (isSubscribed) {
+                    // Unsubscribe
+                    updatedSubs = currentSubs.filter((id: string) => id !== user.uid);
+                } else {
+                    // Subscribe
+                    updatedSubs = [...currentSubs, user.uid];
+                }
+
+                // Update entire channel data with new sub array (matching archive pattern)
+                await updateDoc(docRef, {
+                    ...channelData,
+                    sub: updatedSubs
+                });
+
+                setIsSubscribed(!isSubscribed);
+
+                logEvent(analytics, isSubscribed ? "Unsubscribe" : "Subscribe", {
+                    channelId: channelIdToQuery,
+                    channelTitle: channel.title,
+                });
+
+                console.log("Subscribe successful!");
+            } else {
+                console.log("No document found with _id:", channelIdToQuery);
+                alert("Channel not found in database. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error updating subscription:", error);
+            alert("Failed to update subscription. Please try again.");
+        } finally {
+            setSubscribeLoading(false);
+        }
+    };
+
+    // Handle share channel
+    const handleShareChannel = async () => {
+        const shareTitle = channel?.title || "Podcast";
+        const shareLink = window.location.href;
+        const shareMessage = `Listen to ${shareTitle} on JesusPOD\n\n${shareLink}`;
+
+        try {
+            if (navigator.share) {
+                // Only use text field to ensure message is included
+                await navigator.share({
+                    title: shareTitle,
+                    text: shareMessage,
+                });
+                logEvent(analytics, "Share_Channel", {
+                    channelId: channel?.id,
+                    channelTitle: channel?.title,
+                });
+            } else {
+                // Fallback: copy message to clipboard
+                await navigator.clipboard.writeText(shareMessage);
+                alert("Message copied to clipboard!");
+            }
+        } catch (error) {
+            console.error("Error sharing:", error);
+        }
+    };
+
+    // Handle download episode
+    const handleDownloadEpisode = async (episode: any) => {
+        if (!user?.uid) {
+            alert("Please login to download episodes");
+            return;
+        }
+
+        const audioUrl =
+            episode?.enclosure?.[0]?.$?.url ||
+            episode?.["media:content"]?.[0]?.$?.url;
+
+        if (!audioUrl) {
+            alert("Audio file not available for download");
+            return;
+        }
+
+        const episodeTitle = episode?.title?.[0] || "episode";
+        const episodeGuid = episode?.guid?.[0]?._ || episodeTitle;
+        setDownloadingEpisode(episodeTitle);
+
+        try {
+            // Save to Firestore
+            const downloadRef = doc(firestore, `users/${user.uid}/downloads`, episodeGuid);
+            await setDoc(downloadRef, {
+                episodeTitle: episodeTitle,
+                channelTitle: channel?.title || "Unknown",
+                channelId: channel?.id || "",
+                audioUrl: audioUrl,
+                imageUrl: episode?.["itunes:image"]?.[0]?.$?.href || channel?.imageUrl || "",
+                downloadedAt: Timestamp.now(),
+                duration: episode?.["itunes:duration"]?.[0] || "",
+                description: episode?.description?.[0] || "",
+            });
+
+            logEvent(analytics, "Download_Episode", {
+                episodeTitle: episodeTitle,
+                channelTitle: channel?.title,
+            });
+
+            // Refresh downloaded episodes list
+            fetchDownloadedEpisodes();
+
+            alert("Episode saved to Downloads! You can play it from your Downloads page.");
+            setTimeout(() => setDownloadingEpisode(null), 2000);
+        } catch (error) {
+            console.error("Error downloading episode:", error);
+            alert("Failed to save episode. Please try again.");
+            setDownloadingEpisode(null);
+        }
+    };
+
     return (
         <>
             <Header
@@ -237,31 +441,88 @@ export default function PodcastDetail() {
                         ref={scrollRef}
                         onScroll={handleScroll}
                     >
-                        <h2 className="channel-title">{channel?.title.slice(0, 50) + "..."}</h2>
+                        <h2 className="channel-title">
+                            {(() => {
+                                const fullTitle = channel?.title || "";
+                                const shouldTruncate = fullTitle.length > 50;
+
+                                return (
+                                    <>
+                                        {channelTitleExpanded ? fullTitle : (shouldTruncate ? fullTitle.slice(0, 50) + "..." : fullTitle)}
+                                        {shouldTruncate && (
+                                            <span
+                                                onClick={() => setChannelTitleExpanded(!channelTitleExpanded)}
+                                                style={{
+                                                    color: '#FB4A4A',
+                                                    cursor: 'pointer',
+                                                    marginLeft: '8px',
+                                                    fontWeight: '600',
+                                                    fontSize: '14px'
+                                                }}
+                                            >
+                                                {channelTitleExpanded ? 'Show Less' : 'Show More'}
+                                            </span>
+                                        )}
+                                    </>
+                                );
+                            })()}
+                        </h2>
 
                         <p className="channel-description">
-                            {description
-                                ? stripHtml(description).slice(0, 120) + "..."
-                                : "No description available"}
+                            {(() => {
+                                const fullDesc = description ? stripHtml(description) : "No description available";
+                                const shouldTruncate = fullDesc.length > 120;
+
+                                return (
+                                    <>
+                                        {channelDescExpanded ? fullDesc : (shouldTruncate ? fullDesc.slice(0, 120) + "..." : fullDesc)}
+                                        {shouldTruncate && (
+                                            <span
+                                                onClick={() => setChannelDescExpanded(!channelDescExpanded)}
+                                                style={{
+                                                    color: '#FB4A4A',
+                                                    cursor: 'pointer',
+                                                    marginLeft: '5px',
+                                                    fontWeight: '600',
+                                                    fontSize: '12px',
+                                                    display: 'block',
+                                                    marginTop: '5px'
+                                                }}
+                                            >
+                                                {channelDescExpanded ? 'Show Less' : 'Show More'}
+                                            </span>
+                                        )}
+                                    </>
+                                );
+                            })()}
                         </p>
 
                         <div className="channel-actions">
-                            <button className="follow-btn">
+                            <button
+                                className="follow-btn"
+                                onClick={handleSubscribe}
+                                disabled={subscribeLoading}
+                            >
                                 <img src={plus} alt="plus" />
-                                <span>Follow</span>
+                                <span>
+                                    {subscribeLoading ? "Loading..." : (isSubscribed ? "Unfollow" : "Follow")}
+                                </span>
                             </button>
 
-                            <button className="icon-btn">
+                            <button className="icon-btn" onClick={handleShareChannel}>
                                 <img src={share} alt="share" />
                             </button>
 
-                            <button className="icon-btn">
+                            <button
+                                className="icon-btn"
+                                onClick={() => currentEpisode && handleDownloadEpisode(currentEpisode)}
+                                disabled={!currentEpisode}
+                                title={currentEpisode ? "Download current episode" : "Select an episode first"}
+                            >
                                 <img src={download} alt="download" />
                             </button>
 
-                            <button className="icon-btn">
-                                <img src={warning} alt="warning" />
-                            </button>
+
                         </div>
 
 
@@ -272,13 +533,92 @@ export default function PodcastDetail() {
                                     <div key={index} className={`episode-row ${isCurrent ? "active-episode" : ""}`}>
                                         <div className="episode-info">
                                             <h4 className="episode-title">
-                                                {item.title?.[0].slice(0, 50) + "..."}
+                                                {(() => {
+                                                    const fullTitle = item.title?.[0] || "Untitled";
+                                                    const isExpanded = expandedTitles.has(index);
+                                                    const shouldTruncate = fullTitle.length > 50;
+
+                                                    return (
+                                                        <>
+                                                            {isExpanded ? fullTitle : (shouldTruncate ? fullTitle.slice(0, 50) + "..." : fullTitle)}
+                                                            {downloadedEpisodeIds.includes(item?.guid?.[0]?._ || item.title?.[0]) && (
+                                                                <span
+                                                                    style={{
+                                                                        marginLeft: '8px',
+                                                                        padding: '2px 8px',
+                                                                        backgroundColor: '#4CAF50',
+                                                                        color: 'white',
+                                                                        borderRadius: '4px',
+                                                                        fontSize: '10px',
+                                                                        fontWeight: 'bold'
+                                                                    }}
+                                                                >
+                                                                    ✓ SAVED
+                                                                </span>
+                                                            )}
+                                                            {shouldTruncate && (
+                                                                <span
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const newExpanded = new Set(expandedTitles);
+                                                                        if (isExpanded) {
+                                                                            newExpanded.delete(index);
+                                                                        } else {
+                                                                            newExpanded.add(index);
+                                                                        }
+                                                                        setExpandedTitles(newExpanded);
+                                                                    }}
+                                                                    style={{
+                                                                        color: '#FB4A4A',
+                                                                        cursor: 'pointer',
+                                                                        marginLeft: '8px',
+                                                                        fontWeight: '600',
+                                                                        fontSize: '11px'
+                                                                    }}
+                                                                >
+                                                                    {isExpanded ? 'Less' : 'More'}
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    );
+                                                })()}
                                             </h4>
 
                                             <p className="episode-desc">
-                                                {item.description?.[0]
-                                                    ? stripHtml(item.description[0]).slice(0, 80) + "..."
-                                                    : "No description"}
+                                                {(() => {
+                                                    const fullDesc = item.description?.[0] ? stripHtml(item.description[0]) : "No description";
+                                                    const isExpanded = expandedEpisodes.has(index);
+                                                    const shouldTruncate = fullDesc.length > 80;
+
+                                                    return (
+                                                        <>
+                                                            {isExpanded ? fullDesc : (shouldTruncate ? fullDesc.slice(0, 80) + "..." : fullDesc)}
+                                                            {shouldTruncate && (
+                                                                <span
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const newExpanded = new Set(expandedEpisodes);
+                                                                        if (isExpanded) {
+                                                                            newExpanded.delete(index);
+                                                                        } else {
+                                                                            newExpanded.add(index);
+                                                                        }
+                                                                        setExpandedEpisodes(newExpanded);
+                                                                    }}
+                                                                    style={{
+                                                                        color: '#FB4A4A',
+                                                                        cursor: 'pointer',
+                                                                        marginLeft: '5px',
+                                                                        fontWeight: '600',
+                                                                        fontSize: '12px'
+                                                                    }}
+                                                                >
+                                                                    {isExpanded ? 'Show Less' : 'Show More'}
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    );
+                                                })()}
                                             </p>
 
                                             <div className="episode-meta">
@@ -352,12 +692,58 @@ export default function PodcastDetail() {
                                 />
 
                                 <h3 className="player-title">
-                                    {currentEpisode?.title?.[0]}
+                                    {(() => {
+                                        const fullTitle = currentEpisode?.title?.[0] || "";
+                                        const shouldTruncate = fullTitle.length > 60;
+
+                                        return (
+                                            <>
+                                                {playerTitleExpanded ? fullTitle : (shouldTruncate ? fullTitle.slice(0, 100) + "..." : fullTitle)}
+                                                {shouldTruncate && (
+                                                    <span
+                                                        onClick={() => setPlayerTitleExpanded(!playerTitleExpanded)}
+                                                        style={{
+                                                            color: '#FB4A4A',
+                                                            cursor: 'pointer',
+                                                            marginLeft: '8px',
+                                                            fontWeight: '600',
+                                                            fontSize: '13px'
+                                                        }}
+                                                    >
+                                                        {playerTitleExpanded ? 'Show Less' : 'Show More'}
+                                                    </span>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
                                 </h3>
                                 <p className="player-desc">
-                                    {currentEpisode?.description?.[0]
-                                        ? stripHtml(currentEpisode.description[0]).slice(0, 160) + "..."
-                                        : ""}
+                                    {(() => {
+                                        const fullDesc = currentEpisode?.description?.[0] ? stripHtml(currentEpisode.description[0]) : "";
+                                        const shouldTruncate = fullDesc.length > 160;
+
+                                        return (
+                                            <>
+                                                {playerDescExpanded ? fullDesc : (shouldTruncate ? fullDesc.slice(0, 160) + "..." : fullDesc)}
+                                                {shouldTruncate && (
+                                                    <span
+                                                        onClick={() => setPlayerDescExpanded(!playerDescExpanded)}
+                                                        style={{
+                                                            color: '#FB4A4A',
+                                                            cursor: 'pointer',
+                                                            marginLeft: '5px',
+                                                            fontWeight: '600',
+                                                            fontSize: '12px',
+                                                            display: 'block',
+                                                            marginTop: '5px'
+                                                        }}
+                                                    >
+                                                        {playerDescExpanded ? 'Show Less' : 'Show More'}
+                                                    </span>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
                                 </p>
                                 {/* Progress */}
                                 <div className="player-progress">

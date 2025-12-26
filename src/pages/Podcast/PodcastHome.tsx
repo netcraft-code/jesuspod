@@ -18,11 +18,10 @@ export default function PodcastHome() {
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
 
-    // Dynamic sorting: Higher hits or popularity first
-    const sortedPodcasts = [...podcasts].sort((a: any, b: any) => (b.hits || 0) - (a.hits || 0));
+    // Get analytics-based podcast data from Redux
+    const mostListenedPodcasts = useSelector((state: any) => state.data.mostListenedPodcasts) || [];
+    const newNoteworthyPodcasts = useSelector((state: any) => state.data.newNoteworthyPodcasts) || [];
 
-    const topPodcasts = sortedPodcasts.slice(0, 15);
-    const newPodcasts = sortedPodcasts.slice(15, 30);
     const [podcastCategory, setPodcastCategory] = useState<string>("");
 
     // unique categories
@@ -62,7 +61,7 @@ export default function PodcastHome() {
                 <Section
                     title="Top Podcasts"
                     onViewAll={() => navigate("/all-podcast")}
-                    data={topPodcasts}
+                    data={mostListenedPodcasts}
                     onCardClick={(item) =>
                         navigate(`/podcastplayer/${item.id}`, {
                             state: { channel: item },
@@ -74,7 +73,7 @@ export default function PodcastHome() {
                 <Section
                     title="New & Noteworthy"
                     onViewAll={() => navigate("/all-podcast")}
-                    data={newPodcasts}
+                    data={newNoteworthyPodcasts}
                     onCardClick={(item) =>
                         navigate(`/podcastplayer/${item.id}`, {
                             state: { channel: item },

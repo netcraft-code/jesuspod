@@ -29,17 +29,21 @@ export default function Section({
       </div>
 
       <div className="section-row">
-        {data.map((item) => (
-          <Card
-            key={item.id}
-            item={item}
-            onClick={() =>
-              onCardClick
-                ? onCardClick(item)
-                : alert("onclick not calling")
-            }
-          />
-        ))}
+        {data && data.length > 0 ? (
+          data.map((item) => (
+            <Card
+              key={item.id}
+              item={item}
+              onClick={() =>
+                onCardClick
+                  ? onCardClick(item)
+                  : alert("onclick not calling")
+              }
+            />
+          ))
+        ) : (
+          <p style={{ color: '#888', padding: '20px' }}>No data available</p>
+        )}
       </div>
     </div>
   );

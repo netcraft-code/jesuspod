@@ -1,10 +1,18 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../redux/store";
+import { getFilteredRadio, setSelectedCountry, refreshSavedRadios } from "../../redux/dataSlice";
+import { trackRadioPlay } from "../../services/radioAnalytics";
+import { getDocWithQuery, updateDocument } from "../../services/firestoreService";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { firestore } from "../../services/firebase";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import CircleImageCard from "../../components/Cards/CircleImageCard";
 import "./Radio.css";
 import { images } from "../../assets/images";
-import { FaPause } from "react-icons/fa";
+import { FaPause, FaHeart, FaRegHeart } from "react-icons/fa";
 
 /* ================= TYPES ================= */
 
@@ -14,6 +22,8 @@ type RadioItem = {
   imageUrl: string;
   url: string;
   type?: string;
+  star?: string[];
+  _id?: string;
 };
 
 type LocationState = {
@@ -22,15 +32,33 @@ type LocationState = {
   type?: string;
 };
 
+interface CountryItem {
+  id: string;
+  title: string;
+  imageUrl: string;
+  order?: number;
+}
+
 /* ================= COMPONENT ================= */
 
 export default function RadioPlayer() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const state = location.state as LocationState | null;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const playlist: RadioItem[] = state?.list ?? [];
+  // Redux selectors - use filtered radio
+  const radio = useSelector(getFilteredRadio);
+  // Get ALL radios (unfiltered) for country click
+  const allRadios = useSelector((state: RootState) => state.data.radio);
+  const countries = useSelector<RootState, CountryItem[]>(
+    (state) => state.data.Countries
+  );
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const [playlist, setPlaylist] = useState<RadioItem[]>(state?.list ?? []);
   const [current, setCurrent] = useState<RadioItem | null>(
     state?.current ?? null
   );
@@ -38,13 +66,21 @@ export default function RadioPlayer() {
   const [playing, setPlaying] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [volume, setVolume] = useState<number>(80); // 0-100
-  const [saved, setSaved] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [favoriteLoading, setFavoriteLoading] = useState<boolean>(false);
   const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
   const [showVolumeMsg, setShowVolumeMsg] = useState(false);
 
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
+  const [countrySearch, setCountrySearch] = useState<string>("");
+  const [playlistTitle, setPlaylistTitle] = useState<string>(state?.type || "Radio Stations");
   const { play, forward10, repeateone, valumehigh, valumeslash } = images;
+
+  // Filter countries based on search
+  const filteredCountries = countries.filter((c) =>
+    c.title.toLowerCase().includes(countrySearch.toLowerCase())
+  );
 
   /* ================= EFFECT ================= */
 
@@ -61,7 +97,11 @@ export default function RadioPlayer() {
     audioRef.current.load();
     audioRef.current
       .play()
-      .then(() => setPlaying(true))
+      .then(() => {
+        setPlaying(true);
+        // Track radio play for analytics
+        trackRadioPlay(current.id, current.title, current.type || "Unknown");
+      })
       .catch(() => setPlaying(false));
   }, [current]);
 
@@ -105,10 +145,64 @@ export default function RadioPlayer() {
     setTimeout(() => setShowVolumeMsg(false), 800);
   };
 
-  const saveMusic = (): void => {
-    setSaved(true);
-    // future: save to redux / localStorage
+  const toggleFavorite = async (): Promise<void> => {
+    if (!user || !current) {
+      alert("Please login to save favorites");
+      return;
+    }
+
+    setFavoriteLoading(true);
+    try {
+      const radioId = current._id || current.id;
+      const userId = user.uid;
+
+      // Query to find the radio document
+      const radioCollection = collection(firestore, "Radio");
+      const q = query(radioCollection, where("_id", "==", radioId));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const docId = querySnapshot.docs[0].id;
+        const radioData = querySnapshot.docs[0].data();
+        const currentStars = radioData.star || [];
+
+        let updatedStars: string[];
+        if (currentStars.includes(userId)) {
+          // Remove from favorites
+          updatedStars = currentStars.filter((id: string) => id !== userId);
+          setIsFavorite(false);
+        } else {
+          // Add to favorites
+          updatedStars = [...currentStars, userId];
+          setIsFavorite(true);
+        }
+
+        // Update Firestore
+        await updateDocument("Radio", docId, { star: updatedStars });
+
+        // Refresh saved radios in Redux
+        dispatch(refreshSavedRadios(userId) as any);
+
+        console.log("Favorite updated successfully");
+      } else {
+        console.error("Radio document not found");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
+
+  // Check if current radio is favorited
+  useEffect(() => {
+    if (current && user) {
+      const radioId = current._id || current.id;
+      const userId = user.uid;
+      const stars = current.star || [];
+      setIsFavorite(stars.includes(userId));
+    }
+  }, [current, user]);
 
   if (!current) return null;
 
@@ -127,7 +221,7 @@ export default function RadioPlayer() {
 
         {/* LEFT */}
         <div className="player-left">
-          <h2 className="list-title">{state?.type}</h2>
+          <h2 className="list-title">{playlistTitle}</h2>
 
           <div className="left-grid">
             {playlist.map((item) => (
@@ -222,11 +316,76 @@ export default function RadioPlayer() {
                 </button>
                 {showVolumeMsg && volumeMsg?.startsWith("+") && <div className="volume-popup show">{volumeMsg}</div>}
               </div>
+
+              {/* FAVORITE */}
+              <button
+                className="podcast-ctrl-btn"
+                onClick={toggleFavorite}
+                disabled={favoriteLoading}
+                style={{ color: isFavorite ? '#e74c3c' : '#fff' }}
+              >
+                {favoriteLoading ? (
+                  <div className="btn-spinner"></div>
+                ) : isFavorite ? (
+                  <FaHeart size={24} />
+                ) : (
+                  <FaRegHeart size={24} />
+                )}
+              </button>
             </div>
           </div>
 
+
         </div>
       </div>
+
+      {/* COUNTRY SECTION - AT BOTTOM OF PAGE */}
+      <div className="player-country-section">
+        <div className="player-country-header">
+          <h2 className="sub-title">Search For Radio</h2>
+
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search country..."
+            value={countrySearch}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCountrySearch(e.target.value)
+            }
+          />
+        </div>
+
+        <div className="country-grid">
+          {filteredCountries.map((item) => (
+            <CircleImageCard
+              key={item.id}
+              title={item.title}
+              imageUrl={item.imageUrl}
+              onClick={() => {
+                // Filter radios by selected country
+                const countryRadios = allRadios.filter(
+                  (r: RadioItem) => r.type?.toLowerCase() === item.title.toLowerCase()
+                );
+
+                if (countryRadios.length > 0) {
+                  // Update playlist with filtered radios
+                  setPlaylist(countryRadios);
+
+                  // Update playlist title
+                  setPlaylistTitle(item.title);
+
+                  // Set first radio as current
+                  setCurrent(countryRadios[0]);
+
+                  // Scroll to top to show the playlist
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
       <Footer />
     </div>
   );

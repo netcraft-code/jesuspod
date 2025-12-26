@@ -89,7 +89,7 @@ export default function Login() {
             const token = await user.getIdToken();
             localStorage.setItem("token", token);
             dispatch(authSuccess({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL, }));
-            dispatch(fetchInitialData());
+            dispatch(fetchInitialData(user.uid) as any);
             navigate("/home");
         } catch (err: any) {
             alert("Invalid Credential")
@@ -117,7 +117,7 @@ export default function Login() {
                 })
             );
 
-            dispatch(fetchInitialData());
+            dispatch(fetchInitialData(user.uid) as any);
 
             navigate("/home");
         } catch (err: any) {

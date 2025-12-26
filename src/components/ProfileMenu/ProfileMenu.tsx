@@ -62,21 +62,21 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                     icon={<img src={liked} alt="like" width={25} />}
                     label="Favorite Radio"
                     arrow
-                    onClick={() => alert("Favorite Radio")}
+                    onClick={() => navigate("/favorite-radios")}
                 />
 
                 <MenuItem
                     icon={<img src={subscription} alt="sub" width={25} />}
                     label="Subscriptions"
                     arrow
-                    onClick={() => alert("Subscriptions")}
+                    onClick={() => navigate("/subscriptions")}
                 />
 
                 <MenuItem
                     icon={<img src={down} alt="download" width={25} />}
                     label="Downloads"
                     arrow
-                    onClick={() => alert("Downloads")}
+                    onClick={() => navigate("/downloads")}
                 />
 
                 <MenuItem

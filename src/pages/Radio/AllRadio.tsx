@@ -6,6 +6,7 @@ import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
+import { getFilteredRadio } from "../../redux/dataSlice";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -22,10 +23,8 @@ export default function AllRadio() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
 
-  // ✅ Typed selector
-  const radioList = useSelector<RootState, RadioItem[]>(
-    (state) => state.data.radio
-  );
+  // ✅ Use filtered radio selector
+  const radioList = useSelector(getFilteredRadio);
   console.log("radio", radioList)
 
   const filtered = radioList.filter((r) =>

@@ -5,6 +5,7 @@ import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
+import { getFilteredRadio } from "../../redux/dataSlice";
 import Section from "../../components/Section/Section";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 
@@ -31,15 +32,28 @@ export default function RadioList() {
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [countrySearch, setCountrySearch] = useState<string>("");
 
-  // ✅ Typed selector
-  const radio = useSelector<RootState, RadioItem[]>(
-    (state) => state.data.radio
-  );
+  // ✅ Use filtered radio selector
+  const radio = useSelector(getFilteredRadio);
+
+  // ✅ Get ALL radios (unfiltered) for country navigation
+  const allRadios = useSelector((state: RootState) => state.data.radio);
+
+  const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
 
   const countries = useSelector<RootState, CountryItem[]>(
     (state) => state.data.Countries
   );
-  console.log("countries", countries)
+
+  // Analytics data from Redux with fallback to empty arrays
+  const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
+  const topUSARadios = useSelector((state: RootState) => state.data.topUSARadios) || [];
+  const savedRadios = useSelector((state: RootState) => state.data.savedRadios) || [];
+
+  // Filter ONLY Most Listener Radio based on selected country
+  const mostListenedRadios = selectedCountry
+    ? allMostListenedRadios.filter((r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase())
+    : allMostListenedRadios;
+
 
 
   const filteredCountries = countries.filter((c) =>
@@ -48,9 +62,15 @@ export default function RadioList() {
 
   /** 🔹 Common click handler */
   const handleRadioClick = (item: RadioItem) => {
+    console.log("🎵 Radio clicked:", item);
+    console.log("📻 Radio type/country:", item.type);
+
     const sameTypeList = radio.filter(
       (r) => r.type?.toLowerCase() === item.type?.toLowerCase()
     );
+
+    console.log("📋 Filtered playlist:", sameTypeList.length, "radios");
+    console.log("📋 Playlist items:", sameTypeList);
 
     navigate("/radio-player", {
       state: {
@@ -76,7 +96,7 @@ export default function RadioList() {
         {/* ================= MOST LISTENER ================= */}
         <Section
           title="Most Listener Radio"
-          data={radio.slice(20, 40)}
+          data={mostListenedRadios}
           onViewAll={() => navigate("/all-radio")}
           onCardClick={handleRadioClick}
         />
@@ -84,7 +104,7 @@ export default function RadioList() {
         {/* ================= TOP 10 USA ================= */}
         <Section
           title="Top 10 in USA"
-          data={radio.slice(50, 60)}
+          data={topUSARadios}
           onViewAll={() => navigate("/all-radio")}
           onCardClick={handleRadioClick}
         />
@@ -92,8 +112,8 @@ export default function RadioList() {
         {/* ================= RADIO TO LOVE ================= */}
         <Section
           title="Radio To Love"
-          data={radio.slice(110, 120)}
-          onViewAll={() => navigate("/all-radio")}
+          data={savedRadios}
+          onViewAll={() => navigate("/favorite-radios")}
           onCardClick={handleRadioClick}
         />
         <div className="search-radio-section">
@@ -118,8 +138,8 @@ export default function RadioList() {
                 title={item.title}
                 imageUrl={item.imageUrl}
                 onClick={() => {
-                  // Country title ko type ke basis pe filter
-                  const sameTypeList = radio.filter(
+                  // Country title ko type ke basis pe filter - USE UNFILTERED DATA
+                  const sameTypeList = allRadios.filter(
                     (r) => r.type?.toLowerCase() === item.title.toLowerCase()
                   );
 

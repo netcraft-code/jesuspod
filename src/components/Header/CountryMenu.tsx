@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
+import { setSelectedCountry } from "../../redux/dataSlice";
 import "./style.css";
 
 interface CountryItem {
@@ -17,20 +17,30 @@ interface CountryMenuProps {
 }
 
 export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
+  const dispatch = useDispatch();
   const countries = useSelector((state: RootState) => state.data.Countries) as CountryItem[];
-  const [selectedCountry, setSelectedCountry] = useState<CountryItem | null>(null);
+  const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
 
-  // default selection or first available
-  const currentSelection = selectedCountry || (countries.length > 0 ? countries[0] : null);
+  // Find selected country object or use "All Countries"
+  const currentSelection = selectedCountry
+    ? countries.find(c => c.title.toLowerCase() === selectedCountry.toLowerCase())
+    : null;
+
+  const handleCountrySelect = (countryTitle: string | null) => {
+    dispatch(setSelectedCountry(countryTitle));
+    setIsOpen(false);
+  };
 
   return (
     <div className="country-wrapper">
       <div className="country-pill" onClick={() => setIsOpen(!isOpen)}>
-        {currentSelection && (
+        {currentSelection ? (
           <>
             <img src={currentSelection.imageUrl} alt={currentSelection.title} className="pill-flag" />
             <span className="pill-name">{currentSelection.title}</span>
           </>
+        ) : (
+          <span className="pill-name">All Countries</span>
         )}
         <span className={`pill-arrow ${isOpen ? "open" : ""}`}>▼</span>
       </div>
@@ -38,21 +48,32 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
       {isOpen && (
         <div className="country-dropdown">
           <div className="dropdown-scroll">
+            {/* All Countries Option */}
+            <div
+              className={`dropdown-item ${!selectedCountry ? "active" : ""}`}
+              onClick={() => handleCountrySelect(null)}
+            >
+              <div className="item-left">
+                <span className="dropdown-name">🌍 All Countries</span>
+              </div>
+              <div className={`radio-indicator ${!selectedCountry ? "checked" : ""}`}>
+                {!selectedCountry && <span className="checkmark">✓</span>}
+              </div>
+            </div>
+
+            {/* Individual Countries */}
             {countries.map((country) => (
               <div
                 key={country.id}
-                className={`dropdown-item ${currentSelection?.id === country.id ? "active" : ""}`}
-                onClick={() => {
-                  setSelectedCountry(country);
-                  setIsOpen(false);
-                }}
+                className={`dropdown-item ${selectedCountry?.toLowerCase() === country.title.toLowerCase() ? "active" : ""}`}
+                onClick={() => handleCountrySelect(country.title)}
               >
                 <div className="item-left">
                   <img src={country.imageUrl} alt={country.title} className="dropdown-flag" />
                   <span className="dropdown-name">{country.title}</span>
                 </div>
-                <div className={`radio-indicator ${currentSelection?.id === country.id ? "checked" : ""}`}>
-                  {currentSelection?.id === country.id && <span className="checkmark">✓</span>}
+                <div className={`radio-indicator ${selectedCountry?.toLowerCase() === country.title.toLowerCase() ? "checked" : ""}`}>
+                  {selectedCountry?.toLowerCase() === country.title.toLowerCase() && <span className="checkmark">✓</span>}
                 </div>
               </div>
             ))}
