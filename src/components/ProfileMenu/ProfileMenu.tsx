@@ -67,7 +67,7 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
 
                 <MenuItem
                     icon={<img src={subscription} alt="sub" width={25} />}
-                    label="Subscriptions"
+                    label="Following"
                     arrow
                     onClick={() => navigate("/subscriptions")}
                 />

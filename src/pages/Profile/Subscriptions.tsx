@@ -72,7 +72,7 @@ export default function Subscriptions() {
                     <button className="back-btn" onClick={() => navigate(-1)}>
                         ← Back
                     </button>
-                    <h1 className="profile-page-title">My Subscriptions</h1>
+                    <h1 className="profile-page-title">My Following</h1>
                     <p className="profile-page-subtitle">
                         {subscriptions.length} podcast{subscriptions.length !== 1 ? "s" : ""}
                     </p>
@@ -86,7 +86,7 @@ export default function Subscriptions() {
                 ) : subscriptions.length === 0 ? (
                     <div className="profile-empty-state">
                         <div className="empty-icon">📻</div>
-                        <h2>No Subscriptions Yet</h2>
+                        <h2>No Following Yet</h2>
                         <p>Start following your favorite podcasts!</p>
                         <button className="primary-btn" onClick={() => navigate("/podcast")}>
                             Browse Podcasts
