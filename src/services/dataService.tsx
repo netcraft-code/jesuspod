@@ -127,3 +127,26 @@ export const fetchSubscribedPodcasts = async (userId?: string) => {
   }
 };
 
+/**
+ * Fetch live videos from Firestore "Telivision" collection
+ * Only returns channels with valid YouTube URLs
+ */
+export const fetchLiveVideos = async () => {
+  try {
+    const channels = await getAllDocs("Telivision");
+
+    // Filter to only include YouTube URLs
+    const youtubeChannels = channels.filter((channel: any) => {
+      const url = channel.url || '';
+      // Check if URL contains YouTube domain
+      return url.includes('youtube.com') || url.includes('youtu.be');
+    });
+
+    // Sort by order field
+    return youtubeChannels.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+  } catch (error) {
+    console.error("Error fetching live videos:", error);
+    return [];
+  }
+};
+

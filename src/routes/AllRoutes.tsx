@@ -20,6 +20,8 @@ import BooksCategory from "../pages/Books/BooksCategory";
 import Shorts from "../pages/Shorts/Shorts";
 import Subscriptions from "../pages/Profile/Subscriptions";
 import Downloads from "../pages/Profile/Downloads";
+import LiveList from "../pages/Live/LiveList";
+import LivePlayer from "../pages/Live/LivePlayer";
 
 export default function AllRoutes() {
   return (
@@ -43,6 +45,8 @@ export default function AllRoutes() {
       <Route path="/books-category" element={<BooksCategory />} />
       <Route path="/subscriptions" element={<Subscriptions />} />
       <Route path="/downloads" element={<Downloads />} />
+      <Route path="/live-list" element={<LiveList />} />
+      <Route path="/live-player" element={<LivePlayer />} />
 
       <Route
         path="/home/*"

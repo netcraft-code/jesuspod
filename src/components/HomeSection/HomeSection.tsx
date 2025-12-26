@@ -8,6 +8,7 @@ interface HomeSectionProps {
     loading?: boolean;
     onViewAll?: () => void;
     onCardClick?: (item: any) => void;
+    showLiveBadge?: boolean;
 }
 
 export default function HomeSection({
@@ -16,6 +17,7 @@ export default function HomeSection({
     loading,
     onViewAll,
     onCardClick,
+    showLiveBadge = false,
 }: HomeSectionProps) {
     return (
         <div className="home-section-container">
@@ -36,10 +38,11 @@ export default function HomeSection({
                         </div>
                     ))
                     : data.map((item) => (
-                        <div key={item.id} className="home-card-wrapper">
+                        <div key={item.id || item.url} className="home-card-wrapper">
                             <Card
                                 item={item}
                                 onClick={() => onCardClick && onCardClick(item)}
+                                showLiveBadge={showLiveBadge}
                             />
                         </div>
                     ))}

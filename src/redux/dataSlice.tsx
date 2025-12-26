@@ -12,7 +12,8 @@ import {
     fetchSavedRadios,
     fetchMostListenedPodcasts,
     fetchNewNoteworthyPodcasts,
-    fetchSubscribedPodcasts
+    fetchSubscribedPodcasts,
+    fetchLiveVideos
 } from "../services/dataService";
 
 export const fetchInitialData = createAsyncThunk(
@@ -31,7 +32,8 @@ export const fetchInitialData = createAsyncThunk(
             savedRadios,
             mostListenedPodcasts,
             newNoteworthyPodcasts,
-            subscribedPodcasts
+            subscribedPodcasts,
+            liveVideos
         ] = await Promise.all([
             fetchRadio(),
             fetchBooks(),
@@ -45,7 +47,8 @@ export const fetchInitialData = createAsyncThunk(
             fetchSavedRadios(userId),
             fetchMostListenedPodcasts(),
             fetchNewNoteworthyPodcasts(),
-            fetchSubscribedPodcasts(userId)
+            fetchSubscribedPodcasts(userId),
+            fetchLiveVideos()
         ]);
 
         return {
@@ -61,7 +64,8 @@ export const fetchInitialData = createAsyncThunk(
             savedRadios,
             mostListenedPodcasts,
             newNoteworthyPodcasts,
-            subscribedPodcasts
+            subscribedPodcasts,
+            liveVideos
         };
     }
 );
@@ -91,6 +95,7 @@ const dataSlice = createSlice({
         mostListenedPodcasts: [] as any[],
         newNoteworthyPodcasts: [] as any[],
         subscribedPodcasts: [] as any[],
+        liveVideos: [] as any[],
         selectedCountry: null as string | null, // null = "All Countries"
         loading: false
     },
@@ -112,6 +117,7 @@ const dataSlice = createSlice({
             state.mostListenedPodcasts = [];
             state.newNoteworthyPodcasts = [];
             state.subscribedPodcasts = [];
+            state.liveVideos = [];
             state.selectedCountry = null;
         }
     },
