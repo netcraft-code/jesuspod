@@ -7,6 +7,8 @@ import ShortItem from "../../components/ShortItem/ShortItem";
 import { ShortsService } from "../../services/shortsService";
 import type { Short } from "../../types/shorts";
 import usePageTitle from "../../hooks/usePageTitle";
+import { doc, setDoc, arrayUnion, increment } from "firebase/firestore";
+import { firestore } from "../../services/firebase";
 import "./Shorts.css";
 
 export default function Shorts() {
@@ -26,22 +28,38 @@ export default function Shorts() {
 
     usePageTitle("Shorts - Acts2");
 
-    // Load initial shorts
+    // Load initial shorts with diverse feed
     const loadShorts = useCallback(async (isLoadMore = false) => {
         if (!hasMore && isLoadMore) return;
 
         try {
             setLoading(true);
 
+            // Fetch shorts for tag rotation (20 for good variety without being too heavy)
             const response = await ShortsService.fetchShorts({
-                limitCount: 10,
+                limitCount: 20,
                 lastVisible: isLoadMore ? lastVisible : null,
             });
 
+            // Get user viewing history if logged in
+            const userHistory = user?.uid
+                ? await ShortsService.getUserViewHistory(user.uid)
+                : { viewedShorts: [], tagPreferences: {} };
+
+            console.log(`User has viewed ${userHistory.viewedShorts.length} shorts`);
+            console.log("User tag preferences:", userHistory.tagPreferences);
+
+            // Create diverse feed with tag rotation
+            const diverseFeed = ShortsService.createDiverseFeed(
+                response.shorts,
+                new Set(userHistory.viewedShorts),
+                new Map(Object.entries(userHistory.tagPreferences))
+            );
+
             if (isLoadMore) {
-                setShortsData((prev) => [...prev, ...response.shorts]);
+                setShortsData((prev) => [...prev, ...diverseFeed]);
             } else {
-                setShortsData(response.shorts);
+                setShortsData(diverseFeed);
             }
 
             setLastVisible(response.lastVisible);
@@ -51,7 +69,7 @@ export default function Shorts() {
         } finally {
             setLoading(false);
         }
-    }, [hasMore, lastVisible]);
+    }, [hasMore, lastVisible, user]);
 
     // Load initial data only once
     useEffect(() => {
@@ -59,7 +77,7 @@ export default function Shorts() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Handle like toggle
+    // Handle like toggle with tag preference tracking
     const handleLikeToggle = useCallback(
         async (shortId: string, isLiked: boolean) => {
             if (!user?.uid) {
@@ -81,12 +99,29 @@ export default function Shorts() {
                             : short
                     )
                 );
+
+                // Update tag preferences based on like
+                if (isLiked) {
+                    const video = shortsData.find((v) => v.id === shortId);
+                    if (video && video.tags && video.tags.length > 0) {
+                        const primaryTag = video.tags[0];
+                        const userRef = doc(firestore, "users", user.uid);
+                        await setDoc(
+                            userRef,
+                            {
+                                [`tagPreferences.${primaryTag}`]: increment(1),
+                            },
+                            { merge: true }
+                        );
+                        console.log(`Increased preference for tag: ${primaryTag}`);
+                    }
+                }
             } catch (error) {
                 console.error("Error toggling like:", error);
                 throw error;
             }
         },
-        [user]
+        [user, shortsData]
     );
 
     // Handle save toggle
@@ -107,7 +142,7 @@ export default function Shorts() {
         [user]
     );
 
-    // Handle view increment
+    // Handle view increment with tracking
     const handleViewIncrement = useCallback(async (shortId: string) => {
         try {
             await ShortsService.incrementViewCount(shortId);
@@ -120,10 +155,31 @@ export default function Shorts() {
                         : short
                 )
             );
+
+            // Track user viewing history and tag preferences
+            if (user?.uid) {
+                const video = shortsData.find((v) => v.id === shortId);
+                if (video) {
+                    const userRef = doc(firestore, "users", user.uid);
+
+                    const updateData: any = {
+                        viewedShorts: arrayUnion(shortId),
+                    };
+
+                    // Increase tag preference for viewed video
+                    if (video.tags && video.tags.length > 0) {
+                        const primaryTag = video.tags[0];
+                        updateData[`tagPreferences.${primaryTag}`] = increment(0.5);
+                    }
+
+                    await setDoc(userRef, updateData, { merge: true });
+                    console.log(`Tracked view for video ${shortId}`);
+                }
+            }
         } catch (error) {
             console.error("Error incrementing view count:", error);
         }
-    }, []);
+    }, [user, shortsData]);
 
     // Handle scroll to next video
     const handleVideoEnd = useCallback(() => {

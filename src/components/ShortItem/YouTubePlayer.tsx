@@ -36,6 +36,7 @@ export default function YouTubePlayer({
 
         try {
             if (isActive) {
+                playerRef.current.unMute(); // Unmute when becoming active
                 playerRef.current.playVideo();
             } else {
                 playerRef.current.pauseVideo();
@@ -101,14 +102,16 @@ export default function YouTubePlayer({
                     width: "100%",
                     height: "100%",
                     playerVars: {
-                        autoplay: isActive ? 1 : 0,
+                        autoplay: 0, // Don't autoplay, we'll control it manually
                         controls: 1,
                         modestbranding: 1,
                         rel: 0,
                         playsinline: 1,
                         fs: 1,
-                        mute: 0,
+                        mute: 1, // Start muted to prevent browser blocking
                         enablejsapi: 1,
+                        iv_load_policy: 3, // Hide annotations
+                        cc_load_policy: 0, // Hide captions by default
                     },
                     events: {
                         onReady: (event: any) => {
@@ -119,6 +122,7 @@ export default function YouTubePlayer({
                             // Only play if active
                             if (isActive) {
                                 try {
+                                    event.target.unMute(); // Unmute when playing
                                     event.target.playVideo();
                                 } catch (error) {
                                     console.error("Error starting video:", error);

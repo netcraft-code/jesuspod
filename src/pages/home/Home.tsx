@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 import { getFilteredRadio } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
-// import type { LiveVideo } from "../../services/liveService";
+import LiveSection from "../../components/LiveSection/LiveSection";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -76,6 +76,29 @@ export default function Home() {
 
       <main className="radio-container">
 
+
+
+        {/* ================= LIVE ================= */}
+        <LiveSection
+          title="Live"
+          data={liveVideos}
+          loading={isLoading}
+          onViewAll={() => navigate("/live-list")}
+          onCardClick={(item: any) => {
+            // Check if we have a liveVideoId (from channels collection)
+            if (item.liveVideoId || item.url) {
+              navigate("/live-player", {
+                state: {
+                  current: item,
+                  list: liveVideos,
+                },
+              });
+            } else {
+              console.warn('No video ID or URL found for channel:', item);
+            }
+          }}
+        />
+
         {/* ================= RADIO ================= */}
         <HomeSection
           title="Radio"
@@ -120,28 +143,6 @@ export default function Home() {
           onCardClick={handleBookClick}
         />
 
-        {/* ================= LIVE ================= */}
-        <HomeSection
-          title="Live"
-          data={liveVideos}
-          loading={isLoading}
-          onViewAll={() => navigate("/live-player")}
-          onCardClick={(item: any) => {
-            const isYouTube = item.url?.includes('youtube.com') || item.url?.includes('youtu.be');
-
-            if (isYouTube) {
-              navigate("/live-player", {
-                state: {
-                  current: item,
-                  list: liveVideos,
-                },
-              });
-            } else {
-              window.open(item.url, '_blank');
-            }
-          }}
-          showLiveBadge={true}
-        />
 
       </main>
       <Footer />

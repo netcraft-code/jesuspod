@@ -4,6 +4,8 @@
     min-height: 100vh;
     background-color: #0a0a0a;
     color: #ffffff;
+    display: flex;
+    flex-direction: column;
 }
 
 .live-container {
@@ -229,21 +231,21 @@
 /* Live Player Layout - Full Width */
 .live-player-container {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     max-width: 100%;
     margin: 0;
     padding: 15px 20px;
     margin-top: 80px;
     min-height: calc(100vh - 180px);
+    flex: 1;
 }
 
 /* Left Sidebar with Playlist */
 .live-sidebar {
     width: 300px;
     min-width: 300px;
-    background-color: #1a1a1a;
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 0;
+    padding: 0 10px;
     overflow-y: auto;
     max-height: calc(100vh - 200px);
 }
@@ -273,10 +275,36 @@
     gap: 10px;
 }
 
+/* Search in Sidebar */
+.search-section-sidebar {
+    margin-bottom: 16px;
+}
+
+.search-input-sidebar {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: #2a2a2a;
+    border: 1px solid #333;
+    border-radius: 20px;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input-sidebar:focus {
+    border-color: #e63946;
+    background-color: #333;
+}
+
+.search-input-sidebar::placeholder {
+    color: #666;
+}
+
 .sidebar-playlist {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .sidebar-item {
@@ -381,11 +409,41 @@
     padding: 12px 0;
 }
 
+.player-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.live-indicator-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #e63946;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.live-duration {
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .player-title {
     font-size: 20px;
     font-weight: 700;
     color: #ffffff;
     margin: 0 0 6px 0;
+}
+
+.player-channel {
+    font-size: 15px;
+    color: #ccc;
+    margin: 0 0 6px 0;
+    font-weight: 500;
 }
 
 .player-category {

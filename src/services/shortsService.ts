@@ -23,6 +23,200 @@ export class ShortsService {
     static COLLECTION_NAME = "Shorts";
     static USERS_COLLECTION = "users";
 
+    // Available tags for rotation
+    static AVAILABLE_TAGS = [
+        "Worship",
+        "Word",
+        "Preach",
+        "Testimony",
+        "Miracle",
+        "Healing",
+        "Praise",
+    ];
+
+    /**
+     * Group videos by their primary tag
+     */
+    static groupVideosByTag(videos: Short[]): Map<string, Short[]> {
+        const videosByTag = new Map<string, Short[]>();
+
+        // Initialize all tags
+        this.AVAILABLE_TAGS.forEach((tag) => {
+            videosByTag.set(tag, []);
+        });
+
+        // Group videos by their primary tag
+        videos.forEach((video) => {
+            const tags = video.tags || [];
+            const primaryTag = tags.length > 0 ? tags[0] : "Word"; // Default to 'Word' if no tags
+
+            if (videosByTag.has(primaryTag)) {
+                videosByTag.get(primaryTag)!.push(video);
+            } else {
+                // If tag not in our list, add to 'Word' category
+                videosByTag.get("Word")!.push(video);
+            }
+        });
+
+        return videosByTag;
+    }
+
+    /**
+     * Calculate personalized score for a video
+     */
+    static calculatePersonalizedScore(
+        video: Short,
+        viewedSet: Set<string>,
+        tagPreferences: Map<string, number>
+    ): number {
+        const now = new Date();
+        const createdAt = video.createdAt ? new Date(video.createdAt as any) : new Date(0);
+        const hoursOld = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+        const isViewed = viewedSet.has(video.id);
+        const primaryTag = video.tags?.[0] || "Word";
+
+        let score = 0;
+
+        // Priority 1: Strong preference for unseen videos
+        if (!isViewed) {
+            score += 1000;
+        } else {
+            score -= 200; // Penalty for viewed videos
+        }
+
+        // Priority 2: Tag preference bonus
+        const tagEngagement = tagPreferences.get(primaryTag) || 0;
+        score += tagEngagement * 100; // Boost based on user's engagement with this tag
+
+        // Priority 3: Recency bonus
+        if (hoursOld < 1) score += 100;
+        else if (hoursOld < 6) score += 80;
+        else if (hoursOld < 24) score += 60;
+        else if (hoursOld < 168) score += 40;
+        else score += 20;
+
+        // Priority 4: Engagement metrics
+        const likeCount = video.likeCount || 0;
+        const viewCount = video.viewCount || 0;
+        const shareCount = video.shareCount || 0;
+
+        const engagementScore = likeCount * 3 + viewCount * 0.1 + shareCount * 5;
+        score += Math.min(engagementScore / 10, 100);
+
+        // Priority 5: Small randomness for variety
+        score += Math.random() * 50;
+
+        return score;
+    }
+
+    /**
+     * Create diverse feed with tag rotation
+     */
+    static createDiverseFeed(
+        videos: Short[],
+        viewedSet: Set<string>,
+        tagPreferences: Map<string, number>
+    ): Short[] {
+        console.log("Creating diverse feed with", videos.length, "videos");
+
+        // Group videos by tags
+        const videosByTag = this.groupVideosByTag(videos);
+
+        // Sort videos within each tag by personalized score
+        const sortedVideosByTag = new Map<string, Short[]>();
+        videosByTag.forEach((tagVideos, tag) => {
+            const sortedVideos = tagVideos
+                .map((video) => ({
+                    ...video,
+                    personalizedScore: this.calculatePersonalizedScore(
+                        video,
+                        viewedSet,
+                        tagPreferences
+                    ),
+                }))
+                .sort((a, b) => b.personalizedScore - a.personalizedScore);
+
+            sortedVideosByTag.set(tag, sortedVideos);
+            console.log(
+                `${tag}: ${sortedVideos.length} videos (${sortedVideos.filter((v) => !viewedSet.has(v.id)).length
+                } new)`
+            );
+        });
+
+        // Create rotating feed
+        const diverseFeed: Short[] = [];
+        let maxRounds = 50; // Prevent infinite loop
+        let round = 0;
+
+        // Create tag rotation pattern based on user preferences
+        const tagRotationOrder = [...this.AVAILABLE_TAGS].sort((a, b) => {
+            const aScore = (tagPreferences.get(a) || 0) + Math.random() * 0.5;
+            const bScore = (tagPreferences.get(b) || 0) + Math.random() * 0.5;
+            return bScore - aScore; // Higher engagement tags first, with some randomness
+        });
+
+        console.log("Tag rotation order:", tagRotationOrder);
+
+        while (diverseFeed.length < videos.length && round < maxRounds) {
+            let addedInThisRound = false;
+
+            // Go through tags in rotation order
+            for (const tag of tagRotationOrder) {
+                const tagVideos = sortedVideosByTag.get(tag) || [];
+                const availableVideos = tagVideos.filter(
+                    (video) => !diverseFeed.find((feedVideo) => feedVideo.id === video.id)
+                );
+
+                if (availableVideos.length > 0) {
+                    // Add best video from this tag that hasn't been added yet
+                    diverseFeed.push(availableVideos[0]);
+                    addedInThisRound = true;
+
+                    if (diverseFeed.length >= videos.length) break;
+                }
+            }
+
+            if (!addedInThisRound) break; // No more videos to add
+            round++;
+        }
+
+        console.log(
+            `Created diverse feed with ${diverseFeed.length} videos over ${round} rounds`
+        );
+
+        return diverseFeed;
+    }
+
+    /**
+     * Get user's viewing history and tag preferences
+     */
+    static async getUserViewHistory(userId: string): Promise<{
+        viewedShorts: string[];
+        tagPreferences: Record<string, number>;
+    }> {
+        try {
+            const userDoc = await getDoc(doc(firestore, this.USERS_COLLECTION, userId));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                return {
+                    viewedShorts: userData.viewedShorts || [],
+                    tagPreferences: userData.tagPreferences || {},
+                };
+            }
+            return {
+                viewedShorts: [],
+                tagPreferences: {},
+            };
+        } catch (error) {
+            console.error("Error fetching user view history:", error);
+            return {
+                viewedShorts: [],
+                tagPreferences: {},
+            };
+        }
+    }
+
+
     /**
      * Fetch shorts from Firestore with pagination
      */

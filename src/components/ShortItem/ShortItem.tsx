@@ -154,45 +154,45 @@ export default function ShortItem({
                             {item.viewCount ? `${formatCount(item.viewCount)} views` : ""}
                         </p>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="short-actions">
-                        <button
-                            className="short-action-btn"
-                            onClick={handleLike}
-                            aria-label={liked ? "Unlike" : "Like"}
-                        >
-                            {liked ? (
-                                <FaHeart className="icon-filled" />
-                            ) : (
-                                <FaRegHeart className="icon-outline" />
-                            )}
-                            <span className="action-text">{formatCount(localLikeCount)}</span>
-                        </button>
-
-                        <button
-                            className="short-action-btn"
-                            onClick={handleShare}
-                            aria-label="Share"
-                        >
-                            <FaShare className="icon-outline" />
-                            <span className="action-text">Share</span>
-                        </button>
-
-                        <button
-                            className="short-action-btn"
-                            onClick={handleSave}
-                            aria-label={saved ? "Unsave" : "Save"}
-                        >
-                            {saved ? (
-                                <FaBookmark className="icon-filled" />
-                            ) : (
-                                <FaRegBookmark className="icon-outline" />
-                            )}
-                            <span className="action-text">Save</span>
-                        </button>
-                    </div>
                 </div>
+            </div>
+
+            {/* Action Buttons - Outside the card */}
+            <div className="short-actions">
+                <button
+                    className="short-action-btn"
+                    onClick={handleLike}
+                    aria-label={liked ? "Unlike" : "Like"}
+                >
+                    {liked ? (
+                        <FaHeart className="icon-filled" />
+                    ) : (
+                        <FaRegHeart className="icon-outline" />
+                    )}
+                    <span className="action-text">{formatCount(localLikeCount)}</span>
+                </button>
+
+                <button
+                    className="short-action-btn"
+                    onClick={handleShare}
+                    aria-label="Share"
+                >
+                    <FaShare className="icon-outline" />
+                    <span className="action-text">Share</span>
+                </button>
+
+                <button
+                    className="short-action-btn"
+                    onClick={handleSave}
+                    aria-label={saved ? "Unsave" : "Save"}
+                >
+                    {saved ? (
+                        <FaBookmark className="icon-filled" />
+                    ) : (
+                        <FaRegBookmark className="icon-outline" />
+                    )}
+                    <span className="action-text">Save</span>
+                </button>
             </div>
         </div>
     );

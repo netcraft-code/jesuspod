@@ -128,24 +128,42 @@ export const fetchSubscribedPodcasts = async (userId?: string) => {
 };
 
 /**
- * Fetch live videos from Firestore "Telivision" collection
- * Only returns channels with valid YouTube URLs
+ * Fetch live channels from Firestore "channels" collection
+ * Only returns channels where isLive == true
  */
 export const fetchLiveVideos = async () => {
   try {
-    const channels = await getAllDocs("Telivision");
+    const { getDocWithQuery } = await import("./firestoreService");
+    
+    // Query channels collection where isLive == true
+    const liveChannels = await getDocWithQuery("channels", ["isLive", "==", true]);
 
-    // Filter to only include YouTube URLs
-    const youtubeChannels = channels.filter((channel: any) => {
-      const url = channel.url || '';
-      // Check if URL contains YouTube domain
-      return url.includes('youtube.com') || url.includes('youtu.be');
+    console.log(`Found ${liveChannels.length} live channels`);
+
+    // Sort by liveStartTime (most recent first)
+    const sortedChannels = liveChannels.sort((a: any, b: any) => {
+      const timeA = a.liveStartTime ? new Date(a.liveStartTime).getTime() : 0;
+      const timeB = b.liveStartTime ? new Date(b.liveStartTime).getTime() : 0;
+      return timeB - timeA; // Most recent first
     });
 
-    // Sort by order field
-    return youtubeChannels.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    // Map to expected structure for compatibility
+    return sortedChannels.map((channel: any) => ({
+      id: channel.id,
+      _id: channel.id,
+      title: channel.liveTitle || channel.name,
+      imageUrl: channel.liveThumbnail || channel.image,
+      category: channel.category || '',
+      url: channel.liveVideoId ? `https://www.youtube.com/watch?v=${channel.liveVideoId}` : '',
+      liveVideoId: channel.liveVideoId,
+      liveThumbnail: channel.liveThumbnail,
+      liveTitle: channel.liveTitle,
+      liveStartTime: channel.liveStartTime,
+      name: channel.name,
+      image: channel.image,
+    }));
   } catch (error) {
-    console.error("Error fetching live videos:", error);
+    console.error("Error fetching live channels:", error);
     return [];
   }
 };

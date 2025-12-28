@@ -1,5 +1,7 @@
 .profile-menu {
     position: fixed;
+    top: 100px;
+    /* Match country-dropdown positioning */
     right: 40px;
     width: 320px;
     /* narrowed slightly for cleaner look */
@@ -108,8 +110,4 @@
     opacity: 0.4;
     filter: invert(1);
     /* white arrow */
-}
-
-.menu-red .menu-label {
-    /* color: #ff2b2b; */
 }
