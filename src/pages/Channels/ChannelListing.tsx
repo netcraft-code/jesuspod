@@ -96,7 +96,7 @@ export default function ChannelListing() {
                     title={`Most Watched Channels `}
                     data={mostWatchedChannels}
                     loading={loading}
-                    cardVariant="video"
+                    cardVariant="channel"
                     onViewAll={() => navigate("/all-channels")}
                     onCardClick={handleCardClick}
                     onToggleSave={handleToggleSave}
@@ -108,7 +108,7 @@ export default function ChannelListing() {
                     title="Top 10 in USA"
                     data={topUSAChannels}
                     loading={loading}
-                    cardVariant="video"
+                    cardVariant="channel"
                     onViewAll={() => navigate("/all-channels")}
                     onCardClick={handleCardClick}
                     onToggleSave={handleToggleSave}
@@ -120,7 +120,7 @@ export default function ChannelListing() {
                     title="Channels to Love"
                     data={savedChannels}
                     loading={loading}
-                    cardVariant="video"
+                    cardVariant="channel"
                     onViewAll={() => navigate("/all-channels", { state: { filter: 'saved' } })}
                     onCardClick={handleCardClick}
                     onToggleSave={handleToggleSave}

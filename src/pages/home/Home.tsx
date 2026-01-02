@@ -178,7 +178,7 @@ export default function Home() {
           title="Video Channels"
           data={filteredChannels.slice(0, 30)}
           loading={isLoading}
-          cardVariant="video"
+          cardVariant="channel"
           onViewAll={() => navigate("/all-channels")}
           onCardClick={(item) => {
             if (item.channelLink) {

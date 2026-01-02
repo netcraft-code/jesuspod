@@ -1,4 +1,5 @@
 import Card from "../Cards/Card";
+import ChannelCard from "../../pages/Channels/ChannelCard";
 import SkeletonCard from "../Skeletons/SkeletonCard";
 import "./HomeSection.css";
 
@@ -9,7 +10,7 @@ interface HomeSectionProps {
     onViewAll?: () => void;
     onCardClick?: (item: any) => void;
     showLiveBadge?: boolean;
-    cardVariant?: "standard" | "large" | "video";
+    cardVariant?: "standard" | "large" | "video" | "channel";
     onToggleSave?: (item: any, isSaved: boolean) => void;
     user?: any;
     emptyMessage?: string;
@@ -41,21 +42,30 @@ export default function HomeSection({
             <div className="home-section-scroll-row">
                 {loading ? (
                     [...Array(6)].map((_, i) => (
-                        <div key={i} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : ''}`}>
-                            <SkeletonCard variant={cardVariant} />
+                        <div key={i} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : cardVariant === 'channel' ? 'channel-card-wrapper' : ''}`}>
+                            <SkeletonCard variant={cardVariant === 'channel' ? 'video' : cardVariant} />
                         </div>
                     ))
                 ) : data.length > 0 ? (
                     data.map((item) => (
-                        <div key={item.id || item.url} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : cardVariant === 'video' ? 'video-wrapper' : ''}`}>
-                            <Card
-                                item={item}
-                                onClick={() => onCardClick && onCardClick(item)}
-                                showLiveBadge={showLiveBadge}
-                                variant={cardVariant}
-                                isSaved={item.star?.includes(user?.uid)}
-                                onToggleSave={onToggleSave}
-                            />
+                        <div key={item.id || item.url} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : cardVariant === 'video' ? 'video-wrapper' : cardVariant === 'channel' ? 'channel-card-wrapper' : ''}`}>
+                            {cardVariant === "channel" ? (
+                                <ChannelCard
+                                    item={item}
+                                    onClick={(itm) => onCardClick && onCardClick(itm)}
+                                    isSaved={item.star?.includes(user?.uid)}
+                                    onToggleSave={onToggleSave}
+                                />
+                            ) : (
+                                <Card
+                                    item={item}
+                                    onClick={() => onCardClick && onCardClick(item)}
+                                    showLiveBadge={showLiveBadge}
+                                    variant={cardVariant}
+                                    isSaved={item.star?.includes(user?.uid)}
+                                    onToggleSave={onToggleSave}
+                                />
+                            )}
                         </div>
                     ))
                 ) : (

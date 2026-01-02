@@ -1,0 +1,136 @@
+/* ChannelCard.css */
+
+.channel-card-wrapper {
+    width: 100%;
+    min-width: 200px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    /* Ensure no high z-index here */
+    position: relative;
+    z-index: 1;
+    /* Keep low, just enough to be above standard flow if needed, but ideally auto */
+}
+
+.channel-card-wrapper:hover {
+    transform: translateY(-2px);
+}
+
+.channel-img-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    /* Changed from 1/1 to 16/9 for landscape */
+    border-radius: 8px;
+    /* Changed from 12px to 8px to match large cards */
+    position: relative;
+    overflow: hidden;
+    background: #111;
+    /* Simple black background like radio cards */
+    transition: 0.25s ease;
+}
+
+.channel-card-wrapper:hover .channel-img-wrapper {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+    /* Matching radio hover shadow */
+}
+
+/* BLURRED BACKGROUND */
+.card-bg-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px) brightness(0.5);
+    transform: scale(1.2);
+    /* Prevent white edges from blur */
+    /* z-index: 0 implies bottom */
+}
+
+.channel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* CHANGED: Contain image to show full context over blur */
+    position: relative;
+    /* No Z-Index to rely on DOM order (after overlay) */
+}
+
+/* Gradient Overlay - Matching radio-overlay */
+.channel-card-overlay {
+    position: absolute;
+    bottom: 0;
+    /* Anchored to bottom */
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, rgba(255, 0, 0, 0.9), transparent);
+    /* No Z-Index to rely on DOM order (before image) */
+}
+
+/* Title Styling - Matching .radio-card.large .radio-title */
+.channel-title {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    padding: 0;
+    /* Removed padding */
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    /* Aligned left like other cards */
+    text-shadow: none;
+    z-index: 3;
+    /* Top most z-index for text */
+    white-space: nowrap;
+    /* Truncate single line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Save Icon Badge */
+.channel-save-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 3;
+    /* Reduced from 10 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px;
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s;
+}
+
+.channel-save-badge:hover {
+    transform: scale(1.1);
+}
+
+/* Duration Badge */
+.channel-duration-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4d4d;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.play-icon-small {
+    font-size: 10px;
+}

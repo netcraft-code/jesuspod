@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import Card from "../../components/Cards/Card";
+import ChannelCard from "./ChannelCard";
 import "../Radio/Radio.css"; // Reuse Radio CSS
 import { trackChannelPlay } from "../../services/channelAnalytics.ts";
 import { useSelector, useDispatch } from "react-redux";
@@ -26,9 +26,6 @@ export default function AllChannels() {
     // 2. Get Redux filtered channels (Global fallback)
     const reduxFilteredChannels = useSelector(getFilteredChannels);
 
-    // 3. Determine which source to use
-    // If location.state.country exists, filter raw channels by it.
-    // Otherwise, use the global Redux filtered list.
     // 3. Determine which source to use
     // If location.state.country exists, filter raw channels by it.
     // If location.state.filter === 'saved', use savedChannels.
@@ -119,10 +116,9 @@ export default function AllChannels() {
                 {/* CHANNELS GRID */}
                 <div className="card-grid">
                     {filtered.map((item: any) => (
-                        <div key={item.id} className="home-card-wrapper video-wrapper">
-                            <Card
+                        <div key={item.id} className="home-card-wrapper channel-wrapper">
+                            <ChannelCard
                                 item={item}
-                                variant="video"
                                 onClick={handleCardClick}
                                 isSaved={item.star?.includes(user?.uid)}
                                 onToggleSave={handleToggleSave}
