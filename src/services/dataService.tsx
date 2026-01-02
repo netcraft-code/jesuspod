@@ -31,7 +31,13 @@ export const getAllFalgs = async () => {
  * Fetch all podcasts
  */
 export const fetchPodcasts = async () => {
-  return await getAllDocs("Podcasts"); // create this collection in Firestore if needed
+  const docs = await getAllDocs("Newchannels");
+  return docs.map((doc: any) => ({
+    ...doc,
+    imageUrl: doc.image || doc.imageUrl || doc.thumbnail, // Standardize image field
+    title: doc.name || doc.title, // Standardize title field
+    id: doc._id || doc.id // Ensure ID presence
+  }));
 };
 
 /**

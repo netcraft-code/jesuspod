@@ -10,7 +10,7 @@ export default function AllPodcast() {
 
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
-    const podcasts = useSelector((state: any) => state.data.channels);
+    const podcasts = useSelector((state: any) => state.data.podcasts);
     const navigate = useNavigate();
     const filtered = podcasts.filter((p: any) =>
         p.title.toLowerCase().includes(search.toLowerCase())

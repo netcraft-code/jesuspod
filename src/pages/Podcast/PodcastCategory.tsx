@@ -12,7 +12,7 @@ export default function PodcastCategory() {
     const navigate = useNavigate();
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const podcasts = useSelector((s: any) =>
-        s.data.channels.filter(
+        s.data.podcasts.filter(
             (p: any) =>
                 p.category?.name?.toLowerCase() === category?.toLowerCase()
         )

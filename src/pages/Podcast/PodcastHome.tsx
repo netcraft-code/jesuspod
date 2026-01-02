@@ -14,7 +14,7 @@ import { categoryImages } from "../../assets/images/CatImages";
 export default function PodcastHome() {
     const navigate = useNavigate();
 
-    const podcasts = useSelector((state: any) => state.data.channels);
+    const podcasts = useSelector((state: any) => state.data.podcasts);
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
 
