@@ -13,6 +13,8 @@ import AllRadio from "../pages/Radio/AllRadio";
 import FavoriteRadios from "../pages/Radio/FavoriteRadios";
 import PodcastHome from "../pages/Podcast/PodcastHome";
 import AllPodcast from "../pages/Podcast/AllPodcast";
+import AllChannels from "../pages/Channels/AllChannels.tsx";
+import ChannelListing from "../pages/Channels/ChannelListing.tsx";
 import PodcastCategory from "../pages/Podcast/PodcastCategory";
 import PodcastDetail from "../pages/Podcast/PodcastDetail";
 import BooksHome from "../pages/Books/BooksHome";
@@ -55,6 +57,10 @@ export default function AllRoutes() {
       <Route path="/all-podcast" element={<PrivateRoute><AllPodcast /></PrivateRoute>} />
       <Route path="/podcast-category" element={<PrivateRoute><PodcastCategory /></PrivateRoute>} />
       <Route path="/podcastplayer/:id" element={<PrivateRoute><PodcastDetail /></PrivateRoute>} />
+
+      {/* Channels Route */}
+      <Route path="/channel-listing" element={<PrivateRoute><ChannelListing /></PrivateRoute>} />
+      <Route path="/all-channels" element={<PrivateRoute><AllChannels /></PrivateRoute>} />
 
       {/* Shorts */}
       <Route path="/shorts" element={<PrivateRoute><Shorts /></PrivateRoute>} />

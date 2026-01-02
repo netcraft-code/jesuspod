@@ -5,7 +5,13 @@ import { getAllDocs } from "./firestoreService";
  * Fetch all channels
  */
 export const fetchChannels = async () => {
-  return await getAllDocs("Newchannels");
+  const docs = await getAllDocs("channels");
+  return docs.map((doc: any) => ({
+    ...doc,
+    imageUrl: doc.image || doc.imageUrl || doc.thumbnail, // Map 'image' to 'imageUrl'
+    title: doc.name || doc.title, // Map 'name' to 'title'
+    // Ensure id exists if not handled by getAllDocs properly (though it usually is)
+  }));
 };
 
 /**
@@ -134,7 +140,7 @@ export const fetchSubscribedPodcasts = async (userId?: string) => {
 export const fetchLiveVideos = async () => {
   try {
     const { getDocWithQuery } = await import("./firestoreService");
-    
+
     // Query channels collection where isLive == true
     const liveChannels = await getDocWithQuery("channels", ["isLive", "==", true]);
 
@@ -168,3 +174,111 @@ export const fetchLiveVideos = async () => {
   }
 };
 
+/**
+ * Fetch most watched channels from analytics
+ */
+export const fetchMostWatchedChannels = async () => {
+  try {
+    const { getMostWatchedChannels } = await import("./channelAnalytics.ts");
+    return await getMostWatchedChannels(20);
+  } catch (error) {
+    console.error("Error fetching most watched channels:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch top USA channels from analytics
+ */
+export const fetchTopUSAChannels = async () => {
+  try {
+    const { getTopUSAChannels } = await import("./channelAnalytics.ts");
+    return await getTopUSAChannels(10);
+  } catch (error) {
+    console.error("Error fetching top USA channels:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch saved channels
+ */
+export const fetchSavedChannels = async (userId?: string) => {
+  try {
+    const { getSavedChannels } = await import("./channelAnalytics.ts");
+    return await getSavedChannels(userId);
+  } catch (error) {
+    console.error("Error fetching saved channels:", error);
+    return [];
+  }
+};
+
+
+
+/**
+ * Toggle save status of a channel
+ */
+export const toggleChannelSave = async (channelId: string, userId: string, isSaved: boolean) => {
+  try {
+    const { toggleChannelSave } = await import("./channelAnalytics.ts");
+    return await toggleChannelSave(channelId, userId, isSaved);
+  } catch (error) {
+    console.error("Error toggling channel save:", error);
+    return false;
+  }
+};
+
+
+// -------------------- BOOKS --------------------
+
+/**
+ * Fetch most read books from analytics
+ */
+export const fetchMostReadBooks = async () => {
+  try {
+    const { getMostReadBooks } = await import("./booksAnalytics.ts");
+    return await getMostReadBooks(20);
+  } catch (error) {
+    console.error("Error fetching most read books:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch top USA books from analytics
+ */
+export const fetchTopUSABooks = async () => {
+  try {
+    const { getTopUSABooks } = await import("./booksAnalytics.ts");
+    return await getTopUSABooks(10);
+  } catch (error) {
+    console.error("Error fetching top USA books:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch saved books
+ */
+export const fetchSavedBooks = async (userId?: string) => {
+  try {
+    const { getSavedBooks } = await import("./booksAnalytics.ts");
+    return await getSavedBooks(userId);
+  } catch (error) {
+    console.error("Error fetching saved books:", error);
+    return [];
+  }
+};
+
+/**
+ * Toggle save status of a book
+ */
+export const toggleBookSave = async (bookId: string, userId: string, isSaved: boolean) => {
+  try {
+    const { toggleBookSave } = await import("./booksAnalytics.ts");
+    return await toggleBookSave(bookId, userId, isSaved);
+  } catch (error) {
+    console.error("Error toggling book save:", error);
+    return false;
+  }
+};

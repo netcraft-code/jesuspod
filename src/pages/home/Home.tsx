@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio } from "../../redux/dataSlice";
+import { getFilteredRadio, getFilteredChannels } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 
@@ -43,6 +43,8 @@ export default function Home() {
     (state) => state.data.channels
   );
 
+  const filteredChannels = useSelector(getFilteredChannels);
+
   /** LOADING */
   const isLoading = useSelector<RootState, boolean>(
     (state) => state.data.loading
@@ -52,6 +54,16 @@ export default function Home() {
   const liveVideos = useSelector<RootState, any[]>(
     (state) => state.data.liveVideos
   );
+
+  /** ANALYTICS DATA (Popular & Trending) */
+  const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
+  const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
+  const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
+
+  // Filter ONLY Most Listener Radio based on selected country
+  const mostListenedRadios = selectedCountry
+    ? allMostListenedRadios.filter((r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase())
+    : allMostListenedRadios;
 
   // Debug: Check what data we're getting
   console.log("Live Videos Data:", liveVideos);
@@ -76,8 +88,35 @@ export default function Home() {
 
       <main className="radio-container">
 
-
-
+        {/* ================= POPULAR & TRENDING ================= */}
+        <HomeSection
+          title="Popular & Trending"
+          cardVariant="large"
+          data={[...mostListenedPodcasts.slice(0, 10), ...mostListenedRadios.slice(0, 10)]}
+          loading={isLoading}
+          onCardClick={(item) => {
+            // CHECK IF RADIO (has 'type') OR PODCAST
+            if (item.type) {
+              // RADIO LOGIC
+              const sameTypeList = radioList.filter(
+                (r: MediaItem) =>
+                  r.type?.toLowerCase() === item.type?.toLowerCase()
+              );
+              navigate("/radio-player", {
+                state: {
+                  current: item,
+                  list: sameTypeList,
+                  type: item.type,
+                },
+              });
+            } else {
+              // PODCAST LOGIC
+              navigate(`/podcastplayer/${item.id}`, {
+                state: { channel: item },
+              });
+            }
+          }}
+        />
         {/* ================= LIVE ================= */}
         <LiveSection
           title="Live"
@@ -133,6 +172,25 @@ export default function Home() {
             })
           }
         />
+
+        {/* ================= VIDEO CHANNELS ================= */}
+        <HomeSection
+          title="Video Channels"
+          data={filteredChannels.slice(0, 30)}
+          loading={isLoading}
+          cardVariant="video"
+          onViewAll={() => navigate("/all-channels")}
+          onCardClick={(item) => {
+            if (item.channelLink) {
+              window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
+            } else if (item.url) {
+              window.open(item.url, "_blank");
+            } else {
+              console.warn("No channel link found for", item);
+            }
+          }}
+        />
+
 
         {/* ================= BOOKS ================= */}
         <HomeSection

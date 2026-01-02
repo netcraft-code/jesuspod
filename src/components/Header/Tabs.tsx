@@ -34,6 +34,7 @@ export default function Tabs({ active, setActive }: TabsProps) {
             if (t === "Radio") navigate("/radio");
             if (t === "All") navigate("/home");
             if (t === "Podcast") navigate("/podcast");
+            if (t === "Channels") navigate("/channel-listing");
             if (t === "Books") navigate("/books");
             if (t === "Acts2") navigate("/shorts");
             if (t === "Live") navigate("/live-player");

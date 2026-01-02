@@ -1,5 +1,6 @@
 .home-section-container {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
+    /* Tighter spacing (was 40px) */
     width: 100%;
 }
 
@@ -7,7 +8,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    /* Tighter spacing (was 16px) */
     padding: 0 4px;
 }
 
@@ -51,4 +53,13 @@
     flex: 0 0 auto;
     width: 130px;
     /* Fixed width as requested */
+}
+
+.home-card-wrapper.large-wrapper {
+    width: 280px;
+    /* Width for Large/Popular cards */
+}
+
+.home-card-wrapper.video-wrapper {
+    width: 280px;
 }

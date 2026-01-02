@@ -13,7 +13,13 @@ import {
     fetchMostListenedPodcasts,
     fetchNewNoteworthyPodcasts,
     fetchSubscribedPodcasts,
-    fetchLiveVideos
+    fetchLiveVideos,
+    fetchMostWatchedChannels,
+    fetchTopUSAChannels,
+    fetchSavedChannels,
+    fetchMostReadBooks,
+    fetchTopUSABooks,
+    fetchSavedBooks
 } from "../services/dataService";
 
 export const fetchInitialData = createAsyncThunk(
@@ -33,7 +39,13 @@ export const fetchInitialData = createAsyncThunk(
             mostListenedPodcasts,
             newNoteworthyPodcasts,
             subscribedPodcasts,
-            liveVideos
+            liveVideos,
+            mostWatchedChannels,
+            topUSAChannels,
+            savedChannels,
+            mostReadBooks,
+            topUSABooks,
+            savedBooks
         ] = await Promise.all([
             fetchRadio(),
             fetchBooks(),
@@ -48,7 +60,13 @@ export const fetchInitialData = createAsyncThunk(
             fetchMostListenedPodcasts(),
             fetchNewNoteworthyPodcasts(),
             fetchSubscribedPodcasts(userId),
-            fetchLiveVideos()
+            fetchLiveVideos(),
+            fetchMostWatchedChannels(),
+            fetchTopUSAChannels(),
+            fetchSavedChannels(userId),
+            fetchMostReadBooks(),
+            fetchTopUSABooks(),
+            fetchSavedBooks(userId)
         ]);
 
         return {
@@ -65,8 +83,22 @@ export const fetchInitialData = createAsyncThunk(
             mostListenedPodcasts,
             newNoteworthyPodcasts,
             subscribedPodcasts,
-            liveVideos
+            liveVideos,
+            mostWatchedChannels,
+            topUSAChannels,
+            savedChannels,
+            mostReadBooks,
+            topUSABooks,
+            savedBooks
         };
+    }
+);
+
+export const refreshSavedBooks = createAsyncThunk(
+    "data/refreshSavedBooks",
+    async (userId: string) => {
+        const savedBooks = await fetchSavedBooks(userId);
+        return savedBooks;
     }
 );
 
@@ -75,6 +107,14 @@ export const refreshSavedRadios = createAsyncThunk(
     async (userId: string) => {
         const savedRadios = await fetchSavedRadios(userId);
         return savedRadios;
+    }
+);
+
+export const refreshSavedChannels = createAsyncThunk(
+    "data/refreshSavedChannels",
+    async (userId: string) => {
+        const savedChannels = await fetchSavedChannels(userId);
+        return savedChannels;
     }
 );
 
@@ -96,6 +136,12 @@ const dataSlice = createSlice({
         newNoteworthyPodcasts: [] as any[],
         subscribedPodcasts: [] as any[],
         liveVideos: [] as any[],
+        mostWatchedChannels: [] as any[],
+        topUSAChannels: [] as any[],
+        savedChannels: [] as any[],
+        mostReadBooks: [] as any[],
+        topUSABooks: [] as any[],
+        savedBooks: [] as any[],
         selectedCountry: null as string | null, // null = "All Countries"
         loading: false
     },
@@ -118,7 +164,76 @@ const dataSlice = createSlice({
             state.newNoteworthyPodcasts = [];
             state.subscribedPodcasts = [];
             state.liveVideos = [];
+            state.mostWatchedChannels = [];
+            state.topUSAChannels = [];
+            state.savedChannels = [];
             state.selectedCountry = null;
+            state.savedChannels = [];
+            state.mostReadBooks = [];
+            state.topUSABooks = [];
+            state.savedBooks = [];
+            state.selectedCountry = null;
+        },
+        toggleChannelSaveState: (state, action) => {
+            const { channelId, userId } = action.payload;
+
+            // Helper to toggle star array
+            const toggleStar = (item: any) => {
+                if (!item.star) item.star = [];
+                const index = item.star.indexOf(userId);
+                if (index > -1) {
+                    item.star.splice(index, 1); // Unsave
+                } else {
+                    item.star.push(userId); // Save
+                }
+            };
+
+            // Update in all lists
+            const listsToUpdate = [
+                state.mostWatchedChannels,
+                state.topUSAChannels,
+                state.channels,
+                state.savedChannels // Also update savedChannels immediately if present
+            ];
+
+            listsToUpdate.forEach(list => {
+                const channel = list.find((c: any) => c.id === channelId || c._id === channelId);
+                if (channel) {
+                    toggleStar(channel);
+                }
+            });
+
+            // Handle adding/removing from savedChannels explicitly if not found in savedChannels list
+            // This is a bit tricky since we don't have the full object if it wasn't in savedChannels.
+            // Ideally rely on refreshSavedChannels for the list addition/removal proper, 
+            // but here we just update the 'star' property for UI feedback in other lists.
+        },
+        toggleBookSaveState: (state, action) => {
+            const { bookId, userId } = action.payload;
+
+            const toggleStar = (item: any) => {
+                if (!item.star) item.star = [];
+                const index = item.star.indexOf(userId);
+                if (index > -1) {
+                    item.star.splice(index, 1);
+                } else {
+                    item.star.push(userId);
+                }
+            };
+
+            const listsToUpdate = [
+                state.mostReadBooks,
+                state.topUSABooks,
+                state.books,
+                state.savedBooks
+            ];
+
+            listsToUpdate.forEach(list => {
+                const book = list.find((b: any) => b.id === bookId || b._id === bookId);
+                if (book) {
+                    toggleStar(book);
+                }
+            });
         }
     },
     extraReducers: (builder) => {
@@ -135,11 +250,17 @@ const dataSlice = createSlice({
             })
             .addCase(refreshSavedRadios.fulfilled, (state, action) => {
                 state.savedRadios = action.payload;
+            })
+            .addCase(refreshSavedChannels.fulfilled, (state, action) => {
+                state.savedChannels = action.payload;
+            })
+            .addCase(refreshSavedBooks.fulfilled, (state, action) => {
+                state.savedBooks = action.payload;
             });
     }
 });
 
-export const { setSelectedCountry, clearData } = dataSlice.actions;
+export const { setSelectedCountry, clearData, toggleChannelSaveState, toggleBookSaveState } = dataSlice.actions;
 
 // Selector for filtered radio based on selected country
 export const getFilteredRadio = (state: any) => {
@@ -153,6 +274,35 @@ export const getFilteredRadio = (state: any) => {
     // Filter radio by selected country (type field)
     return radio.filter((r: any) =>
         r.type?.toLowerCase() === selectedCountry.toLowerCase()
+    );
+};
+
+// Selector for filtered channels based on selected country
+export const getFilteredChannels = (state: any) => {
+    const { channels, selectedCountry } = state.data;
+
+    // If no country selected or "Global", return all
+    if (!selectedCountry || selectedCountry === "Global") {
+        return channels;
+    }
+
+    // Filter channels by selected country (type field)
+    return channels.filter((c: any) =>
+        c.type?.toLowerCase() === selectedCountry.toLowerCase()
+    );
+};
+
+// Selector for filtered books
+export const getFilteredBooks = (state: any) => {
+    const { books, selectedCountry } = state.data;
+
+    if (!selectedCountry || selectedCountry === "Global") {
+        return books;
+    }
+
+    // Filter books by country (using 'type' or 'country' field)
+    return books.filter((b: any) =>
+        b.type?.toLowerCase() === selectedCountry.toLowerCase()
     );
 };
 

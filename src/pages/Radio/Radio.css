@@ -1,10 +1,14 @@
 .main-content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .content {
   margin-top: var(--header-height, 14vh);
   padding: 0px 18px;
+  flex: 1;
 }
 
 /* TOP BAR */
@@ -25,8 +29,19 @@
 /* GRID */
 .card-grid {
   display: grid;
-  gap: 15px;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px 24px;
+  /* row-gap: 20px, column-gap: 24px */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  /* Slightly smaller min-width for better fit */
+}
+
+/* Only apply width 100% when inside the grid to prevent breaking HomeSection horizontal scroll */
+.card-grid .home-card-wrapper {
+  width: 100%;
+}
+
+.video-wrapper {
+  /* Specific tweaks for video cards if needed */
 }
 
 /* small devices */

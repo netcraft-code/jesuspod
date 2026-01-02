@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Card from "../../components/Cards/Card";
+import { useNavigate } from "react-router-dom";
 
 export default function AllPodcast() {
     const [search, setSearch] = useState("");
@@ -10,7 +11,7 @@ export default function AllPodcast() {
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const podcasts = useSelector((state: any) => state.data.channels);
-
+    const navigate = useNavigate();
     const filtered = podcasts.filter((p: any) =>
         p.title.toLowerCase().includes(search.toLowerCase())
     );
@@ -37,7 +38,11 @@ export default function AllPodcast() {
 
                 <div className="card-grid">
                     {filtered.map((item: any) => (
-                        <Card key={item.id} item={item} onClick={() => console.log()} />
+                        <Card key={item.id} item={item} onClick={(item) =>
+                            navigate(`/podcastplayer/${item.id}`, {
+                                state: { channel: item },
+                            })
+                        } />
                     ))}
                 </div>
             </div>
