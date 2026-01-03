@@ -17,13 +17,15 @@ interface BookCardProps {
     onClick: (item: BookItem) => void;
     isSaved?: boolean;
     onToggleSave?: (item: BookItem, status: boolean) => void;
+    subtitle?: string;
 }
 
 export default function BookCard({
     item,
     onClick,
     isSaved = false,
-    onToggleSave
+    onToggleSave,
+    subtitle
 }: BookCardProps) {
 
     const handleHeartClick = (e: React.MouseEvent) => {
@@ -50,6 +52,13 @@ export default function BookCard({
 
             {/* Title Below Card */}
             <h4 className="book-title" onClick={() => onClick(item)}>{item.title}</h4>
+
+            {/* Subtitle (Type) */}
+            {subtitle && (
+                <div style={{ fontSize: '11px', color: '#999', marginTop: '2px', textTransform: 'uppercase' }}>
+                    {subtitle}
+                </div>
+            )}
 
             {/* Save Icon Below Card */}
             {onToggleSave && (

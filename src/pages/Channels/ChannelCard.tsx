@@ -16,14 +16,16 @@ interface ChannelCardProps {
     onClick: (item: Item) => void;
     isSaved?: boolean;
     onToggleSave?: (item: Item, status: boolean) => void;
-    variant?: string; // Kept for compatibility if passed, though this card dictates its own style
+    variant?: string;
+    subtitle?: string;
 }
 
 export default function ChannelCard({
     item,
     onClick,
     isSaved = false,
-    onToggleSave
+    onToggleSave,
+    subtitle
 }: ChannelCardProps) {
 
     const handleHeartClick = (e: React.MouseEvent) => {
@@ -58,11 +60,6 @@ export default function ChannelCard({
                     className="channel-img"
                 />
 
-                {/* DURATION BADGE (Mocked or Real if avail) */}
-                {/* <div className="channel-duration-badge">
-                    <span className="play-icon-small">▶</span> 51 min
-                </div> */}
-
                 {/* SAVE ICON */}
                 <div
                     className="channel-save-badge"
@@ -83,9 +80,25 @@ export default function ChannelCard({
                 </div>
 
                 {/* TITLE */}
-                <h4 className="channel-title">
-                    {item.title}
-                </h4>
+                <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', zIndex: 2 }}>
+                    <h4 className="channel-title" style={{ margin: 0 }}>
+                        {item.title}
+                    </h4>
+                    {subtitle && (
+                        <div
+                            style={{
+                                fontSize: '11px',
+                                fontWeight: '400',
+                                color: 'rgba(255,255,255,0.8)',
+                                marginTop: '2px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                            }}
+                        >
+                            {subtitle}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

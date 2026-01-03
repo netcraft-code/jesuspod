@@ -15,7 +15,7 @@
   background: #000;
   padding: 10px 20px;
   /* Reduced vertical padding */
-  z-index: 999;
+  z-index: 10000;
 
   /* No wrap for single bar look, overflow handled in middle */
   flex-wrap: nowrap;
@@ -501,5 +501,12 @@
   background: rgba(243, 7, 7, 0.7);
   backdrop-filter: blur(2px);
 
-  z-index: 2;
+  z-index: 9998;
+}
+
+.profile-menu-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 10001;
 }

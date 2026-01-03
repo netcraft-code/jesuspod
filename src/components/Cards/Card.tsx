@@ -20,6 +20,7 @@ interface Card {
   onClick: (item: Item) => void;
   showLiveBadge?: boolean;
   variant?: "standard" | "large" | "video";
+  subtitle?: string;
   isSaved?: boolean;
   onToggleSave?: (item: Item, status: boolean) => void;
 }
@@ -29,6 +30,7 @@ export default function Card({
   onClick,
   showLiveBadge = false,
   variant = "standard",
+  subtitle,
   isSaved = false,
   onToggleSave
 }: Card) {
@@ -98,9 +100,10 @@ export default function Card({
               alignItems: 'center',
               justifyContent: 'center',
               background: 'rgba(0, 0, 0, 0.6)',
-              padding: 6,
               borderRadius: '50%',
-              backdropFilter: 'blur(4px)'
+              width: '32px',
+              height: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
             }}
           >
             <svg
@@ -118,11 +121,30 @@ export default function Card({
           </div>
         )}
 
-        {/* TITLE */}
-        <h4 className={`radio-title ${variant === "video" ? "video-title" : ""}`}>
-          {item.title}
-          {variant === "video" && <span className="video-subtitle">What's it like when everyone...</span>}
-        </h4>
+        {variant === "video" ? (
+          <div className="radio-title video-title">
+            {item.title}
+            <span className="video-subtitle">{item.type || "Channel"}</span>
+          </div>
+        ) : (
+          <div className="radio-title">
+            {item.title}
+            {subtitle && (
+              <div
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '400',
+                  opacity: 0.8,
+                  marginTop: '2px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}
+              >
+                {subtitle}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

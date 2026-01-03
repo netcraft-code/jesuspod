@@ -75,37 +75,56 @@ export default function HomeSection({
                             </div>
                         ))
                     ) : data.length > 0 ? (
-                        data.map((item) => (
-                            isBook ? (
-                                <BookCard
-                                    key={item.id}
-                                    item={item}
-                                    onClick={(itm) => onCardClick && onCardClick(itm)}
-                                    isSaved={item.star?.includes(user?.uid)}
-                                    onToggleSave={onToggleSave}
-                                />
-                            ) : (
-                                <div key={item.id || item.url} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : cardVariant === 'video' ? 'video-wrapper' : cardVariant === 'channel' ? 'channel-card-wrapper' : ''}`}>
-                                    {cardVariant === "channel" ? (
+                        data.map((item) => {
+                            // Check for entityType (Mixed Content) or fall back to props
+                            const type = item.entityType; // 'Book', 'Channel', 'Radio', 'Podcast'
+
+                            if (type === 'Book' || isBook) {
+                                return (
+                                    <BookCard
+                                        key={item.id}
+                                        item={item}
+                                        onClick={(itm) => onCardClick && onCardClick(itm)}
+                                        isSaved={item.star?.includes(user?.uid)}
+                                        onToggleSave={onToggleSave}
+                                        subtitle={type}
+                                    />
+                                );
+                            }
+
+                            // Determine render content for non-books
+                            const renderContent = () => {
+                                if (type === 'Channel' || cardVariant === "channel") {
+                                    return (
                                         <ChannelCard
                                             item={item}
                                             onClick={(itm) => onCardClick && onCardClick(itm)}
                                             isSaved={item.star?.includes(user?.uid)}
                                             onToggleSave={onToggleSave}
+                                            subtitle={type}
                                         />
-                                    ) : (
-                                        <Card
-                                            item={item}
-                                            onClick={() => onCardClick && onCardClick(item)}
-                                            showLiveBadge={showLiveBadge}
-                                            variant={cardVariant}
-                                            isSaved={item.star?.includes(user?.uid)}
-                                            onToggleSave={onToggleSave}
-                                        />
-                                    )}
+                                    );
+                                }
+                                // Default Card (Radio/Podcast/Video/Standard)
+                                return (
+                                    <Card
+                                        item={item}
+                                        onClick={() => onCardClick && onCardClick(item)}
+                                        showLiveBadge={showLiveBadge}
+                                        variant={type === 'Channel' ? 'video' : cardVariant} // If Type is Channel but caught here, treat as video variant?? No, handled above. Just use cardVariant.
+                                        isSaved={item.star?.includes(user?.uid)}
+                                        onToggleSave={onToggleSave}
+                                        subtitle={type}
+                                    />
+                                );
+                            };
+
+                            return (
+                                <div key={item.id || item.url} className={`home-card-wrapper ${cardVariant === 'large' ? 'large-wrapper' : cardVariant === 'video' ? 'video-wrapper' : cardVariant === 'channel' ? 'channel-card-wrapper' : ''}`}>
+                                    {renderContent()}
                                 </div>
-                            )
-                        ))
+                            );
+                        })
                     ) : (
                         <div style={{ padding: '20px 0', color: '#999', fontSize: '14px' }}>
                             {emptyMessage || "No items to display"}

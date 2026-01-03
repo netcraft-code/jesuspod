@@ -127,3 +127,18 @@
 .right-arrow {
     right: 0;
 }
+
+@media (min-width: 1024px) {
+
+    /* Increase standard card size by ~20% on desktop (130px -> 160px) */
+    .home-card-wrapper {
+        width: 160px;
+    }
+
+    /* Ensure specific variants remain at their desired width */
+    .home-card-wrapper.large-wrapper,
+    .home-card-wrapper.video-wrapper,
+    .home-card-wrapper.channel-card-wrapper {
+        width: 280px;
+    }
+}

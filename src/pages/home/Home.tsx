@@ -40,9 +40,13 @@ export default function Home() {
   );
 
   /** PODCAST */
-  const channels = useSelector<RootState, MediaItem[]>(
-    (state) => state.data.channels
-  );
+
+  const podcasts = useSelector((state: any) => state.data.podcasts);
+
+
+  // const channels = useSelector<RootState, MediaItem[]>(
+  //   (state) => state.data.channels
+  // );
 
   const filteredChannels = useSelector(getFilteredChannels);
 
@@ -59,6 +63,9 @@ export default function Home() {
   /** ANALYTICS DATA (Popular & Trending) */
   const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
   const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
+  // const mostWatchedChannels = useSelector((state: RootState) => state.data.mostWatchedChannels) || [];
+  // const mostReadBooks = useSelector((state: RootState) => state.data.mostReadBooks) || [];
+
   const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
 
   // Filter ONLY Most Listener Radio based on selected country
@@ -66,9 +73,32 @@ export default function Home() {
     ? allMostListenedRadios.filter((r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase())
     : allMostListenedRadios;
 
+  // MERGE & SORT LOGIC
+  const getPopularity = (item: any) => {
+    // Normalize popularity score. Adjust keys based on real API data. 
+    // Fallback to random/id if no data (for now using 0 to avoid crash).
+    const score = item.views || item.clicks || item.listeners || item.reads || item.popularity || 0;
+    return Number(score);
+  };
+
+  // Get Top 5 from each category first to ensure diversity
+  const topRadios = mostListenedRadios.slice(0, 15).map(item => ({ ...item, entityType: 'Radio', popularity: getPopularity(item) }));
+  const topPodcasts = mostListenedPodcasts.slice(0, 15).map(item => ({ ...item, entityType: 'Podcast', popularity: getPopularity(item) }));
+  // const topChannels = mostWatchedChannels.slice(0, 5).map(item => ({ ...item, entityType: 'Channel', popularity: getPopularity(item) }));
+  // const topBooks = mostReadBooks.slice(0, 5).map(item => ({ ...item, entityType: 'Book', popularity: getPopularity(item) }));
+
+  // Combine and sort the top picks
+  const mixedPopularData = [
+    ...topPodcasts,
+    ...topRadios,
+
+    // ...topChannels,
+    // ...topBooks
+  ].sort((a, b) => b.popularity - a.popularity); // Descending order
+
   // Debug: Check what data we're getting
-  console.log("Live Videos Data:", liveVideos);
-  console.log("Live Videos Count:", liveVideos.length);
+  console.log("mixedPopularData:", mixedPopularData);
+
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth?.user);
@@ -85,6 +115,14 @@ export default function Home() {
       return;
     }
 
+    if (item.entityType === 'Book' || (!item.entityType && item.author)) {
+      dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+      await toggleBookSave(item.id, user.uid, isSaved);
+      dispatch(refreshSavedBooks(user.uid) as any);
+      return;
+    }
+    // ... handle other save types if needed, currently only book save logic was explicit here
+    // Default fallback for book saves if passed directly
     dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
 
     const success = await toggleBookSave(item.id, user.uid, isSaved);
@@ -112,31 +150,35 @@ export default function Home() {
         {/* ================= POPULAR & TRENDING ================= */}
         <HomeSection
           title="Popular & Trending"
-          cardVariant="large"
-          data={[...mostListenedPodcasts.slice(0, 10), ...mostListenedRadios.slice(0, 10)]}
+          cardVariant="large"  /* We will handle mixed types inside HomeSection but keep 'large' as default base style */
+          data={mixedPopularData}
           loading={isLoading}
           onCardClick={(item) => {
-            // CHECK IF RADIO (has 'type') OR PODCAST
-            if (item.type) {
-              // RADIO LOGIC
-              const sameTypeList = radioList.filter(
-                (r: MediaItem) =>
-                  r.type?.toLowerCase() === item.type?.toLowerCase()
-              );
-              navigate("/radio-player", {
-                state: {
-                  current: item,
-                  list: sameTypeList,
-                  type: item.type,
-                },
-              });
+            // ROUTING LOGIC BASED ON TYPE
+            if (item.entityType === 'Radio') {
+              const sameTypeList = radioList.filter((r: MediaItem) => r.type?.toLowerCase() === item.type?.toLowerCase());
+              navigate("/radio-player", { state: { current: item, list: sameTypeList, type: item.type } });
+            } else if (item.entityType === 'Podcast') {
+              navigate(`/podcastplayer/${item.id}`, { state: { channel: item } });
+            } else if (item.entityType === 'Channel') {
+              // Open externally or specific page? Matching 'Video Channels' logic:
+              if (item.channelLink) window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
+              else if (item.url) window.open(item.url, "_blank");
+            } else if (item.entityType === 'Book') {
+              handleBookClick(item);
             } else {
-              // PODCAST LOGIC
-              navigate(`/podcastplayer/${item.id}`, {
-                state: { channel: item },
-              });
+              // Fallback for existing logic if entityType missing
+              if (item.type) {
+                const sameTypeList = radioList.filter((r: MediaItem) => r.type?.toLowerCase() === item.type?.toLowerCase());
+                navigate("/radio-player", { state: { current: item, list: sameTypeList, type: item.type } });
+              } else {
+                navigate(`/podcastplayer/${item.id}`, { state: { channel: item } });
+              }
             }
           }}
+          // Pass handleToggleSave but note it handles books primarily. 
+          // If we want universal save, we need a universal handler. For now passing as is.
+          onToggleSave={handleToggleSave}
         />
         {/* ================= LIVE ================= */}
         <LiveSection
@@ -162,7 +204,7 @@ export default function Home() {
         {/* ================= RADIO ================= */}
         <HomeSection
           title="Radio"
-          data={radioList}
+          data={radioList.slice(103, 150)}
           loading={isLoading}
           onViewAll={() => navigate("/all-radio")}
           onCardClick={(item) => {
@@ -184,7 +226,7 @@ export default function Home() {
         {/* ================= PODCAST ================= */}
         <HomeSection
           title="Podcast"
-          data={channels}
+          data={podcasts.slice(50, 100)}
           loading={isLoading}
           onViewAll={() => navigate("/all-podcast")}
           onCardClick={(item) =>
@@ -197,7 +239,7 @@ export default function Home() {
         {/* ================= VIDEO CHANNELS ================= */}
         <HomeSection
           title="Video Channels"
-          data={filteredChannels.slice(0, 30)}
+          data={filteredChannels.slice(100, 150)}
           loading={isLoading}
           cardVariant="channel"
           onViewAll={() => navigate("/all-channels")}
@@ -216,7 +258,7 @@ export default function Home() {
         {/* ================= BOOKS ================= */}
         <HomeSection
           title="Books"
-          data={books}
+          data={books.slice(50, 100)}
           loading={isLoading}
           onViewAll={() => navigate("/all-books")}
           onCardClick={handleBookClick}

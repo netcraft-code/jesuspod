@@ -41,7 +41,7 @@ export default function BooksHome() {
 
 
     const mostReadBooks = useSelector((state: RootState) => state.data.mostReadBooks);
-    const top10USA = useSelector((state: RootState) => state.data.topUSABooks);
+    // const top10USA = useSelector((state: RootState) => state.data.topUSABooks);
     const savedBooks = useSelector((state: RootState) => state.data.savedBooks);
     // Categories Data
     const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean);
