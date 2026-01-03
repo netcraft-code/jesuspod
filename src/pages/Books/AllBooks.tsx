@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import Card from "../../components/Cards/Card";
+
+import BookCard from "../../components/Cards/BookCard";
 import "../Radio/Radio.css"; // Reuse Radio/Channel CSS
 import { useSelector, useDispatch } from "react-redux";
 import { trackBookRead } from "../../services/booksAnalytics";
@@ -109,17 +110,15 @@ export default function AllBooks() {
                     />
                 </div>
 
-                <div className="card-grid">
+                <div className="book-grid">
                     {filtered.map((book: any) => (
-                        <div key={book.id} className="home-card-wrapper video-wrapper">
-                            <Card
-                                item={book}
-                                variant="video" // Use video variant for consistent styling if desired, or default
-                                onClick={handleBookClick}
-                                isSaved={book.star?.includes(user?.uid)}
-                                onToggleSave={handleToggleSave}
-                            />
-                        </div>
+                        <BookCard
+                            key={book.id}
+                            item={book}
+                            onClick={handleBookClick}
+                            isSaved={book.star?.includes(user?.uid)}
+                            onToggleSave={handleToggleSave}
+                        />
                     ))}
                 </div>
             </div>

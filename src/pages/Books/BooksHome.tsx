@@ -1,12 +1,19 @@
+
+
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Section from "../../components/Section/Section";
-import CircleImageCard from "../../components/Cards/CircleImageCard";
+
 import type { RootState } from "../../redux/store";
+
 import { categoryImages } from "../../assets/images/CatImages";
+import { trackBookRead } from "../../services/booksAnalytics";
+import { refreshSavedBooks, toggleBookSaveState } from "../../redux/dataSlice";
+import { toggleBookSave } from "../../services/dataService";
+import CircleImageCard from "../../components/Cards/CircleImageCard";
 
 interface BookItem {
     id: string;
@@ -21,28 +28,54 @@ interface BookItem {
 
 export default function BooksHome() {
     const navigate = useNavigate();
-    const books = useSelector((state: RootState) => state.data.books) as BookItem[];
+
     const loading = useSelector((state: any) => state.data.loading);
 
     const [active, setActive] = useState<string>("Books");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-    // Split books into sections (using dummy logic for now)
-    const mostReadBooks = books.slice(0, 10);
-    const top10USA = books.slice(10, 20);
-    const booksToLove = books.slice(20, 30);
+    const dispatch = useDispatch();
+    const user = useSelector((state: any) => state.auth.user);
+    const books = useSelector((state: RootState) => state.data.books) as BookItem[];
 
-    // Get unique categories
+
+    const mostReadBooks = useSelector((state: RootState) => state.data.mostReadBooks);
+    const top10USA = useSelector((state: RootState) => state.data.topUSABooks);
+    const savedBooks = useSelector((state: RootState) => state.data.savedBooks);
+    // Categories Data
     const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean);
 
     const filteredCategories = categories.filter(cat =>
         cat.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleBookClick = (book: BookItem) => {
+    const handleBookClick = (book: any) => {
+        // Track analytics
+        trackBookRead(book.id, book.title, book.type || "Unknown");
+
         if (book.url) {
             window.open(book.url, "_blank");
+        }
+    };
+
+    const handleToggleSave = async (item: any, isSaved: boolean) => {
+        if (!user?.uid) {
+            alert("Please login to save books");
+            return;
+        }
+
+        // Optimistic Update
+        dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+
+        const success = await toggleBookSave(item.id, user.uid, isSaved);
+        if (success) {
+            // Refresh saved list
+            dispatch(refreshSavedBooks(user.uid) as any);
+        } else {
+            // Revert
+            dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+            alert("Failed to save book");
         }
     };
 
@@ -63,26 +96,26 @@ export default function BooksHome() {
                     data={mostReadBooks}
 
                     onCardClick={handleBookClick}
+                    isBook={true}
+                    onToggleSave={handleToggleSave}
+                    user={user}
                 />
 
-                {/* Top 10 in the US */}
-                <Section
-                    title="Top 10 in the US"
-                    onViewAll={() => navigate("/all-books")}
-                    data={top10USA}
-
-                    onCardClick={handleBookClick}
-                />
 
                 {/* Books to Love */}
                 <Section
                     title="Books to Love"
-                    onViewAll={() => navigate("/all-books")}
-                    data={booksToLove}
+                    onViewAll={() => navigate("/all-books", { state: { filter: 'saved' } })}
+                    data={savedBooks}
 
                     onCardClick={handleBookClick}
+                    isBook={true}
+                    onToggleSave={handleToggleSave}
+                    user={user}
+                    emptyMessage="Start saving books to see them here ❤️"
                 />
 
+                {/* Search for Books (Country Grid - Matching Channels) */}
                 {/* Search for Books (Category Grid) */}
                 <div className="search-radio-section">
                     <div className="search-radio-header">

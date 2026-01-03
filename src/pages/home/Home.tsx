@@ -4,11 +4,12 @@ import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio, getFilteredChannels } from "../../redux/dataSlice";
+import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
+import { toggleBookSave } from "../../services/dataService";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -69,9 +70,29 @@ export default function Home() {
   console.log("Live Videos Data:", liveVideos);
   console.log("Live Videos Count:", liveVideos.length);
 
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth?.user);
+
   const handleBookClick = (book: BookItem) => {
     if (book.url) {
       window.open(book.url, "_blank");
+    }
+  };
+
+  const handleToggleSave = async (item: any, isSaved: boolean) => {
+    if (!user?.uid) {
+      alert("Please login to save books");
+      return;
+    }
+
+    dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+
+    const success = await toggleBookSave(item.id, user.uid, isSaved);
+    if (success) {
+      dispatch(refreshSavedBooks(user.uid) as any);
+    } else {
+      dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+      alert("Failed to save book");
     }
   };
 
@@ -199,6 +220,9 @@ export default function Home() {
           loading={isLoading}
           onViewAll={() => navigate("/all-books")}
           onCardClick={handleBookClick}
+          isBook={true}
+          user={user}
+          onToggleSave={handleToggleSave}
         />
 
 

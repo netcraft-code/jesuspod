@@ -492,3 +492,16 @@
     width: 100%;
   }
 }
+
+.book-grid {
+  display: grid;
+  gap: 25px 20px;
+  /* Vertical gap 25px, Horizontal 20px */
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  padding-bottom: 20px;
+}
+
+.book-grid .book-card-container {
+  width: 100%;
+  margin-right: 0;
+}
