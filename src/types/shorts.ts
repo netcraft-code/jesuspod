@@ -37,6 +37,7 @@ export interface ShortsResponse {
 export interface ShortItemProps {
     item: Short;
     isActive: boolean;
+    isSaved?: boolean;
     onEnd?: () => void;
     onLikeToggle: (shortId: string, isLiked: boolean) => Promise<void>;
     onSaveToggle: (shortId: string, isSaved: boolean) => Promise<void>;

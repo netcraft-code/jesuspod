@@ -21,6 +21,7 @@ import BooksHome from "../pages/Books/BooksHome";
 import AllBooks from "../pages/Books/AllBooks";
 import BooksCategory from "../pages/Books/BooksCategory";
 import Shorts from "../pages/Shorts/Shorts";
+import SavedShorts from "../pages/SavedShorts/SavedShorts";
 import Subscriptions from "../pages/Profile/Subscriptions";
 import Downloads from "../pages/Profile/Downloads";
 import LiveList from "../pages/Live/LiveList";
@@ -64,6 +65,7 @@ export default function AllRoutes() {
 
       {/* Shorts */}
       <Route path="/shorts" element={<PrivateRoute><Shorts /></PrivateRoute>} />
+      <Route path="/saved-shorts" element={<PrivateRoute><SavedShorts /></PrivateRoute>} />
 
       {/* Books Routes */}
       <Route path="/books" element={<PrivateRoute><BooksHome /></PrivateRoute>} />

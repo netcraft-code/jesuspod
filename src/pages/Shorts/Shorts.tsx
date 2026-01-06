@@ -15,6 +15,7 @@ export default function Shorts() {
     const [active, setActive] = useState("Acts2");
     const [profileOpen, setProfileOpen] = useState(false);
     const [shortsData, setShortsData] = useState<Short[]>([]);
+    const [savedShortIds, setSavedShortIds] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
     const [hasMore, setHasMore] = useState(true);
@@ -44,10 +45,14 @@ export default function Shorts() {
             // Get user viewing history if logged in
             const userHistory = user?.uid
                 ? await ShortsService.getUserViewHistory(user.uid)
-                : { viewedShorts: [], tagPreferences: {} };
+                : { viewedShorts: [], tagPreferences: {}, savedShorts: [], likedShorts: [] };
 
             console.log(`User has viewed ${userHistory.viewedShorts.length} shorts`);
             console.log("User tag preferences:", userHistory.tagPreferences);
+
+            if (userHistory.savedShorts) {
+                setSavedShortIds(new Set(userHistory.savedShorts));
+            }
 
             // Create diverse feed with tag rotation
             const diverseFeed = ShortsService.createDiverseFeed(
@@ -134,6 +139,17 @@ export default function Shorts() {
 
             try {
                 await ShortsService.toggleSave(shortId, user.uid, isSaved);
+
+                // Update local state
+                setSavedShortIds(prev => {
+                    const newSet = new Set(prev);
+                    if (isSaved) {
+                        newSet.add(shortId);
+                    } else {
+                        newSet.delete(shortId);
+                    }
+                    return newSet;
+                });
             } catch (error) {
                 console.error("Error toggling save:", error);
                 throw error;
@@ -296,6 +312,7 @@ export default function Shorts() {
                                 key={short.id}
                                 item={short}
                                 isActive={index === activeIndex}
+                                isSaved={savedShortIds.has(short.id)}
                                 onEnd={handleVideoEnd}
                                 onLikeToggle={handleLikeToggle}
                                 onSaveToggle={handleSaveToggle}

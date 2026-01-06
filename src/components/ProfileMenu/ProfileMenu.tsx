@@ -1,4 +1,5 @@
 import React from "react";
+import { FaBookmark, FaTv, FaBook } from "react-icons/fa";
 
 import defaultAvatar from "../../assets/default-avatar.svg";
 import { images } from "../../assets/images";
@@ -50,7 +51,7 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                         className="profile-image"
                     />
                     <div className="camera-overlay">
-                        <img src={images.camera} alt="camera" width={16} />
+                        <img src={images.camera} alt="camera" width={16} color="white" />
                     </div>
                 </div>
                 <h3 className="profile-name">{user?.displayName || "No Name"}</h3>
@@ -63,6 +64,27 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                     label="Favorite Radio"
                     arrow
                     onClick={() => navigate("/favorite-radios")}
+                />
+
+                <MenuItem
+                    icon={<FaBookmark size={20} color="#ff4444" />}
+                    label="Favorite Shorts"
+                    arrow
+                    onClick={() => navigate("/saved-shorts")}
+                />
+
+                <MenuItem
+                    icon={<FaTv size={20} color="#ff4444" />}
+                    label="Favorite Channels"
+                    arrow
+                    onClick={() => navigate("/all-channels", { state: { filter: 'saved' } })}
+                />
+
+                <MenuItem
+                    icon={<FaBook size={20} color="#ff4444" />}
+                    label="Favorite Books"
+                    arrow
+                    onClick={() => navigate("/all-books", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem

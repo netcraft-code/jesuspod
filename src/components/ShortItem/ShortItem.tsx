@@ -8,13 +8,14 @@ import "./ShortItem.css";
 export default function ShortItem({
     item,
     isActive,
+    isSaved = false,
     onEnd,
     onLikeToggle,
     onSaveToggle,
     onViewIncrement,
 }: ShortItemProps) {
     const [liked, setLiked] = useState(false);
-    const [saved, setSaved] = useState(false);
+    const [saved, setSaved] = useState(isSaved);
     const [localLikeCount, setLocalLikeCount] = useState(item.likeCount || 0);
     const [hasViewCounted, setHasViewCounted] = useState(false);
 
@@ -23,6 +24,11 @@ export default function ShortItem({
         setLocalLikeCount(item.likeCount || 0);
         setHasViewCounted(false);
     }, [item]);
+
+    // Sync saved state with prop
+    useEffect(() => {
+        setSaved(isSaved);
+    }, [isSaved]);
 
     // Handle like button click
     const handleLike = useCallback(async () => {

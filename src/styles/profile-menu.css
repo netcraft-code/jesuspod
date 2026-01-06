@@ -11,6 +11,14 @@
     z-index: 9999;
     box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
     border: 1px solid #1a1a1a;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.profile-menu::-webkit-scrollbar {
+    display: none;
 }
 
 @media (max-width: 480px) {

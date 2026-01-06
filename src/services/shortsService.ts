@@ -193,6 +193,8 @@ export class ShortsService {
     static async getUserViewHistory(userId: string): Promise<{
         viewedShorts: string[];
         tagPreferences: Record<string, number>;
+        savedShorts: string[];
+        likedShorts: string[];
     }> {
         try {
             const userDoc = await getDoc(doc(firestore, this.USERS_COLLECTION, userId));
@@ -201,18 +203,78 @@ export class ShortsService {
                 return {
                     viewedShorts: userData.viewedShorts || [],
                     tagPreferences: userData.tagPreferences || {},
+                    savedShorts: userData.savedShorts || [],
+                    likedShorts: userData.likedShorts || [],
                 };
             }
             return {
                 viewedShorts: [],
                 tagPreferences: {},
+                savedShorts: [],
+                likedShorts: [],
             };
         } catch (error) {
             console.error("Error fetching user view history:", error);
             return {
                 viewedShorts: [],
                 tagPreferences: {},
+                savedShorts: [],
+                likedShorts: [],
             };
+        }
+    }
+
+    /**
+     * Get user's saved shorts with full short data
+     */
+    static async getUserSavedShorts(userId: string, limitCount = 20): Promise<Short[]> {
+        try {
+            const userDoc = await getDoc(doc(firestore, this.USERS_COLLECTION, userId));
+            if (!userDoc.exists()) {
+                return [];
+            }
+
+            const userData = userDoc.data();
+            const savedShortIds = userData.savedShorts || [];
+
+            if (savedShortIds.length === 0) {
+                return [];
+            }
+
+            // Fetch the actual short documents
+            // Note: Firestore has a limit of 10 items for 'in' queries, so we need to batch
+            const batchSize = 10;
+            const savedShorts: Short[] = [];
+
+            for (let i = 0; i < savedShortIds.length; i += batchSize) {
+                const batch = savedShortIds.slice(i, i + batchSize);
+                const q = query(
+                    collection(firestore, this.COLLECTION_NAME),
+                    where("__name__", "in", batch)
+                );
+
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    // Only include active shorts? Assuming yes, or maybe show inactive as unavailable
+                    savedShorts.push({
+                        id: doc.id,
+                        uid: doc.id,
+                        ...doc.data(),
+                    } as Short);
+                });
+            }
+
+            // Sort by the order they were saved (most recent first)
+            // Assuming savedShorts array in user doc creates the order, but we need to reverse it to show newest save first if using arrayUnion
+            return savedShorts.sort((a, b) => {
+                const aIndex = savedShortIds.indexOf(a.id);
+                const bIndex = savedShortIds.indexOf(b.id);
+                return bIndex - aIndex; // Reverse order for most recent first
+            }).slice(0, limitCount);
+
+        } catch (error) {
+            console.error("Error fetching saved shorts:", error);
+            throw error;
         }
     }
 
