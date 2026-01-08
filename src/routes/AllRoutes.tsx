@@ -26,6 +26,8 @@ import Subscriptions from "../pages/Profile/Subscriptions";
 import Downloads from "../pages/Profile/Downloads";
 import LiveList from "../pages/Live/LiveList";
 import LivePlayer from "../pages/Live/LivePlayer";
+import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
+import HelpCenter from "../pages/HelpCenter/HelpCenter";
 
 // Component to handle base URL redirect
 function BaseRedirect() {
@@ -79,6 +81,10 @@ export default function AllRoutes() {
       {/* Live Routes */}
       <Route path="/live-list" element={<PrivateRoute><LiveList /></PrivateRoute>} />
       <Route path="/live-player" element={<PrivateRoute><LivePlayer /></PrivateRoute>} />
+
+      {/* Profile Menu Routes */}
+      <Route path="/privacy-policy" element={<PrivateRoute><PrivacyPolicy /></PrivateRoute>} />
+      <Route path="/help-center" element={<PrivateRoute><HelpCenter /></PrivateRoute>} />
 
       {/* 404 Route */}
       <Route path="*" element={<div style={{ padding: 40 }}>404 - Not Found</div>} />

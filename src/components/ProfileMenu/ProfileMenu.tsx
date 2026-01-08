@@ -104,19 +104,31 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                 <MenuItem
                     icon={<img src={share} alt="share" width={25} />}
                     label="Share App with Friends"
-                    onClick={() => alert("Share")}
+                    onClick={() => {
+                        const shareData = {
+                            title: 'JesusPod',
+                            text: 'Check out the JesusPod app!',
+                            url: window.location.origin,
+                        };
+                        if (navigator.share) {
+                            navigator.share(shareData).catch(err => console.log('Error sharing', err));
+                        } else {
+                            navigator.clipboard.writeText(window.location.origin);
+                            alert("Link copied to clipboard!");
+                        }
+                    }}
                 />
 
                 <MenuItem
                     icon={<img src={privacy} alt="privacy" width={20} />}
                     label="Privacy Policy"
-                    onClick={() => alert("Privacy Policy")}
+                    onClick={() => navigate("/privacy-policy")}
                 />
 
                 <MenuItem
                     icon={<img src={help} alt="help" width={25} />}
                     label="Help Center"
-                    onClick={() => alert("Help Center")}
+                    onClick={() => navigate("/help-center")}
                 />
 
                 <MenuItem

@@ -252,6 +252,9 @@
   .short-actions {
     padding: 20px 16px 24px 16px;
     gap: 20px;
+    right: 10px;
+    /* Override desktop positioning */
+    bottom: 50px;
   }
 
   .short-action-btn {
@@ -285,6 +288,9 @@
   .short-actions {
     padding: 18px 14px 22px 14px;
     gap: 18px;
+    right: 5px;
+    /* Tighter spacing for very small screens */
+    bottom: 60px;
   }
 
   .short-action-btn {

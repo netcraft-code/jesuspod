@@ -1,0 +1,110 @@
+.help-center-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.help-header {
+    display: none;
+    /* Hide internal header as we use main Header */
+}
+
+.help-content {
+    flex: 1;
+    padding: 20px;
+    padding-top: 150px;
+    /* Space for fixed Header */
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    /* Center content */
+}
+
+.help-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.help-input,
+.help-textarea {
+    background-color: #1c1c1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 15px;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.help-input:disabled {
+    background-color: #111;
+    color: #777;
+    border-color: #222;
+    cursor: not-allowed;
+}
+
+.help-textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.help-textarea:focus,
+.help-input:focus {
+    outline: none;
+    border-color: #ff4444;
+}
+
+.help-submit-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 20px auto 0;
+    /* Center button */
+    width: fit-content;
+    min-width: 200px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.help-submit-button:hover:not(:disabled) {
+    background-color: #e03e3e;
+    transform: scale(1.02);
+}
+
+.help-submit-button:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.success-message {
+    color: #4caf50;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.error-message {
+    color: #f44336;
+    text-align: center;
+    margin-top: 10px;
+}

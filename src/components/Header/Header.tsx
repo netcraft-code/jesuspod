@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Tabs from "./Tabs";
 import ProfileButton from "./ProfileButton";
 import CountryMenu from "./CountryMenu";
@@ -32,6 +33,8 @@ export default function Header({
     (state) => state.auth.user
   );
 
+  const navigate = useNavigate();
+
   const [countryOpen, setCountryOpen] = useState<boolean>(false);
 
   const firstLetter =
@@ -40,6 +43,39 @@ export default function Header({
     "";
 
   const overlayActive = profileOpen || countryOpen;
+
+  // REFS for click detection
+  const countryRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // CLICK OUTSIDE HANDLER
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Close Country Menu if open and clicked outside
+      if (countryOpen && countryRef.current && !countryRef.current.contains(event.target as Node)) {
+        setCountryOpen(false);
+      }
+
+      // Close Profile Menu if open and clicked outside both button and menu
+      if (
+        profileOpen &&
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node) &&
+        profileButtonRef.current &&
+        !profileButtonRef.current.contains(event.target as Node)
+      ) {
+        setProfileOpen(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [countryOpen, profileOpen, setCountryOpen, setProfileOpen]);
 
   return (
     <>
@@ -54,7 +90,13 @@ export default function Header({
         }}
       >
         <div className="header-left">
-          <div className="logo">JesusPOD</div>
+          <div
+            className="logo"
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            JesusPOD
+          </div>
         </div>
 
         {/* CENTER TABS */}
@@ -63,17 +105,21 @@ export default function Header({
         </div>
 
         <div className="header-right">
-          <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
+          <div ref={countryRef} style={{ position: 'relative' }}>
+            <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
+          </div>
 
-          <ProfileButton
-            letter={firstLetter}
-            onClick={() => setProfileOpen(!profileOpen)}
-          />
+          <div ref={profileButtonRef}>
+            <ProfileButton
+              letter={firstLetter}
+              onClick={() => setProfileOpen(!profileOpen)}
+            />
+          </div>
         </div>
       </header>
 
       {profileOpen && user && (
-        <div className="profile-menu-container">
+        <div className="profile-menu-container" ref={profileMenuRef}>
           <ProfileMenu user={user} />
         </div>
       )}

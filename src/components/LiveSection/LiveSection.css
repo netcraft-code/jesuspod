@@ -21,6 +21,7 @@
     margin: 0;
 }
 
+
 .live-view-all {
     color: #9ea3a8;
     cursor: pointer;
@@ -30,9 +31,10 @@
 }
 
 .live-view-all:hover {
-    color: #d62839;
-    text-decoration: underline;
+    color: #fff;
 }
+
+
 
 /* Horizontal Scroll Row */
 .live-section-scroll-row {

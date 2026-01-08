@@ -30,7 +30,7 @@
   overflow: hidden;
 }
 
-.channel-title {
+.channel-title-details {
   font-size: 21px;
   font-weight: 700;
   margin-bottom: 10px;
@@ -452,7 +452,7 @@
     margin-top: 80px;
   }
 
-  .channel-title {
+  .channel-title-details {
     font-size: 18px;
   }
 

@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks } from "../../redux/dataSlice";
+import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks, toggleChannelSaveState, refreshSavedChannels } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
-import { toggleBookSave } from "../../services/dataService";
+import { toggleBookSave, toggleChannelSave } from "../../services/dataService";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -115,14 +115,23 @@ export default function Home() {
       return;
     }
 
+    // console.log("item", item);
+
     if (item.entityType === 'Book' || (!item.entityType && item.author)) {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
       await toggleBookSave(item.id, user.uid, isSaved);
       dispatch(refreshSavedBooks(user.uid) as any);
       return;
     }
-    // ... handle other save types if needed, currently only book save logic was explicit here
-    // Default fallback for book saves if passed directly
+
+    if (item.entityType === 'Channel' || (!item.entityType && (item.channelLink || item.subscribers))) {
+      dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
+      await toggleChannelSave(item.id, user.uid, isSaved);
+      dispatch(refreshSavedChannels(user.uid) as any);
+      return;
+    }
+
+
     dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
 
     const success = await toggleBookSave(item.id, user.uid, isSaved);
@@ -132,6 +141,17 @@ export default function Home() {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
       alert("Failed to save book");
     }
+
+    // ... handle other save types if needed, currently only book save logic was explicit here
+    // Default fallback for book saves if passed directly - REMOVED risky fallback, explicit checks preferred
+    // dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+    // const success = await toggleBookSave(item.id, user.uid, isSaved);
+    // if (success) {
+    //   dispatch(refreshSavedBooks(user.uid) as any);
+    // } else {
+    //   dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
+    //   alert("Failed to save book");
+    // }
   };
 
   return (
@@ -252,6 +272,8 @@ export default function Home() {
               console.warn("No channel link found for", item);
             }
           }}
+          onToggleSave={handleToggleSave}
+          user={user}
         />
 
 

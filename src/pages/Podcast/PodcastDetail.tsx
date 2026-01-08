@@ -455,7 +455,7 @@ export default function PodcastDetail() {
         {/* LEFT 20% */}
         <div className="podcast-layout">
           <div className="podcast-left" ref={scrollRef} onScroll={handleScroll}>
-            <h2 className="channel-title">
+            <h2 className="channel-title-details">
               {(() => {
                 const fullTitle = channel?.title || "";
                 const shouldTruncate = fullTitle.length > 50;
@@ -465,8 +465,8 @@ export default function PodcastDetail() {
                     {channelTitleExpanded
                       ? fullTitle
                       : shouldTruncate
-                      ? fullTitle.slice(0, 50) + "..."
-                      : fullTitle}
+                        ? fullTitle.slice(0, 50) + "..."
+                        : fullTitle}
                     {shouldTruncate && (
                       <span
                         onClick={() =>
@@ -500,8 +500,8 @@ export default function PodcastDetail() {
                     {channelDescExpanded
                       ? fullDesc
                       : shouldTruncate
-                      ? fullDesc.slice(0, 120) + "..."
-                      : fullDesc}
+                        ? fullDesc.slice(0, 120) + "..."
+                        : fullDesc}
                     {shouldTruncate && (
                       <span
                         onClick={() =>
@@ -536,8 +536,8 @@ export default function PodcastDetail() {
                   {subscribeLoading
                     ? "Loading..."
                     : isSubscribed
-                    ? "Unfollow"
-                    : "Follow"}
+                      ? "Unfollow"
+                      : "Follow"}
                 </span>
               </button>
 
@@ -555,8 +555,8 @@ export default function PodcastDetail() {
                   downloadingEpisode !== null
                     ? "Downloading..."
                     : currentEpisode
-                    ? "Download current episode"
-                    : "Select an episode first"
+                      ? "Download current episode"
+                      : "Select an episode first"
                 }
                 style={{
                   opacity: downloadingEpisode !== null ? 0.5 : 1,
@@ -591,9 +591,8 @@ export default function PodcastDetail() {
                 return (
                   <div
                     key={index}
-                    className={`episode-row ${
-                      isCurrent ? "active-episode" : ""
-                    }`}
+                    className={`episode-row ${isCurrent ? "active-episode" : ""
+                      }`}
                   >
                     <div className="episode-info">
                       <h4 className="episode-title">
@@ -607,25 +606,25 @@ export default function PodcastDetail() {
                               {isExpanded
                                 ? fullTitle
                                 : shouldTruncate
-                                ? fullTitle.slice(0, 50) + "..."
-                                : fullTitle}
+                                  ? fullTitle.slice(0, 50) + "..."
+                                  : fullTitle}
                               {downloadedEpisodeIds.includes(
                                 item?.guid?.[0]?._ || item.title?.[0]
                               ) && (
-                                <span
-                                  style={{
-                                    marginLeft: "8px",
-                                    padding: "2px 8px",
-                                    backgroundColor: "#4CAF50",
-                                    color: "white",
-                                    borderRadius: "4px",
-                                    fontSize: "10px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  ✓ SAVED
-                                </span>
-                              )}
+                                  <span
+                                    style={{
+                                      marginLeft: "8px",
+                                      padding: "2px 8px",
+                                      backgroundColor: "#4CAF50",
+                                      color: "white",
+                                      borderRadius: "4px",
+                                      fontSize: "10px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    ✓ SAVED
+                                  </span>
+                                )}
                               {shouldTruncate && (
                                 <span
                                   onClick={(e) => {
@@ -667,8 +666,8 @@ export default function PodcastDetail() {
                               {isExpanded
                                 ? fullDesc
                                 : shouldTruncate
-                                ? fullDesc.slice(0, 80) + "..."
-                                : fullDesc}
+                                  ? fullDesc.slice(0, 80) + "..."
+                                  : fullDesc}
                               {shouldTruncate && (
                                 <span
                                   onClick={(e) => {
@@ -786,8 +785,8 @@ export default function PodcastDetail() {
                         {playerTitleExpanded
                           ? fullTitle
                           : shouldTruncate
-                          ? fullTitle.slice(0, 100) + "..."
-                          : fullTitle}
+                            ? fullTitle.slice(0, 100) + "..."
+                            : fullTitle}
                         {shouldTruncate && (
                           <span
                             onClick={() =>
@@ -820,8 +819,8 @@ export default function PodcastDetail() {
                         {playerDescExpanded
                           ? fullDesc
                           : shouldTruncate
-                          ? fullDesc.slice(0, 160) + "..."
-                          : fullDesc}
+                            ? fullDesc.slice(0, 160) + "..."
+                            : fullDesc}
                         {shouldTruncate && (
                           <span
                             onClick={() =>
@@ -888,9 +887,8 @@ export default function PodcastDetail() {
                   </button>
 
                   <button
-                    className={`podcast-ctrl-btn play-main-btn ${
-                      isPlaying ? "playing" : ""
-                    }`}
+                    className={`podcast-ctrl-btn play-main-btn ${isPlaying ? "playing" : ""
+                      }`}
                     onClick={() => playEpisode(currentEpisode)}
                     disabled={isAudioLoading}
                   >
