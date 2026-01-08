@@ -5,15 +5,6 @@ import "./HelpCenter.css";
 import { useSelector } from "react-redux";
 import emailjs from '@emailjs/browser';
 
-// Define the root state interface (simplified)
-interface RootState {
-    auth: {
-        user: {
-            displayName?: string;
-            email?: string;
-        } | null;
-    };
-}
 
 export default function HelpCenter() {
     const [active, setActive] = useState("Help Center");

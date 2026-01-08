@@ -47,14 +47,7 @@ export default function SavedShorts() {
         loadSavedShorts();
     }, [loadSavedShorts]);
 
-    // Handle back button
-    const handleBack = () => {
-        if (selectedVideoIndex !== null) {
-            setSelectedVideoIndex(null);
-        } else {
-            navigate(-1);
-        }
-    };
+
 
     // Handle video selection
     const handleVideoSelect = (index: number) => {
