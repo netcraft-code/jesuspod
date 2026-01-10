@@ -52,11 +52,17 @@ export default function AllBooks() {
         sourceBooks = allBooks.filter((b: any) => b.category === categoryFilter);
     }
 
-    // Local Search
-    const filtered = sourceBooks.filter((b: any) =>
-        b.title?.toLowerCase().includes(search.toLowerCase()) ||
-        b.name?.toLowerCase().includes(search.toLowerCase())
-    );
+    // Local Search & Sort
+    const filtered = sourceBooks
+        .filter((b: any) =>
+            b.title?.toLowerCase().includes(search.toLowerCase()) ||
+            b.name?.toLowerCase().includes(search.toLowerCase())
+        )
+        .sort((a: any, b: any) => {
+            const titleA = (a.title || a.name || "").toLowerCase();
+            const titleB = (b.title || b.name || "").toLowerCase();
+            return titleA.localeCompare(titleB);
+        });
 
     const handleBookClick = (book: any) => {
         trackBookRead(book.id, book.title, book.type || "Unknown");
@@ -104,7 +110,7 @@ export default function AllBooks() {
                     <input
                         type="text"
                         className="search-input"
-                        placeholder="Search for books..."
+                        placeholder="Search books by title and author..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
