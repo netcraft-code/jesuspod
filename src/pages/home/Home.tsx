@@ -258,9 +258,8 @@ export default function Home() {
           data={movies}
           loading={isLoading}
           onViewAll={() => navigate("/all-movies")}
-          onCardClick={() =>
-            navigate("/all-movies")
-
+          onCardClick={(item) =>
+            navigate("/all-movies", { state: { current: item } })
           }
         />
 

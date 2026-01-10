@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 import Header from "../../components/Header/Header";
@@ -9,8 +10,8 @@ import "./Movies.css";
 export default function MoviesList() {
     const [active, setActive] = useState<string>("Movies");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
-    const [searchQuery, setSearchQuery] = useState<string>("");
-
+    // const [searchQuery, setSearchQuery] = useState<string>("");
+    const searchQuery = "";
     // Get movies from Redux
     const movies = useSelector<RootState, any[]>(
         (state) => state.data.movies
@@ -26,11 +27,17 @@ export default function MoviesList() {
         movie.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // Get data from navigation state
+    const location = useLocation();
+    const stateData = location.state as { current?: any };
+
     // Auto-select first movie
-    const [currentMovie, setCurrentMovie] = useState<any>(null);
+    const [currentMovie, setCurrentMovie] = useState<any>(
+        stateData?.current || null
+    );
 
     useEffect(() => {
-        if (filteredMovies.length > 0 && !currentMovie) {
+        if (!currentMovie && filteredMovies.length > 0) {
             setCurrentMovie(filteredMovies[0]);
         }
     }, [filteredMovies, currentMovie]);
