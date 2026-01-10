@@ -26,6 +26,7 @@ import Subscriptions from "../pages/Profile/Subscriptions";
 import Downloads from "../pages/Profile/Downloads";
 import LiveList from "../pages/Live/LiveList";
 import LivePlayer from "../pages/Live/LivePlayer";
+import MoviesList from "../pages/Movies/MoviesList";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
 import HelpCenter from "../pages/HelpCenter/HelpCenter";
 
@@ -81,6 +82,9 @@ export default function AllRoutes() {
       {/* Live Routes */}
       <Route path="/live-list" element={<PrivateRoute><LiveList /></PrivateRoute>} />
       <Route path="/live-player" element={<PrivateRoute><LivePlayer /></PrivateRoute>} />
+
+      {/* Movies Routes */}
+      <Route path="/all-movies" element={<PrivateRoute><MoviesList /></PrivateRoute>} />
 
       {/* Profile Menu Routes */}
       <Route path="/privacy-policy" element={<PrivateRoute><PrivacyPolicy /></PrivateRoute>} />

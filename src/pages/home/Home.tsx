@@ -9,6 +9,7 @@ import type { RootState } from "../../redux/store";
 import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks, toggleChannelSaveState, refreshSavedChannels } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
+import MoviesSection from "../../components/MoviesSection/MoviesSection";
 import { toggleBookSave, toggleChannelSave } from "../../services/dataService";
 
 /** 🔹 Radio / Podcast common type */
@@ -58,6 +59,11 @@ export default function Home() {
   /** LIVE VIDEOS */
   const liveVideos = useSelector<RootState, any[]>(
     (state) => state.data.liveVideos
+  );
+
+  /** MOVIES */
+  const movies = useSelector<RootState, any[]>(
+    (state) => state.data.movies
   );
 
   /** ANALYTICS DATA (Popular & Trending) */
@@ -221,6 +227,8 @@ export default function Home() {
           }}
         />
 
+
+
         {/* ================= RADIO ================= */}
         <HomeSection
           title="Radio"
@@ -242,6 +250,20 @@ export default function Home() {
             });
           }}
         />
+
+
+        {/* ================= MOVIES ================= */}
+        <MoviesSection
+          title="Movies"
+          data={movies}
+          loading={isLoading}
+          onViewAll={() => navigate("/all-movies")}
+          onCardClick={() =>
+            navigate("/all-movies")
+
+          }
+        />
+
 
         {/* ================= PODCAST ================= */}
         <HomeSection

@@ -44,7 +44,7 @@ export const fetchPodcasts = async () => {
  * Fetch all movies
  */
 export const fetchMovies = async () => {
-  return await getAllDocs("Movies");
+  return await getAllDocs("movies");
 };
 
 /**

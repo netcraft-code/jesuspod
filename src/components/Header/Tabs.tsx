@@ -38,6 +38,7 @@ export default function Tabs({ active, setActive }: TabsProps) {
             if (t === "Books") navigate("/books");
             if (t === "Acts2") navigate("/shorts");
             if (t === "Live") navigate("/live-player");
+            if (t === "Movies") navigate("/all-movies");
           }}
           type="button"
         >

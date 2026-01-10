@@ -6,7 +6,7 @@ export default function Footer() {
         <footer className="main-footer">
             <div className="footer-content">
                 <div className="footer-left">
-                    <p>&copy; 2025 All Rights Reserved</p>
+                    <p>&copy; 2026 All Rights Reserved</p>
                 </div>
                 <div className="footer-center">
                     <div className="footer-logo">JesusPOD</div>
