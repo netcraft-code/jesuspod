@@ -44,7 +44,14 @@ export const fetchPodcasts = async () => {
  * Fetch all movies
  */
 export const fetchMovies = async () => {
-  return await getAllDocs("movies");
+  const docs = await getAllDocs("movies");
+  return docs.map((doc: any) => ({
+    ...doc,
+    imageUrl: doc.image || doc.imageUrl || doc.thumbnail, // Standardize image field
+    title: doc.name || doc.title, // Standardize title field
+    createdAt: doc.createdAt?.toMillis ? doc.createdAt.toMillis() : doc.createdAt,
+    updatedAt: doc.updatedAt?.toMillis ? doc.updatedAt.toMillis() : doc.updatedAt,
+  }));
 };
 
 /**
@@ -285,6 +292,48 @@ export const toggleBookSave = async (bookId: string, userId: string, isSaved: bo
     return await toggleBookSave(bookId, userId, isSaved);
   } catch (error) {
     console.error("Error toggling book save:", error);
+    return false;
+  }
+};
+
+
+// -------------------- MOVIES --------------------
+
+/**
+ * Fetch most watched movies from analytics
+ */
+export const fetchMostWatchedMovies = async () => {
+  try {
+    const { getMostWatchedMovies } = await import("./movieAnalytics");
+    return await getMostWatchedMovies(20);
+  } catch (error) {
+    console.error("Error fetching most watched movies:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch saved movies
+ */
+export const fetchSavedMovies = async (userId?: string) => {
+  try {
+    const { getSavedMovies } = await import("./movieAnalytics");
+    return await getSavedMovies(userId);
+  } catch (error) {
+    console.error("Error fetching saved movies:", error);
+    return [];
+  }
+};
+
+/**
+ * Toggle save status of a movie
+ */
+export const toggleMovieSave = async (movieId: string, userId: string, isSaved: boolean) => {
+  try {
+    const { toggleMovieSave } = await import("./movieAnalytics");
+    return await toggleMovieSave(movieId, userId, isSaved);
+  } catch (error) {
+    console.error("Error toggling movie save:", error);
     return false;
   }
 };

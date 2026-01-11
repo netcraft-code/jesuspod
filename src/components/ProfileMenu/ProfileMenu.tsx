@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBookmark, FaTv, FaBook } from "react-icons/fa";
+import { FaBookmark, FaTv, FaBook, FaFilm } from "react-icons/fa";
 
 import defaultAvatar from "../../assets/default-avatar.svg";
 import { images } from "../../assets/images";
@@ -78,6 +78,13 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                     label="Favorite Channels"
                     arrow
                     onClick={() => navigate("/all-channels", { state: { filter: 'saved' } })}
+                />
+
+                <MenuItem
+                    icon={<FaFilm size={20} color="#ff4444" />}
+                    label="Favorite Movies"
+                    arrow
+                    onClick={() => navigate("/all-movies", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem

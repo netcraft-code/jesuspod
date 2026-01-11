@@ -6,11 +6,11 @@ import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks, toggleChannelSaveState, refreshSavedChannels } from "../../redux/dataSlice";
+import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks, toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 import MoviesSection from "../../components/MoviesSection/MoviesSection";
-import { toggleBookSave, toggleChannelSave } from "../../services/dataService";
+import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -121,7 +121,7 @@ export default function Home() {
       return;
     }
 
-    // console.log("item", item);
+    console.log("item", item);
 
     if (item.entityType === 'Book' || (!item.entityType && item.author)) {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
@@ -137,6 +137,15 @@ export default function Home() {
       return;
     }
 
+    // Check for Movie specific properties (movieUrl) or explicit type
+    // Avoid checking just 'category' as Books also have categories
+    if (item.entityType === 'Movie' || (!item.entityType && item.movieUrl)) {
+      dispatch(toggleMovieSaveState({ movieId: item.id, userId: user.uid }));
+      await toggleMovieSave(item.id, user.uid, isSaved);
+      dispatch(refreshSavedMovies(user.uid) as any);
+      return;
+    }
+
 
     dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
 
@@ -147,7 +156,6 @@ export default function Home() {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
       alert("Failed to save book");
     }
-
     // ... handle other save types if needed, currently only book save logic was explicit here
     // Default fallback for book saves if passed directly - REMOVED risky fallback, explicit checks preferred
     // dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
@@ -258,9 +266,15 @@ export default function Home() {
           data={movies}
           loading={isLoading}
           onViewAll={() => navigate("/all-movies")}
-          onCardClick={(item) =>
-            navigate("/all-movies", { state: { current: item } })
-          }
+          onCardClick={(item) => {
+            // Track play (optional here if MoviesSection doesn't do it)
+            // Using logic from MoviesList
+            if (item.movieUrl) {
+              window.open(item.movieUrl, "_blank");
+            }
+          }}
+          onToggleSave={handleToggleSave}
+          user={user}
         />
 
 

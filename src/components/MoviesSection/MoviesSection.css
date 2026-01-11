@@ -153,6 +153,27 @@
     text-shadow: none;
 }
 
+/* Save Icon Badge (Matching ChannelCard) */
+.movie-save-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px;
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s;
+}
+
+.movie-save-badge:hover {
+    transform: scale(1.1);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .movies-card-wrapper {
@@ -192,4 +213,61 @@
     .movies-section-header {
         padding: 0 4px;
     }
+}
+
+/* Scroll Wrapper */
+/* Use movies-scroll-container-wrapper to match TSX */
+.movies-scroll-container-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Updated Arrow Buttons (Copied from HomeSection.css) */
+.arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Show arrows on hover of the container */
+.movies-scroll-container-wrapper:hover .arrow-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.arrow-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.arrow-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.arrow-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.left-arrow {
+    left: 0;
+}
+
+.right-arrow {
+    right: 0;
 }

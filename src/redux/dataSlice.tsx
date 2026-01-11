@@ -19,7 +19,9 @@ import {
     fetchSavedChannels,
     fetchMostReadBooks,
     fetchTopUSABooks,
-    fetchSavedBooks
+    fetchSavedBooks,
+    fetchMostWatchedMovies,
+    fetchSavedMovies
 } from "../services/dataService";
 
 export const fetchInitialData = createAsyncThunk(
@@ -45,7 +47,9 @@ export const fetchInitialData = createAsyncThunk(
             savedChannels,
             mostReadBooks,
             topUSABooks,
-            savedBooks
+            savedBooks,
+            mostWatchedMovies,
+            savedMovies
         ] = await Promise.all([
             fetchRadio(),
             fetchBooks(),
@@ -66,7 +70,9 @@ export const fetchInitialData = createAsyncThunk(
             fetchSavedChannels(userId),
             fetchMostReadBooks(),
             fetchTopUSABooks(),
-            fetchSavedBooks(userId)
+            fetchSavedBooks(userId),
+            fetchMostWatchedMovies(),
+            fetchSavedMovies(userId)
         ]);
 
         return {
@@ -89,7 +95,9 @@ export const fetchInitialData = createAsyncThunk(
             savedChannels,
             mostReadBooks,
             topUSABooks,
-            savedBooks
+            savedBooks,
+            mostWatchedMovies,
+            savedMovies
         };
     }
 );
@@ -99,6 +107,14 @@ export const refreshSavedBooks = createAsyncThunk(
     async (userId: string) => {
         const savedBooks = await fetchSavedBooks(userId);
         return savedBooks;
+    }
+);
+
+export const refreshSavedMovies = createAsyncThunk(
+    "data/refreshSavedMovies",
+    async (userId: string) => {
+        const savedMovies = await fetchSavedMovies(userId);
+        return savedMovies;
     }
 );
 
@@ -142,6 +158,8 @@ const dataSlice = createSlice({
         mostReadBooks: [] as any[],
         topUSABooks: [] as any[],
         savedBooks: [] as any[],
+        mostWatchedMovies: [] as any[],
+        savedMovies: [] as any[],
         selectedCountry: null as string | null, // null = "All Countries"
         loading: false
     },
@@ -172,6 +190,8 @@ const dataSlice = createSlice({
             state.mostReadBooks = [];
             state.topUSABooks = [];
             state.savedBooks = [];
+            state.mostWatchedMovies = [];
+            state.savedMovies = [];
             state.selectedCountry = null;
         },
         toggleChannelSaveState: (state, action) => {
@@ -202,11 +222,6 @@ const dataSlice = createSlice({
                     toggleStar(channel);
                 }
             });
-
-            // Handle adding/removing from savedChannels explicitly if not found in savedChannels list
-            // This is a bit tricky since we don't have the full object if it wasn't in savedChannels.
-            // Ideally rely on refreshSavedChannels for the list addition/removal proper, 
-            // but here we just update the 'star' property for UI feedback in other lists.
         },
         toggleBookSaveState: (state, action) => {
             const { bookId, userId } = action.payload;
@@ -234,6 +249,32 @@ const dataSlice = createSlice({
                     toggleStar(book);
                 }
             });
+        },
+        toggleMovieSaveState: (state, action) => {
+            const { movieId, userId } = action.payload;
+
+            const toggleStar = (item: any) => {
+                if (!item.star) item.star = [];
+                const index = item.star.indexOf(userId);
+                if (index > -1) {
+                    item.star.splice(index, 1);
+                } else {
+                    item.star.push(userId);
+                }
+            };
+
+            const listsToUpdate = [
+                state.mostWatchedMovies,
+                state.movies,
+                state.savedMovies
+            ];
+
+            listsToUpdate.forEach(list => {
+                const movie = list.find((m: any) => m.id === movieId || m._id === movieId);
+                if (movie) {
+                    toggleStar(movie);
+                }
+            });
         }
     },
     extraReducers: (builder) => {
@@ -256,11 +297,14 @@ const dataSlice = createSlice({
             })
             .addCase(refreshSavedBooks.fulfilled, (state, action) => {
                 state.savedBooks = action.payload;
+            })
+            .addCase(refreshSavedMovies.fulfilled, (state, action) => {
+                state.savedMovies = action.payload;
             });
     }
 });
 
-export const { setSelectedCountry, clearData, toggleChannelSaveState, toggleBookSaveState } = dataSlice.actions;
+export const { setSelectedCountry, clearData, toggleChannelSaveState, toggleBookSaveState, toggleMovieSaveState } = dataSlice.actions;
 
 // Selector for filtered radio based on selected country
 export const getFilteredRadio = (state: any) => {
