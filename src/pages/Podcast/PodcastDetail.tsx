@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { logEvent } from "firebase/analytics";
@@ -8,6 +8,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
   doc,
   updateDoc,
   setDoc,
@@ -28,7 +29,9 @@ import { FaPause } from "react-icons/fa";
 
 export default function PodcastDetail() {
   const { state } = useLocation();
-  const channel = state?.channel;
+  const { id } = useParams();
+  const [fetchedChannel, setFetchedChannel] = useState<any>(null);
+  const channel = state?.channel || fetchedChannel;
   const {
     play,
     share,
@@ -80,6 +83,28 @@ export default function PodcastDetail() {
   const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   const remainingTime = Math.max(duration - currentTime, 0);
+
+  useEffect(() => {
+    if (!channel && id) {
+      const getChannel = async () => {
+        setLoading(true);
+        try {
+          const docRef = doc(firestore, "Newchannels", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setFetchedChannel({ id: docSnap.id, ...docSnap.data() });
+          } else {
+            console.log("No such document!");
+          }
+        } catch (error) {
+          console.error("Error fetching channel:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      getChannel();
+    }
+  }, [id, channel]);
 
   useEffect(() => {
     if (audioRef.current) {

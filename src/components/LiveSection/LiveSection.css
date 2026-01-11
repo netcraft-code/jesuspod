@@ -236,3 +236,62 @@
         padding: 0 4px;
     }
 }
+
+/* Scroll Wrapper and Arrows functionality (Copied from HomeSection) */
+.scroll-container-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Updated Arrow Buttons */
+.arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    /* Darker backdrop */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    opacity: 0;
+    /* Hidden by default until hover */
+    pointer-events: none;
+    /* Prevent clicks when hidden */
+}
+
+/* Show arrows on hover of the container */
+.scroll-container-wrapper:hover .arrow-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.arrow-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.arrow-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.arrow-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.left-arrow {
+    left: 0;
+}
+
+.right-arrow {
+    right: 0;
+}

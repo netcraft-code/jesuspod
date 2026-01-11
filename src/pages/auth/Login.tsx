@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash, FaTwitter, FaFacebookF } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
 import colors from "../../theme/colors";
@@ -281,18 +281,7 @@ export default function Login() {
                     }}>
                         <FcGoogle size={28} />
                     </div>
-                    <div style={{
-                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
-                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
-                    }}>
-                        <FaTwitter size={24} color="#1DA1F2" />
-                    </div>
-                    <div style={{
-                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
-                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
-                    }}>
-                        <FaFacebookF size={24} color="#1877F2" />
-                    </div>
+
                 </div>
 
                 <div style={{ textAlign: "center", marginTop: 24, fontSize: 14, color: "#9ca3af" }}>

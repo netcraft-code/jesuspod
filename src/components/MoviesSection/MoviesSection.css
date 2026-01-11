@@ -180,6 +180,14 @@
         width: 240px;
     }
 
+    /* Force arrows to be visible on mobile/tablet */
+    .arrow-btn {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background: rgba(0, 0, 0, 0.6);
+        /* Ensure background is visible */
+    }
+
     .movies-card {
         height: 140px;
     }
