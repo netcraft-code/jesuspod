@@ -6,13 +6,14 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import LiveCard from "../../components/LiveSection/LiveCard";
 import "./Live.css";
+import usePageTitle from "../../hooks/usePageTitle";
 
 export default function LivePlayer() {
     const location = useLocation();
     const navigate = useNavigate();
     const [active, setActive] = useState<string>("Live");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
-
+    usePageTitle("Live");
     // Get data from navigation state or Redux
     const stateData = location.state as { current?: any; list?: any[] };
     const liveChannels = useSelector<RootState, any[]>(

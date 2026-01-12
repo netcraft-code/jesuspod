@@ -14,6 +14,7 @@ import { trackBookRead } from "../../services/booksAnalytics";
 import { refreshSavedBooks, toggleBookSaveState } from "../../redux/dataSlice";
 import { toggleBookSave } from "../../services/dataService";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
+import usePageTitle from "../../hooks/usePageTitle";
 
 interface BookItem {
     id: string;
@@ -34,7 +35,7 @@ export default function BooksHome() {
     const [active, setActive] = useState<string>("Books");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
-
+    usePageTitle("Books")
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.auth.user);
     const books = useSelector((state: RootState) => state.data.books) as BookItem[];

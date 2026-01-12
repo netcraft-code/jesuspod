@@ -75,7 +75,11 @@ export default function Signup() {
             case "password":
                 setErrors((prev) => ({
                     ...prev,
-                    password: !value.trim() ? "Please enter password" : "",
+                    password: !value.trim()
+                        ? "Please enter password"
+                        : value.length < 6
+                            ? "Password must be at least 6 characters"
+                            : "",
                     confirmPassword:
                         form.confirmPassword && form.confirmPassword !== value
                             ? "Passwords do not match"
@@ -119,6 +123,7 @@ export default function Signup() {
         if (!form.email.trim()) return setErrors((prev) => ({ ...prev, email: "Please enter email" }));
         if (!validateEmailFormat(form.email)) return setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
         if (!form.password.trim()) return setErrors((prev) => ({ ...prev, password: "Please enter password" }));
+        if (form.password.length < 6) return setErrors((prev) => ({ ...prev, password: "Password must be at least 6 characters" }));
         if (!form.confirmPassword.trim()) return setErrors((prev) => ({ ...prev, confirmPassword: "Please confirm password" }));
         if (form.password !== form.confirmPassword) return setErrors((prev) => ({ ...prev, confirmPassword: "Passwords do not match" }));
 
@@ -158,7 +163,7 @@ export default function Signup() {
         setLoading(false);
     };
 
-    
+
     const handleGoogle = async () => {
         dispatch(authStart());
         try {
@@ -237,7 +242,7 @@ export default function Signup() {
                         onChange={handleChange}
                         placeholder="john@gmail.com"
                     />
-                    {errors.email && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.email}</p>}
+                    {errors.email && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0 }}>{errors.email}</p>}
 
                     {/* PASSWORD */}
                     <div style={{ position: "relative" }}>
@@ -256,7 +261,7 @@ export default function Signup() {
                             {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                         </span>
                     </div>
-                    {errors.password && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.password}</p>}
+                    {errors.password && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0 }}>{errors.password}</p>}
 
                     {/* CONFIRM PASSWORD */}
                     <div style={{ position: "relative" }}>
@@ -275,7 +280,7 @@ export default function Signup() {
                             {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                         </span>
                     </div>
-                    {errors.confirmPassword && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0  }}>{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0 }}>{errors.confirmPassword}</p>}
                     <button
                         className="btn-primary"
                         type="submit"

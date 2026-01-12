@@ -620,7 +620,11 @@ export default function PodcastDetail() {
                       }`}
                   >
                     <div className="episode-info">
-                      <h4 className="episode-title">
+                      <h4
+                        className="episode-title"
+                        onClick={() => playEpisode(item)}
+                        style={{ cursor: "pointer" }}
+                      >
                         {(() => {
                           const fullTitle = item.title?.[0] || "Untitled";
                           const isExpanded = expandedTitles.has(index);

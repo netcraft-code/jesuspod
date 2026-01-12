@@ -8,6 +8,7 @@ import type { RootState } from "../../redux/store";
 import { getFilteredRadio } from "../../redux/dataSlice";
 import Section from "../../components/Section/Section";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
+import usePageTitle from "../../hooks/usePageTitle";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -31,7 +32,7 @@ export default function RadioList() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [countrySearch, setCountrySearch] = useState<string>("");
-
+  usePageTitle("Radio")
   // ✅ Use filtered radio selector
   const radio = useSelector(getFilteredRadio);
 

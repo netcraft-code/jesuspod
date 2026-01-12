@@ -147,6 +147,18 @@
   color: #fb4a4a;
 }
 
+/* Hover effect for row */
+.episode-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Hover effect for play button when row is hovered */
+.episode-row:hover .episode-play img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+  transition: all 0.2s ease;
+}
+
 .playing-bars {
   display: flex;
   align-items: flex-end;

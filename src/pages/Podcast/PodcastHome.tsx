@@ -9,6 +9,7 @@ import { useState } from "react";
 import Section from "../../components/Section/Section";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import { categoryImages } from "../../assets/images/CatImages";
+import usePageTitle from "../../hooks/usePageTitle";
 
 
 export default function PodcastHome() {
@@ -17,7 +18,7 @@ export default function PodcastHome() {
     const podcasts = useSelector((state: any) => state.data.podcasts);
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
-
+    usePageTitle("Podcast");
     // Get analytics-based podcast data from Redux
     const mostListenedPodcasts = useSelector((state: any) => state.data.mostListenedPodcasts) || [];
     const newNoteworthyPodcasts = useSelector((state: any) => state.data.newNoteworthyPodcasts) || [];
