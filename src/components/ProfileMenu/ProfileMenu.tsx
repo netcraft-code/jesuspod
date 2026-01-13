@@ -26,6 +26,8 @@ interface MenuItemProps {
     red?: boolean;
 }
 
+import { resetSplashState } from "../../pages/home/Home";
+
 export default function ProfileMenu({ user }: ProfileMenuProps) {
     const { liked, subscription, down, share, privacy, help, exit } = images;
 
@@ -37,6 +39,7 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
             localStorage.removeItem("token");
             dispatch(authLogout());
             dispatch(clearData());
+            resetSplashState(); // Reset splash for next login
             navigate("/login", { replace: true });
         }
     };

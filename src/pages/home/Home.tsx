@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Home.css";
@@ -11,6 +11,7 @@ import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 import MoviesSection from "../../components/MoviesSection/MoviesSection";
 import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
+import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -25,9 +26,46 @@ interface BookItem extends MediaItem {
   url?: string;
 }
 
+// Track if splash has been shown in this session (resets on refresh)
+// Track if splash has been shown in this session (resets on refresh)
+let hasShownSplash = false;
+
+// Export reset function for logout
+export const resetSplashState = () => {
+  hasShownSplash = false;
+};
+
 export default function Home() {
   const [active, setActive] = useState("All");
   const [profileOpen, setProfileOpen] = useState(false);
+
+  // Initialize splash state: only true if we haven't shown it yet
+  const [showSplash, setShowSplash] = useState(!hasShownSplash);
+
+  /** LOADING */
+  const isLoading = useSelector<RootState, boolean>(
+    (state) => state.data.loading
+  );
+
+  useEffect(() => {
+    // If we've already shown it, force false immediately (safety)
+    if (hasShownSplash) {
+      setShowSplash(false);
+      return;
+    }
+
+    // If data is done loading, hide splash
+    if (!isLoading) {
+      // Small buffer to ensure smooth transition (500ms minimum or immediate)
+      // User asked for "as soon as data is fetched", but instant might be jarring if data is cached.
+      // We will use a safe minimal delay to prevent flicker if isLoading toggles fast.
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        hasShownSplash = true; // Mark as shown for navigation
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   const navigate = useNavigate();
   usePageTitle("Home");
@@ -52,9 +90,7 @@ export default function Home() {
   const filteredChannels = useSelector(getFilteredChannels);
 
   /** LOADING */
-  const isLoading = useSelector<RootState, boolean>(
-    (state) => state.data.loading
-  );
+
 
   /** LIVE VIDEOS */
   const liveVideos = useSelector<RootState, any[]>(
@@ -170,6 +206,7 @@ export default function Home() {
 
   return (
     <div className="home-wrapper">
+      <SplashScreen isVisible={showSplash} />
       <Header
         active={active}
         setActive={setActive}
