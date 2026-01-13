@@ -21,7 +21,7 @@ export default function MoviesList() {
     const [active, setActive] = useState("Movies");
     const [profileOpen, setProfileOpen] = useState(false);
     const [categorySearch, setCategorySearch] = useState("");
-    // const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Removed: Navigating to AllMovies instead
+    const [searchQuery, setSearchQuery] = useState(""); // Global movie search
 
     const loading = useSelector((state: RootState) => state.data.loading);
 
@@ -30,10 +30,21 @@ export default function MoviesList() {
     const mostWatchedMovies = useSelector((state: RootState) => state.data.mostWatchedMovies) || [];
     const savedMovies = useSelector((state: RootState) => state.data.savedMovies) || [];
 
+    // Filter Logic
+    const filterMovies = (movies: any[]) => {
+        if (!searchQuery) return movies;
+        return movies.filter((m: any) =>
+            m.title?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    };
+
+    const filteredMostWatched = filterMovies(mostWatchedMovies);
+    const filteredSaved = filterMovies(savedMovies);
+
     // Get Unique Categories
     const categories = Array.from(new Set(allMovies.map((m: any) => m.category).filter(Boolean)));
 
-    // Filter Categories based on search
+    // Filter Categories based on search (existing logic remains for bottom grid)
     const filteredCategories = categories.filter((c: any) =>
         c.toLowerCase().includes(categorySearch.toLowerCase())
     );
@@ -89,35 +100,83 @@ export default function MoviesList() {
 
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
+                {/* Global Search Bar */}
+                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search for movies..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{ width: '100%', maxWidth: '400px' }}
+                    />
+                </div>
+
                 {/* 1. Most Watched Movies */}
-                <HomeSection
-                    title="Most Watched Movies"
-                    data={mostWatchedMovies}
-                    loading={loading}
-                    cardVariant="channel"
-                    onViewAll={() => navigate("/all-movies")}
-                    onCardClick={handleCardClick}
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                />
+                {filteredMostWatched.length > 0 && (
+                    <div style={{ marginBottom: '40px' }}>
+                        <HomeSection
+                            title="Most Watched Movies"
+                            data={filteredMostWatched}
+                            loading={loading}
+                            cardVariant="channel"
+                            onViewAll={() => navigate("/all-movies")}
+                            onCardClick={handleCardClick}
+                            onToggleSave={handleToggleSave}
+                            user={user}
+                        />
+                    </div>
+                )}
+
+
+                {/* 3. Categorized Movie Sections */}
+                {categories.map((category: any) => {
+                    // Filter movies in this category by the global search query
+                    const categoryMovies = allMovies.filter((m: any) =>
+                        m.category === category &&
+                        (!searchQuery || m.title?.toLowerCase().includes(searchQuery.toLowerCase()))
+                    );
+
+                    if (categoryMovies.length === 0) return null;
+
+                    return (
+                        <div key={category} style={{ marginBottom: '40px' }}>
+                            <HomeSection
+                                title={category.toUpperCase()}
+                                data={categoryMovies}
+                                loading={loading}
+                                cardVariant="channel"
+                                onViewAll={() => handleCategorySelect(category)}
+                                onCardClick={handleCardClick}
+                                onToggleSave={handleToggleSave}
+                                user={user}
+                            />
+                        </div>
+                    );
+                })}
+
 
                 {/* 2. Movies to Love (Favorites) */}
-                <HomeSection
-                    title="Movies to Love"
-                    data={savedMovies}
-                    loading={loading}
-                    cardVariant="channel"
-                    onViewAll={() => navigate("/all-movies", { state: { filter: 'saved' } })}
-                    onCardClick={handleCardClick}
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                    emptyMessage="Start saving movies to see them here ❤️"
-                />
+                {(filteredSaved.length > 0 || !searchQuery) && (
+                    <div style={{ marginBottom: '40px' }}>
+                        <HomeSection
+                            title="My Movies"
+                            data={filteredSaved}
+                            loading={loading}
+                            cardVariant="channel"
+                            onViewAll={() => navigate("/all-movies", { state: { filter: 'saved' } })}
+                            onCardClick={handleCardClick}
+                            onToggleSave={handleToggleSave}
+                            user={user}
+                            emptyMessage={searchQuery ? "No saved movies match your search" : "Start saving movies to see them here ❤️"}
+                        />
+                    </div>
+                )}
 
-                {/* 3. Search for Movies (Category Grid) */}
-                <div className="search-radio-section" style={{ marginTop: 40 }}>
+                {/* 4. Search for Category (Category Grid) - Kept at bottom as requested/existing */}
+                <div className="search-radio-section" style={{ marginTop: 60 }}>
                     <div className="search-radio-header">
-                        <h2 className="sub-title">Search by Category</h2>
+                        <h2 className="sub-title">Browse Categories</h2>
                         <input
                             type="text"
                             className="search-input"
@@ -129,8 +188,6 @@ export default function MoviesList() {
 
                     {/* Category Grid */}
                     <div className="country-grid">
-
-
                         {filteredCategories.map((cat: any) => (
                             <CircleImageCard
                                 key={cat}

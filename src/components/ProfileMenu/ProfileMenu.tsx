@@ -75,21 +75,21 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
 
                 <MenuItem
                     icon={<FaTv size={20} color="#ff4444" />}
-                    label="Favorite Channels"
+                    label="My Channels"
                     arrow
                     onClick={() => navigate("/all-channels", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<FaFilm size={20} color="#ff4444" />}
-                    label="Favorite Movies"
+                    label="My Movies"
                     arrow
                     onClick={() => navigate("/all-movies", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<FaBook size={20} color="#ff4444" />}
-                    label="Favorite Books"
+                    label="My Books"
                     arrow
                     onClick={() => navigate("/all-books", { state: { filter: 'saved' } })}
                 />
