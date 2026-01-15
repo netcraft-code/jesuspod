@@ -86,7 +86,7 @@ export default function Card({
         )}
 
         {/* SAVE ICON (Left Top) */}
-        {variant === "video" && (
+        {(variant === "video" || onToggleSave) && (
           <div
             className="video-save-badge"
             onClick={handleHeartClick}

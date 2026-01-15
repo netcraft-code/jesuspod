@@ -31,7 +31,7 @@ export default function RadioList() {
 
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
-  const [countrySearch, setCountrySearch] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   usePageTitle("Radio")
   // ✅ Use filtered radio selector
   const radio = useSelector(getFilteredRadio);
@@ -57,9 +57,22 @@ export default function RadioList() {
 
 
 
-  const filteredCountries = countries.filter((c) =>
-    c.title.toLowerCase().includes(countrySearch.toLowerCase())
+  // --- GLOBAL SEARCH FILTERING ---
+  const filteredMostListened = mostListenedRadios.filter((item: RadioItem) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const filteredTopUSA = topUSARadios.filter((item: RadioItem) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredSaved = savedRadios.filter((item: RadioItem) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // const filteredCountries = countries.filter((c) =>
+  //   c.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   /** 🔹 Common click handler */
   const handleRadioClick = (item: RadioItem) => {
@@ -92,50 +105,64 @@ export default function RadioList() {
         setProfileOpen={setProfileOpen}
       />
 
-      <div className="radio-container">
+      <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
+
+        {/* GLOBAL SEARCH BAR */}
+        <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end' }}>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search for radios..."
+            value={searchTerm}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
+            style={{ width: '100%', maxWidth: '400px' }}
+          />
+        </div>
+
 
         {/* ================= MOST LISTENER ================= */}
-        <Section
-          title="Most Listener Radio"
-          data={mostListenedRadios}
-          onViewAll={() => navigate("/all-radio")}
-          onCardClick={handleRadioClick}
-        />
+        {filteredMostListened.length > 0 && (
+          <Section
+            title="Most Listened Radio"
+            data={filteredMostListened}
+            onViewAll={() => navigate("/all-radio")}
+            onCardClick={handleRadioClick}
+          />
+        )}
 
         {/* ================= TOP 10 USA ================= */}
-        <Section
-          title="Top 10 in USA"
-          data={topUSARadios}
-          onViewAll={() => navigate("/all-radio")}
-          onCardClick={handleRadioClick}
-        />
+        {filteredTopUSA.length > 0 && (
+          <Section
+            title="Top 10 in USA"
+            data={filteredTopUSA}
+            onViewAll={() => navigate("/all-radio")}
+            onCardClick={handleRadioClick}
+          />
+        )}
 
         {/* ================= RADIO TO LOVE ================= */}
-        <Section
-          title="Radio To Love"
-          data={savedRadios}
-          onViewAll={() => navigate("/favorite-radios")}
-          onCardClick={handleRadioClick}
-        />
+        {filteredSaved.length > 0 && (
+          <Section
+            title="Radio To Love"
+            data={filteredSaved}
+            onViewAll={() => navigate("/favorite-radios")}
+            onCardClick={handleRadioClick}
+          />
+        )}
+
         <div className="search-radio-section">
 
           <div className="search-radio-header">
-            <h2 className="sub-title">Search For Radio</h2>
-
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search country..."
-              value={countrySearch}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setCountrySearch(e.target.value)
-              }
-            />
+            <h2 className="sub-title"> By Country</h2>
+            {/* Removed Local Search Input */}
           </div>
 
           <div className="country-grid">
-            {filteredCountries.map((item) => (
+            {countries.map((item) => (
               <CircleImageCard
+                key={item.id}
                 title={item.title}
                 imageUrl={item.imageUrl}
                 onClick={() => {
@@ -164,7 +191,7 @@ export default function RadioList() {
 
         </div>
 
-      </div>
+      </main>
       <Footer />
     </div>
   );

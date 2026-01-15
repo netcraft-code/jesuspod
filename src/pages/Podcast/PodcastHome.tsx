@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
@@ -10,18 +10,23 @@ import Section from "../../components/Section/Section";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import { categoryImages } from "../../assets/images/CatImages";
 import usePageTitle from "../../hooks/usePageTitle";
+import { togglePodcastSave } from "../../services/dataService";
+import { refreshSavedPodcasts, togglePodcastSaveState } from "../../redux/dataSlice";
 
 
 export default function PodcastHome() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const podcasts = useSelector((state: any) => state.data.podcasts);
+    const user = useSelector((state: any) => state.auth.user);
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     usePageTitle("Podcast");
     // Get analytics-based podcast data from Redux
     const mostListenedPodcasts = useSelector((state: any) => state.data.mostListenedPodcasts) || [];
-    const newNoteworthyPodcasts = useSelector((state: any) => state.data.newNoteworthyPodcasts) || [];
+    const savedPodcasts = useSelector((state: any) => state.data.savedPodcasts) || [];
+    // const newNoteworthyPodcasts = useSelector((state: any) => state.data.newNoteworthyPodcasts) || [];
 
     const [podcastCategory, setPodcastCategory] = useState<string>("");
 
@@ -46,6 +51,25 @@ export default function PodcastHome() {
         cat.name.toLowerCase().includes(podcastCategory.toLowerCase())
     );
 
+    const handleToggleSave = async (item: any, isSaved: boolean) => {
+        if (!user?.uid) {
+            alert("Please login to save podcasts");
+            return;
+        }
+
+        // Optimistic Update
+        dispatch(togglePodcastSaveState({ podcastId: item.id, userId: user.uid }));
+
+        const success = await togglePodcastSave(item.id, user.uid, isSaved);
+        if (success) {
+            // Refresh saved list
+            dispatch(refreshSavedPodcasts(user.uid) as any);
+        } else {
+            // Revert
+            dispatch(togglePodcastSaveState({ podcastId: item.id, userId: user.uid }));
+            alert("Failed to save podcast");
+        }
+    };
 
     return (
         <div className="main-content">
@@ -68,19 +92,25 @@ export default function PodcastHome() {
                             state: { channel: item },
                         })
                     }
+                    onToggleSave={handleToggleSave}
+                    user={user}
                 />
 
-                {/* NEW & NOTEWORTHY */}
+                {/* My Podcast (Favorites) */}
                 <Section
-                    title="New & Noteworthy"
-                    onViewAll={() => navigate("/all-podcast")}
-                    data={newNoteworthyPodcasts}
+                    title="My Podcast"
+                    onViewAll={() => navigate("/all-podcast", { state: { filter: 'saved' } })}
+                    data={savedPodcasts}
                     onCardClick={(item) =>
                         navigate(`/podcastplayer/${item.id}`, {
                             state: { channel: item },
                         })
                     }
+                    onToggleSave={handleToggleSave}
+                    user={user}
+                    emptyMessage="Start saving podcasts to see them here ❤️"
                 />
+
 
                 <div className="search-radio-section">
 

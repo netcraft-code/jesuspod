@@ -56,6 +56,8 @@ export default function Section({
                     ? onCardClick(item)
                     : alert("onclick not calling")
                 }
+                isSaved={item.star?.includes(user?.uid)} // Check if saved
+                onToggleSave={onToggleSave} // Pass handler
               />
             )
           ))

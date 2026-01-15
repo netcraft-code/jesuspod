@@ -122,7 +122,7 @@ export const fetchSavedRadios = async (userId?: string) => {
 export const fetchMostListenedPodcasts = async () => {
   try {
     const { getMostListenedPodcasts } = await import("./podcastAnalytics");
-    return await getMostListenedPodcasts(20);
+    return await getMostListenedPodcasts(30);
   } catch (error) {
     console.error("Error fetching most listened podcasts:", error);
     return [];
@@ -151,6 +151,19 @@ export const fetchSubscribedPodcasts = async (userId?: string) => {
     return await getSubscribedPodcasts(userId);
   } catch (error) {
     console.error("Error fetching subscribed podcasts:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetch user's saved podcasts (Favorites)
+ */
+export const fetchSavedPodcasts = async (userId?: string) => {
+  try {
+    const { getSavedPodcasts } = await import("./podcastAnalytics");
+    return await getSavedPodcasts(userId);
+  } catch (error) {
+    console.error("Error fetching saved podcasts:", error);
     return [];
   }
 };
@@ -343,6 +356,19 @@ export const toggleMovieSave = async (movieId: string, userId: string, isSaved: 
     return await toggleMovieSave(movieId, userId, isSaved);
   } catch (error) {
     console.error("Error toggling movie save:", error);
+    return false;
+  }
+};
+
+/**
+ * Toggle save status of a podcast
+ */
+export const togglePodcastSave = async (podcastId: string, userId: string, isSaved: boolean) => {
+  try {
+    const { togglePodcastSave } = await import("./podcastAnalytics");
+    return await togglePodcastSave(podcastId, userId, isSaved);
+  } catch (error) {
+    console.error("Error toggling podcast save:", error);
     return false;
   }
 };

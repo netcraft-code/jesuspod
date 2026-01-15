@@ -21,7 +21,8 @@ import {
     fetchTopUSABooks,
     fetchSavedBooks,
     fetchMostWatchedMovies,
-    fetchSavedMovies
+    fetchSavedMovies,
+    fetchSavedPodcasts
 } from "../services/dataService";
 
 export const fetchInitialData = createAsyncThunk(
@@ -49,7 +50,8 @@ export const fetchInitialData = createAsyncThunk(
             topUSABooks,
             savedBooks,
             mostWatchedMovies,
-            savedMovies
+            savedMovies,
+            savedPodcasts
         ] = await Promise.all([
             fetchRadio(),
             fetchBooks(),
@@ -72,7 +74,8 @@ export const fetchInitialData = createAsyncThunk(
             fetchTopUSABooks(),
             fetchSavedBooks(userId),
             fetchMostWatchedMovies(),
-            fetchSavedMovies(userId)
+            fetchSavedMovies(userId),
+            fetchSavedPodcasts(userId)
         ]);
 
         return {
@@ -97,7 +100,8 @@ export const fetchInitialData = createAsyncThunk(
             topUSABooks,
             savedBooks,
             mostWatchedMovies,
-            savedMovies
+            savedMovies,
+            savedPodcasts
         };
     }
 );
@@ -134,6 +138,14 @@ export const refreshSavedChannels = createAsyncThunk(
     }
 );
 
+export const refreshSavedPodcasts = createAsyncThunk(
+    "data/refreshSavedPodcasts",
+    async (userId: string) => {
+        const savedPodcasts = await fetchSavedPodcasts(userId);
+        return savedPodcasts;
+    }
+);
+
 
 const dataSlice = createSlice({
     name: "data",
@@ -143,6 +155,7 @@ const dataSlice = createSlice({
         Countries: [] as any[],
         movies: [] as any[],
         podcasts: [] as any[],
+        savedPodcasts: [] as any[], // Separate from subscribedPodcasts
         channels: [] as any[],
         acts2: [] as any[],
         mostListenedRadios: [] as any[],
@@ -173,6 +186,7 @@ const dataSlice = createSlice({
             state.Countries = [];
             state.movies = [];
             state.podcasts = [];
+            state.savedPodcasts = [];
             state.channels = [];
             state.acts2 = [];
             state.mostListenedRadios = [];
@@ -275,6 +289,34 @@ const dataSlice = createSlice({
                     toggleStar(movie);
                 }
             });
+        },
+        togglePodcastSaveState: (state, action) => {
+            const { podcastId, userId } = action.payload;
+
+            // Helper to toggle star array (Favorites)
+            const toggleStar = (item: any) => {
+                if (!item.star) item.star = [];
+                const index = item.star.indexOf(userId);
+                if (index > -1) {
+                    item.star.splice(index, 1);
+                } else {
+                    item.star.push(userId);
+                }
+            };
+
+            const listsToUpdate = [
+                state.mostListenedPodcasts,
+                state.newNoteworthyPodcasts,
+                state.podcasts,
+                state.savedPodcasts // Update savedPodcasts
+            ];
+
+            listsToUpdate.forEach(list => {
+                const podcast = list.find((p: any) => p.id === podcastId || p._id === podcastId);
+                if (podcast) {
+                    toggleStar(podcast);
+                }
+            });
         }
     },
     extraReducers: (builder) => {
@@ -300,11 +342,14 @@ const dataSlice = createSlice({
             })
             .addCase(refreshSavedMovies.fulfilled, (state, action) => {
                 state.savedMovies = action.payload;
+            })
+            .addCase(refreshSavedPodcasts.fulfilled, (state, action) => {
+                state.savedPodcasts = action.payload;
             });
     }
 });
 
-export const { setSelectedCountry, clearData, toggleChannelSaveState, toggleBookSaveState, toggleMovieSaveState } = dataSlice.actions;
+export const { setSelectedCountry, clearData, toggleChannelSaveState, toggleBookSaveState, toggleMovieSaveState, togglePodcastSaveState } = dataSlice.actions;
 
 // Selector for filtered radio based on selected country
 export const getFilteredRadio = (state: any) => {

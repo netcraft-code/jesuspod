@@ -6,12 +6,16 @@ import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks, toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies } from "../../redux/dataSlice";
+import {
+  getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks,
+  toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies,
+  togglePodcastSaveState, refreshSavedPodcasts
+} from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 import MoviesSection from "../../components/MoviesSection/MoviesSection";
 import Banner from "../../components/Banner/Banner";
-import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
+import { toggleBookSave, toggleChannelSave, toggleMovieSave, togglePodcastSave } from "../../services/dataService";
 import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
 
 /** 🔹 Radio / Podcast common type */
@@ -205,6 +209,7 @@ export default function Home() {
     // }
   };
 
+
   return (
     <div className="home-wrapper">
       <SplashScreen isVisible={showSplash} />
@@ -251,9 +256,9 @@ export default function Home() {
               }
             }
           }}
-          // Pass handleToggleSave but note it handles books primarily. 
-          // If we want universal save, we need a universal handler. For now passing as is.
-          onToggleSave={handleToggleSave}
+        // Pass handleToggleSave but note it handles books primarily. 
+        // If we want universal save, we need a universal handler. For now passing as is.
+        // onToggleSave={handleToggleSave} // REMOVED as requested by user
         />
         {/* ================= LIVE ================= */}
         <LiveSection
@@ -322,7 +327,7 @@ export default function Home() {
         {/* ================= PODCAST ================= */}
         <HomeSection
           title="Podcast"
-          data={podcasts.slice(50, 100)}
+          data={podcasts.slice(50, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
           loading={isLoading}
           onViewAll={() => navigate("/all-podcast")}
           onCardClick={(item) =>
@@ -330,6 +335,8 @@ export default function Home() {
               state: { channel: item },
             })
           }
+        // onToggleSave={handleToggleSave}
+        // user={user}
         />
 
         {/* ================= VIDEO CHANNELS ================= */}

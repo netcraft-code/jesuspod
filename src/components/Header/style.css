@@ -625,4 +625,26 @@
   .mobile-menu-icon {
     display: block;
   }
+
+  /* Center Country Dropdown on Mobile */
+  .country-dropdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    right: auto;
+    width: 90%;
+    max-width: 380px;
+    z-index: 10005;
+    background: #0d0d0d;
+    /* solid dark background */
+    border: 1px solid #333;
+    padding: 10px;
+    /* Reset padding if needed */
+  }
+
+  /* Increase scroll height */
+  .country-dropdown .dropdown-scroll {
+    max-height: 60vh;
+  }
 }

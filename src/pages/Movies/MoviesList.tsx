@@ -176,7 +176,7 @@ export default function MoviesList() {
                 {/* 4. Search for Category (Category Grid) - Kept at bottom as requested/existing */}
                 <div className="search-radio-section" style={{ marginTop: 60 }}>
                     <div className="search-radio-header">
-                        <h2 className="sub-title">Browse Categories</h2>
+                        <h2 className="sub-title">By Categories</h2>
                         <input
                             type="text"
                             className="search-input"

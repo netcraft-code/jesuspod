@@ -372,38 +372,29 @@
   font-weight: 700;
 }
 
+/* SEARCH STYLES (Matched with Movies) */
 .search-input {
-  width: 340px;
-  /* thodi aur width */
-  height: 48px;
-  /* comfortable height */
-  padding: 0 16px;
-  border-radius: 14px;
-  /* smooth edges */
-  border: none;
-  /* no default border */
-  background: rgba(255, 255, 255, 0.08);
-  /* subtle light overlay */
-  color: #fff;
-  /* text whiteish */
-  font-size: 16px;
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 25px;
+  color: #ffffff;
+  font-size: 14px;
   outline: none;
-  transition: 0.3s ease;
-  backdrop-filter: blur(5px);
-  /* optional: glass effect */
+  transition: all 0.3s ease;
 }
 
-/* Focus state */
 .search-input:focus {
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 2px rgba(255, 45, 45, 0.3);
-  /* subtle red focus */
+  border-color: #e63946;
+  background-color: #222;
+  box-shadow: none;
+  /* Override existing box-shadow */
 }
 
-/* Placeholder */
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-  /* slightly faded white */
+  color: #666;
 }
 
 .sub-title {

@@ -62,7 +62,7 @@
 }
 
 .splash-logo {
-  font-size: 4rem;
+  font-size: clamp(2rem, 10vw, 4rem);
   font-weight: 900;
   margin: 0;
   letter-spacing: 5px;

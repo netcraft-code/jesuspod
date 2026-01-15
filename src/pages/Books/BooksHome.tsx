@@ -47,9 +47,18 @@ export default function BooksHome() {
     // Categories Data
     const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean);
 
-    const filteredCategories = categories.filter(cat =>
-        cat.toLowerCase().includes(searchTerm.toLowerCase())
+    // --- GLOBAL SEARCH FILTERING ---
+    const filteredMostRead = mostReadBooks.filter((book: any) =>
+        book.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const filteredSaved = savedBooks.filter((book: any) =>
+        book.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // const filteredCategories = categories.filter(cat =>
+    //     cat.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
 
     const handleBookClick = (book: any) => {
         // Track analytics
@@ -90,44 +99,56 @@ export default function BooksHome() {
             />
 
             <div className="content">
-                {/* Most Read Books */}
-                <Section
-                    title="Most Read Books"
-                    onViewAll={() => navigate("/all-books")}
-                    data={mostReadBooks}
+                {/* GLOBAL SEARCH BAR */}
+                <div style={{ padding: '0 20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search for books..."
+                        value={searchTerm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchTerm(e.target.value)
+                        }
+                        style={{ width: '100%', maxWidth: '400px' }}
+                    />
+                </div>
 
-                    onCardClick={handleBookClick}
-                    isBook={true}
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                />
+                {/* Most Read Books */}
+                {filteredMostRead.length > 0 && (
+                    <Section
+                        title="Most Read Books"
+                        onViewAll={() => navigate("/all-books")}
+                        data={filteredMostRead}
+
+                        onCardClick={handleBookClick}
+                        isBook={true}
+                        onToggleSave={handleToggleSave}
+                        user={user}
+                    />
+                )}
 
 
                 {/* Books to Love */}
-                <Section
-                    title="Books to Love"
-                    onViewAll={() => navigate("/all-books", { state: { filter: 'saved' } })}
-                    data={savedBooks}
+                {filteredSaved.length > 0 && (
+                    <Section
+                        title="Books to Love"
+                        onViewAll={() => navigate("/all-books", { state: { filter: 'saved' } })}
+                        data={filteredSaved}
 
-                    onCardClick={handleBookClick}
-                    isBook={true}
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                    emptyMessage="Start saving books to see them here ❤️"
-                />
+                        onCardClick={handleBookClick}
+                        isBook={true}
+                        onToggleSave={handleToggleSave}
+                        user={user}
+                        emptyMessage="Start saving books to see them here ❤️"
+                    />
+                )}
 
                 {/* Search for Books (Country Grid - Matching Channels) */}
                 {/* Search for Books (Category Grid) */}
                 <div className="search-radio-section">
                     <div className="search-radio-header">
-                        <h2 className="sub-title">Search for Books</h2>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search category..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                        <h2 className="sub-title">By Categories</h2>
+                        {/* Removed Local Search Input */}
                     </div>
 
                     <div className="podcast-category-grid">
@@ -139,7 +160,7 @@ export default function BooksHome() {
                                 </div>
                             ))
                         ) : (
-                            filteredCategories.map((cat, index) => (
+                            categories.map((cat, index) => (
                                 <CircleImageCard
                                     key={cat}
                                     title={cat}

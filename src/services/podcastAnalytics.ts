@@ -9,7 +9,10 @@ import {
     orderBy,
     limit,
     increment,
-    serverTimestamp
+    serverTimestamp,
+    updateDoc,
+    arrayUnion,
+    arrayRemove
 } from "firebase/firestore";
 import { logEvent } from "firebase/analytics";
 import { getDocWithQuery, getDocumentsByIds } from "./firestoreService";
@@ -85,7 +88,7 @@ export const trackPodcastPlay = async (
  * @param limitCount - Number of podcasts to fetch
  */
 export const getMostListenedPodcasts = async (
-    limitCount: number = 20
+    limitCount: number = 30
 ): Promise<any[]> => {
     try {
         console.log("📊 Fetching most listened podcasts...", { limitCount });
@@ -216,6 +219,64 @@ export const getSubscribedPodcasts = async (userId?: string): Promise<any[]> => 
         return subscribedPodcasts;
     } catch (error) {
         console.error("Error fetching subscribed podcasts:", error);
+        return [];
+    }
+};
+
+/**
+ * Toggle podcast save status (Favorite/Unfavorite)
+ * Uses 'star' field to separate from subscriptions
+ * @param channelId - ID of the podcast to save/unsave
+ * @param userId - ID of the user performing the action
+ * @param isSaved - Current save status (true = unsave, false = save)
+ */
+export const togglePodcastSave = async (channelId: string, userId: string, isSaved: boolean) => {
+    try {
+        console.log(`❤️ Toggling podcast save (star): ${channelId}, User: ${userId}, IsSaved: ${isSaved}`);
+
+        const podcastRef = doc(firestore, CHANNELS_COLLECTION, channelId);
+
+        if (isSaved) {
+            // Remove user from star array
+            await updateDoc(podcastRef, {
+                star: arrayRemove(userId)
+            });
+            console.log("💔 Podcast unsaved (unstarred)");
+        } else {
+            // Add user to star array
+            await updateDoc(podcastRef, {
+                star: arrayUnion(userId)
+            });
+            console.log("💖 Podcast saved (starred)");
+        }
+        return true;
+    } catch (error) {
+        console.error("❌ Error toggling podcast save:", error);
+        return false;
+    }
+};
+
+/**
+ * Get user's saved podcasts (Favorites)
+ * @param userId - User ID to fetch saved podcasts for
+ */
+export const getSavedPodcasts = async (userId?: string): Promise<any[]> => {
+    try {
+        if (!userId) {
+            return [];
+        }
+
+        // Query Newchannels collection where star array contains userId
+        const savedPodcasts = await getDocWithQuery(CHANNELS_COLLECTION, [
+            "star",
+            "array-contains",
+            userId,
+        ]);
+
+        console.log("✅ Saved podcasts fetched:", savedPodcasts.length);
+        return savedPodcasts;
+    } catch (error) {
+        console.error("Error fetching saved podcasts:", error);
         return [];
     }
 };
