@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { fetchBanners } from "../../services/dataService";
 import "./Banner.css";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function Banner() {
     const [banners, setBanners] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     useEffect(() => {
         const loadBanners = async () => {
