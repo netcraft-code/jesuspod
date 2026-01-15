@@ -10,6 +10,7 @@ import { getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSave
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 import MoviesSection from "../../components/MoviesSection/MoviesSection";
+import Banner from "../../components/Banner/Banner";
 import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
 import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
 
@@ -217,6 +218,9 @@ export default function Home() {
 
 
       <main className="radio-container">
+
+        {/* ================= BANNER ================= */}
+        <Banner />
 
         {/* ================= POPULAR & TRENDING ================= */}
         <HomeSection

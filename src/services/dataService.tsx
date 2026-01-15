@@ -17,6 +17,15 @@ export const fetchChannels = async () => {
 /**
  * Fetch all radios
  */
+
+/**
+ * Fetch all banners
+ */
+export const fetchBanners = async () => {
+  const docs = await getAllDocs("BannersCollection");
+  return docs.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+};
+
 export const fetchRadio = async () => {
   return await getAllDocs("Radio");
 };
