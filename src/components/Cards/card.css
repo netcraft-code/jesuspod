@@ -107,6 +107,8 @@
 .country-card {
   background: linear-gradient(145deg, #ff2d2d, #d80000);
   border-radius: 14px;
+  position: relative;
+  /* Added for absolute share btn */
 
   height: 100px;
 
@@ -167,6 +169,34 @@
   text-align: center;
   margin: 0;
   /* extra gap remove */
+}
+
+.country-share-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+  z-index: 5;
+}
+
+.country-share-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.country-share-btn img {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) invert(1);
 }
 
 /* Live Badge Styling */

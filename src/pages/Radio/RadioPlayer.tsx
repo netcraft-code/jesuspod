@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -6,7 +6,8 @@ import { refreshSavedRadios } from "../../redux/dataSlice";
 import { trackRadioPlay } from "../../services/radioAnalytics";
 import { updateDocument } from "../../services/firestoreService";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { firestore } from "../../services/firebase";
+import { firestore, analytics } from "../../services/firebase";
+import { logEvent } from "firebase/analytics";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
@@ -43,25 +44,25 @@ interface CountryItem {
 
 export default function RadioPlayer() {
   const location = useLocation();
-  // const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const paramType = searchParams.get("type");
+  const paramId = searchParams.get("id");
+
   const dispatch = useDispatch();
   const state = location.state as LocationState | null;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Redux selectors - use filtered radio
-  // const radio = useSelector(getFilteredRadio);
-  // Get ALL radios (unfiltered) for country click
+  // Redux selectors
   const allRadios = useSelector((state: RootState) => state.data.radio);
   const countries = useSelector<RootState, CountryItem[]>(
     (state) => state.data.Countries
   );
   const user = useSelector((state: RootState) => state.auth.user);
 
+  // Initialize state - prefer location.state, fallback to URL params logic (initially empty, filled by effect)
   const [playlist, setPlaylist] = useState<RadioItem[]>(state?.list ?? []);
-  const [current, setCurrent] = useState<RadioItem | null>(
-    state?.current ?? null
-  );
+  const [current, setCurrent] = useState<RadioItem | null>(state?.current ?? null);
 
   const [playing, setPlaying] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,8 +75,9 @@ export default function RadioPlayer() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [countrySearch, setCountrySearch] = useState<string>("");
-  const [playlistTitle, setPlaylistTitle] = useState<string>(state?.type || "Radio Stations");
-  const { play, forward10, repeateone, valumehigh, valumeslash } = images;
+  const initialTitle = state?.type || paramType || "Radio Stations";
+  const [playlistTitle, setPlaylistTitle] = useState<string>(initialTitle);
+  const { play, forward10, repeateone, valumehigh, valumeslash, share } = images;
 
   // Filter countries based on search
   const filteredCountries = countries.filter((c) =>
@@ -83,6 +85,35 @@ export default function RadioPlayer() {
   );
 
   /* ================= EFFECT ================= */
+
+  // Handle Deep Linking / URL Params
+  useEffect(() => {
+    // Only run if we DON'T have state but DO have params
+    if (!state && paramType && allRadios.length > 0) {
+      // 1. Filter radios by type (Country)
+      const countryRadios = allRadios.filter(
+        (r: RadioItem) => r.type?.toLowerCase() === paramType.toLowerCase()
+      );
+
+      if (countryRadios.length > 0) {
+        setPlaylist(countryRadios);
+        setPlaylistTitle(paramType);
+
+        // 2. Find specific radio by ID
+        if (paramId) {
+          const foundRadio = countryRadios.find((r: RadioItem) => r.id === paramId || r._id === paramId);
+          if (foundRadio) {
+            setCurrent(foundRadio);
+          } else {
+            setCurrent(countryRadios[0]); // Fallback
+          }
+        } else {
+          setCurrent(countryRadios[0]);
+        }
+      }
+    }
+  }, [state, paramType, paramId, allRadios]);
+
 
   useEffect(() => {
     if (audioRef.current) {
@@ -99,10 +130,12 @@ export default function RadioPlayer() {
       .play()
       .then(() => {
         setPlaying(true);
-        // Track radio play for analytics
         trackRadioPlay(current.id, current.title, current.type || "Unknown");
       })
-      .catch(() => setPlaying(false));
+      .catch((e) => {
+        console.warn("Autoplay blocked or failed", e);
+        setPlaying(false);
+      });
   }, [current]);
 
   /* ================= HANDLERS ================= */
@@ -168,24 +201,15 @@ export default function RadioPlayer() {
 
         let updatedStars: string[];
         if (currentStars.includes(userId)) {
-          // Remove from favorites
           updatedStars = currentStars.filter((id: string) => id !== userId);
           setIsFavorite(false);
         } else {
-          // Add to favorites
           updatedStars = [...currentStars, userId];
           setIsFavorite(true);
         }
 
-        // Update Firestore
         await updateDocument("Radio", docId, { star: updatedStars });
-
-        // Refresh saved radios in Redux
         dispatch(refreshSavedRadios(userId) as any);
-
-        console.log("Favorite updated successfully");
-      } else {
-        console.error("Radio document not found");
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
@@ -194,17 +218,50 @@ export default function RadioPlayer() {
     }
   };
 
-  // Check if current radio is favorited
+  const handleShare = async () => {
+    if (!current) return;
+
+    const shareUrl = `${window.location.origin}/radio-player?type=${encodeURIComponent(current.type || "")}&id=${current.id}`;
+    const shareData = {
+      title: current.title,
+      text: `Listen to ${current.title} on JesusPOD Radio`,
+      url: shareUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        logEvent(analytics, "Share_Radio", {
+          radioId: current.id,
+          radioTitle: current.title,
+          type: current.type
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Share failed", err);
+    }
+  };
+
   useEffect(() => {
     if (current && user) {
-      // const radioId = current._id || current.id;
       const userId = user.uid;
       const stars = current.star || [];
       setIsFavorite(stars.includes(userId));
     }
   }, [current, user]);
 
-  if (!current) return null;
+  if (!current) return (
+    <div className="player-page">
+      <Header active={active} setActive={setActive} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
+      <div className="player-layout" style={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <p>Select a radio station to play</p>
+      </div>
+      <Footer />
+    </div>
+  );
 
   /* ================= JSX ================= */
 
@@ -247,7 +304,6 @@ export default function RadioPlayer() {
         {/* RIGHT */}
         <div className="player-right">
 
-          {/* IMAGE */}
           {/* IMAGE */}
           <div className="image-card">
             <div
@@ -332,6 +388,15 @@ export default function RadioPlayer() {
                   <FaRegHeart size={24} />
                 )}
               </button>
+
+              {/* SHARE BUTTON - ADDED */}
+              <button
+                className="podcast-ctrl-btn"
+                onClick={handleShare}
+                title="Share Station"
+              >
+                <img src={share} alt="share" style={{ width: 22, height: 22 }} />
+              </button>
             </div>
           </div>
 
@@ -362,22 +427,14 @@ export default function RadioPlayer() {
               title={item.title}
               imageUrl={item.imageUrl}
               onClick={() => {
-                // Filter radios by selected country
                 const countryRadios = allRadios.filter(
                   (r: RadioItem) => r.type?.toLowerCase() === item.title.toLowerCase()
                 );
 
                 if (countryRadios.length > 0) {
-                  // Update playlist with filtered radios
                   setPlaylist(countryRadios);
-
-                  // Update playlist title
                   setPlaylistTitle(item.title);
-
-                  // Set first radio as current
                   setCurrent(countryRadios[0]);
-
-                  // Scroll to top to show the playlist
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}

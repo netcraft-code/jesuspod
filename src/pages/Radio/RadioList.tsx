@@ -9,6 +9,9 @@ import { getFilteredRadio } from "../../redux/dataSlice";
 import Section from "../../components/Section/Section";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import usePageTitle from "../../hooks/usePageTitle";
+import { images } from "../../assets/images";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../services/firebase";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -74,6 +77,48 @@ export default function RadioList() {
   //   c.title.toLowerCase().includes(searchTerm.toLowerCase())
   // );
 
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: "JesusPOD Radio",
+      text: "Listen to live Christian radio stations on JesusPOD!",
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        logEvent(analytics, "Share_RadioHome", {});
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
+
+  const handleShareCountry = async (country: CountryItem) => {
+    const shareUrl = `${window.location.origin}/radio-player?type=${encodeURIComponent(country.title)}`;
+    const shareData = {
+      title: `${country.title} Radio Stations`,
+      text: `Listen to ${country.title} radio stations on JesusPOD!`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        logEvent(analytics, "Share_RadioCountry", { country: country.title });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Error sharing country:", err);
+    }
+  };
+
   /** 🔹 Common click handler */
   const handleRadioClick = (item: RadioItem) => {
     console.log("🎵 Radio clicked:", item);
@@ -108,7 +153,15 @@ export default function RadioList() {
       <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
         {/* GLOBAL SEARCH BAR */}
-        <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
+          <button
+            className="share-btn"
+            onClick={handleShare}
+            title="Share Radio Page"
+          >
+            <img src={images.share} alt="share" />
+            <span>Share</span>
+          </button>
           <input
             type="text"
             className="search-input"
@@ -184,6 +237,7 @@ export default function RadioList() {
                     },
                   });
                 }}
+                onShare={() => handleShareCountry(item)}
               />
             ))}
           </div>

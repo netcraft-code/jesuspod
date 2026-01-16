@@ -11,6 +11,40 @@
   flex: 1;
 }
 
+.share-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+  height: 44px;
+  /* Match height of search input roughly */
+}
+
+.share-btn img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+}
+
+.share-btn span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.share-btn:hover {
+  background: #fb4a4a;
+  border-color: #fb4a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(251, 74, 74, 0.3);
+}
+
 /* TOP BAR */
 .top-bar {
   display: flex;
@@ -40,9 +74,7 @@
   width: 100%;
 }
 
-.video-wrapper {
-  /* Specific tweaks for video cards if needed */
-}
+
 
 /* small devices */
 @media (max-width: 600px) {

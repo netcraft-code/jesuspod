@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { logEvent } from "firebase/analytics";
@@ -25,11 +25,14 @@ import { images } from "../../assets/images";
 import { convertSecond } from "../../helper/convertSecond";
 import { incrementHits } from "../../services/firestoreService";
 import { trackPodcastPlay } from "../../services/podcastAnalytics";
-import { FaPause } from "react-icons/fa";
+import { FaPause, FaHeart, FaRegHeart } from "react-icons/fa";
 
 export default function PodcastDetail() {
   const { state } = useLocation();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const episodeIdFromUrl = searchParams.get("episodeId");
+
   const [fetchedChannel, setFetchedChannel] = useState<any>(null);
   const channel = state?.channel || fetchedChannel;
   const {
@@ -50,8 +53,6 @@ export default function PodcastDetail() {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [volume, setVolume] = useState(80); // 0 – 100
-  // const [volumeMsg, setVolumeMsg] = useState<string | null>(null);
-  // const [showVolumeMsg, setShowVolumeMsg] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
   const [downloadingEpisode, setDownloadingEpisode] = useState<string | null>(
@@ -115,7 +116,6 @@ export default function PodcastDetail() {
   const increaseVolume = () => {
     setVolume((prev) => {
       const next = Math.min(prev + 10, 100);
-      // showVolumeFeedback(`+10 (${next}%)`);
       return next;
     });
   };
@@ -123,16 +123,9 @@ export default function PodcastDetail() {
   const decreaseVolume = () => {
     setVolume((prev) => {
       const next = Math.max(prev - 10, 0);
-      // showVolumeFeedback(`-10 (${next}%)`);
       return next;
     });
   };
-
-  // const showVolumeFeedback = (msg: string) => {
-  //     // setVolumeMsg(msg);
-  //     // setShowVolumeMsg(true);
-  //     // setTimeout(() => setShowVolumeMsg(false), 800);
-  // };
 
   const fetchEpisodes = async (pageNo: number) => {
     if (loading || !hasMore) return;
@@ -149,8 +142,27 @@ export default function PodcastDetail() {
 
       setEpisodes((prev) => {
         const updatedList = [...prev, ...newEpisodes];
-        // Set first episode as default if none selected
-        if (!currentEpisode && updatedList.length > 0) {
+
+        // Handle deep linking for episodes
+        if (episodeIdFromUrl && !currentEpisode) {
+          const deepLinkedEpisode = updatedList.find(ep =>
+            (ep?.guid?.[0]?._ === episodeIdFromUrl) ||
+            (ep?.guid?.[0]?._ === decodeURIComponent(episodeIdFromUrl)) ||
+            (ep?.title?.[0] === decodeURIComponent(episodeIdFromUrl))
+          );
+
+          if (deepLinkedEpisode) {
+            setCurrentEpisode(deepLinkedEpisode);
+            setTimeout(() => {
+              const audioUrl = deepLinkedEpisode?.enclosure?.[0]?.$?.url || deepLinkedEpisode?.["media:content"]?.[0]?.$?.url;
+              if (audioRef.current && audioUrl) {
+                audioRef.current.src = audioUrl;
+              }
+            }, 500);
+          } else if (updatedList.length > 0 && !currentEpisode) {
+            setCurrentEpisode(updatedList[0]);
+          }
+        } else if (!currentEpisode && updatedList.length > 0) {
           setCurrentEpisode(updatedList[0]);
         }
         return updatedList;
@@ -176,18 +188,15 @@ export default function PodcastDetail() {
       checkSubscriptionStatus();
       fetchDownloadedEpisodes();
 
-      // Log Channel View Event
       logEvent(analytics, "PodcastChannel", {
         item: JSON.stringify(channel),
         description: "PodcastChannel_event",
       });
 
-      // Track podcast analytics (channel view)
       if (channel?.id && channel?.title) {
         trackPodcastPlay(channel.id, channel.title);
       }
 
-      // Increment Hits in Firestore
       if (channel?.id) {
         incrementHits("Newchannels", channel.id);
       }
@@ -246,7 +255,6 @@ export default function PodcastDetail() {
 
     if (!audioUrl) return;
 
-    // same episode → toggle
     if (currentEpisode?.guid?.[0]?._ === episode?.guid?.[0]?._) {
       if (isPlaying) {
         audioRef.current?.pause();
@@ -261,7 +269,6 @@ export default function PodcastDetail() {
       return;
     }
 
-    // new episode
     setCurrentEpisode(episode);
     setIsPlaying(true);
 
@@ -279,7 +286,6 @@ export default function PodcastDetail() {
     }, 0);
   };
 
-  // Check if user is subscribed to this channel
   const checkSubscriptionStatus = async () => {
     const channelIdToQuery = channel?._id || channel?.id;
     if (!user?.uid || !channelIdToQuery) return;
@@ -299,7 +305,6 @@ export default function PodcastDetail() {
     }
   };
 
-  // Fetch downloaded episodes
   const fetchDownloadedEpisodes = async () => {
     if (!user?.uid) return;
 
@@ -313,34 +318,23 @@ export default function PodcastDetail() {
     }
   };
 
-  // Handle subscribe/unsubscribe
   const handleSubscribe = async () => {
     if (!user?.uid) {
       alert("Please login to subscribe to this podcast");
       return;
     }
 
-    console.log("Channel data:", channel);
     const channelIdToQuery = channel?._id || channel?.id;
-
     if (!channelIdToQuery) {
-      console.error("No channel ID found");
       alert("Channel ID not found");
       return;
     }
-
-    console.log("Querying with _id:", channelIdToQuery);
 
     setSubscribeLoading(true);
     try {
       const channelsRef = collection(firestore, "Newchannels");
       const q = query(channelsRef, where("_id", "==", channelIdToQuery));
       const snapshot = await getDocs(q);
-
-      console.log(
-        "Query result:",
-        snapshot.empty ? "No docs found" : `Found ${snapshot.docs.length} docs`
-      );
 
       if (!snapshot.empty) {
         const docRef = doc(firestore, "Newchannels", snapshot.docs[0].id);
@@ -349,14 +343,11 @@ export default function PodcastDetail() {
 
         let updatedSubs;
         if (isSubscribed) {
-          // Unsubscribe
           updatedSubs = currentSubs.filter((id: string) => id !== user.uid);
         } else {
-          // Subscribe
           updatedSubs = [...currentSubs, user.uid];
         }
 
-        // Update entire channel data with new sub array (matching archive pattern)
         await updateDoc(docRef, {
           ...channelData,
           sub: updatedSubs,
@@ -368,10 +359,7 @@ export default function PodcastDetail() {
           channelId: channelIdToQuery,
           channelTitle: channel.title,
         });
-
-        console.log("Subscribe successful!");
       } else {
-        console.log("No document found with _id:", channelIdToQuery);
         alert("Channel not found in database. Please try again.");
       }
     } catch (error) {
@@ -382,34 +370,60 @@ export default function PodcastDetail() {
     }
   };
 
-  // Handle share channel
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
-    const shareLink = window.location.href;
+    const shareLink = `${window.location.origin}/podcastplayer/${channel?.id}`;
     const shareMessage = `Listen to ${shareTitle} on JesusPOD\n\n${shareLink}`;
 
     try {
       if (navigator.share) {
-        // Only use text field to ensure message is included
         await navigator.share({
           title: shareTitle,
-          text: shareMessage,
+          text: `Listen to ${shareTitle} on JesusPOD`,
+          url: shareLink
         });
         logEvent(analytics, "Share_Channel", {
           channelId: channel?.id,
           channelTitle: channel?.title,
         });
       } else {
-        // Fallback: copy message to clipboard
-        await navigator.clipboard.writeText(shareMessage);
-        alert("Message copied to clipboard!");
+        await navigator.clipboard.writeText(shareLink);
+        alert("Link copied to clipboard!");
       }
     } catch (error) {
       console.error("Error sharing:", error);
     }
   };
 
-  // Handle download episode
+  const handleShareEpisode = async (episode: any, e: any) => {
+    e.stopPropagation();
+    const episodeTitle = episode?.title?.[0] || "Episode";
+    const episodeGuid = episode?.guid?.[0]?._ || episodeTitle;
+
+    // We encode the episode identifier to handle spaces or special chars
+    // Using GUID from RSS which is usually reliable for identifying episodes
+    const shareLink = `${window.location.origin}/podcastplayer/${channel?.id}?episodeId=${encodeURIComponent(episodeGuid)}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: episodeTitle,
+          text: `Listen to ${episodeTitle} from ${channel?.title} on JesusPOD`,
+          url: shareLink
+        });
+        logEvent(analytics, "Share_Episode", {
+          channelId: channel?.id,
+          episodeTitle: episodeTitle,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareLink);
+        alert("Episode link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Share failed", error);
+    }
+  };
+
   const handleDownloadEpisode = async (episode: any) => {
     if (!user?.uid) {
       alert("Please login to download episodes");
@@ -430,7 +444,6 @@ export default function PodcastDetail() {
     setDownloadingEpisode(episodeTitle);
 
     try {
-      // Save to Firestore
       const downloadRef = doc(
         firestore,
         `users/${user.uid}/downloads`,
@@ -453,7 +466,6 @@ export default function PodcastDetail() {
         channelTitle: channel?.title,
       });
 
-      // Refresh downloaded episodes list
       fetchDownloadedEpisodes();
 
       alert(
@@ -477,7 +489,6 @@ export default function PodcastDetail() {
       />
 
       <div className="container">
-        {/* LEFT 20% */}
         <div className="podcast-layout">
           <div className="podcast-left" ref={scrollRef} onScroll={handleScroll}>
             <h2 className="channel-title-details">
@@ -735,26 +746,35 @@ export default function PodcastDetail() {
                       </div>
                     </div>
 
-                    <div
-                      className="episode-play"
-                      onClick={() => playEpisode(item)}
-                    >
-                      {isCurrent && isPlaying ? (
-                        <div className="playing-bars">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </div>
-                      ) : (
-                        <img src={play} alt="play" />
-                      )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <button
+                        className="icon-btn"
+                        onClick={(e) => handleShareEpisode(item, e)}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        title="Share Episode"
+                      >
+                        <img src={share} alt="share" style={{ width: 16, height: 16, opacity: 0.7 }} />
+                      </button>
+                      <div
+                        className="episode-play"
+                        onClick={() => playEpisode(item)}
+                      >
+                        {isCurrent && isPlaying ? (
+                          <div className="playing-bars">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                        ) : (
+                          <img src={play} alt="play" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* LOADING INDICATOR */}
             {loading && (
               <p
                 style={{
@@ -782,7 +802,6 @@ export default function PodcastDetail() {
               </p>
             )}
           </div>
-          {/* RIGHT 80% (empty for now) */}
           <div className="podcast-right">
             {loading && episodes.length === 0 ? (
               <div className="page-loading">
@@ -898,7 +917,6 @@ export default function PodcastDetail() {
 
                 {/* Controls */}
                 <div className="player-controls">
-                  {/* 🔇 LOW / MUTE (START) */}
                   <div className="volume-feedback-wrapper">
                     <button
                       className="podcast-ctrl-btn"
@@ -910,7 +928,7 @@ export default function PodcastDetail() {
 
                   <button
                     className="podcast-ctrl-btn"
-                    onClick={() => (audioRef.current!.currentTime -= 1)}
+                    onClick={() => { if (audioRef.current) audioRef.current.currentTime -= 1 }}
                   >
                     <img src={repeateone} alt="repeateone" />
                   </button>
@@ -932,7 +950,7 @@ export default function PodcastDetail() {
 
                   <button
                     className="podcast-ctrl-btn"
-                    onClick={() => (audioRef.current!.currentTime += 10)}
+                    onClick={() => { if (audioRef.current) audioRef.current.currentTime += 10 }}
                   >
                     <img src={forward10} alt="forward" />
                   </button>

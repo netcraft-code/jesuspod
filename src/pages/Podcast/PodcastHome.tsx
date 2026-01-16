@@ -12,6 +12,9 @@ import { categoryImages } from "../../assets/images/CatImages";
 import usePageTitle from "../../hooks/usePageTitle";
 import { togglePodcastSave } from "../../services/dataService";
 import { refreshSavedPodcasts, togglePodcastSaveState } from "../../redux/dataSlice";
+// import { images } from "../../assets/images";
+// import { logEvent } from "firebase/analytics";
+// import { analytics } from "../../services/firebase";
 
 
 export default function PodcastHome() {
@@ -71,6 +74,27 @@ export default function PodcastHome() {
         }
     };
 
+    // const handleShare = async () => {
+    //     const shareUrl = window.location.href;
+    //     const shareData = {
+    //         title: "JesusPOD Podcast",
+    //         text: "Listen to the best Christian podcasts on JesusPOD!",
+    //         url: shareUrl,
+    //     };
+
+    //     try {
+    //         if (navigator.share) {
+    //             await navigator.share(shareData);
+    //             logEvent(analytics, "Share_PodcastHome", {});
+    //         } else {
+    //             await navigator.clipboard.writeText(shareUrl);
+    //             alert("Link copied to clipboard!");
+    //         }
+    //     } catch (err) {
+    //         console.error("Error sharing:", err);
+    //     }
+    // };
+
     return (
         <div className="main-content">
             <Header
@@ -115,7 +139,16 @@ export default function PodcastHome() {
                 <div className="search-radio-section">
 
                     <div className="search-radio-header">
-                        <h2 className="sub-title">Search For Podcast</h2>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <h2 className="sub-title">Search For Podcast</h2>
+                            {/* <button
+                                onClick={handleShare}
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                                title="Share Podcast Page"
+                            >
+                                <img src={images.share} alt="share" style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }} />
+                            </button> */}
+                        </div>
 
                         <input
                             type="text"
