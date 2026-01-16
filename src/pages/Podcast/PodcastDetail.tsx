@@ -25,7 +25,7 @@ import { images } from "../../assets/images";
 import { convertSecond } from "../../helper/convertSecond";
 import { incrementHits } from "../../services/firestoreService";
 import { trackPodcastPlay } from "../../services/podcastAnalytics";
-import { FaPause, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
 
 export default function PodcastDetail() {
   const { state } = useLocation();
@@ -373,7 +373,7 @@ export default function PodcastDetail() {
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
     const shareLink = `${window.location.origin}/podcastplayer/${channel?.id}`;
-    const shareMessage = `Listen to ${shareTitle} on JesusPOD\n\n${shareLink}`;
+    // const shareMessage = `Listen to ${shareTitle} on JesusPOD\n\n${shareLink}`;
 
     try {
       if (navigator.share) {
