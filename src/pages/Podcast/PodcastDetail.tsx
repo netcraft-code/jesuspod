@@ -219,6 +219,24 @@ export default function PodcastDetail() {
   };
 
   useEffect(() => {
+    const handleWindowScroll = () => {
+      // Check if we are on mobile/tablet (<= 1024px to match CSS)
+      if (window.innerWidth > 1024) return;
+      if (loading || !hasMore) return;
+
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleWindowScroll);
+    return () => window.removeEventListener("scroll", handleWindowScroll);
+  }, [loading, hasMore]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     const onTimeUpdate = () => {

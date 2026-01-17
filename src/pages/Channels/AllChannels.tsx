@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import ChannelCard from "./ChannelCard";
 import "../Radio/Radio.css"; // Reuse Radio CSS
+import "./AllChannels.css";
 import { trackChannelPlay } from "../../services/channelAnalytics.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { getFilteredChannels, refreshSavedChannels, toggleChannelSaveState } from "../../redux/dataSlice";
@@ -48,7 +49,11 @@ export default function AllChannels() {
     // Local Search Filter
     const filtered = sourceChannels.filter((item: any) =>
         item.title?.toLowerCase().includes(search.toLowerCase())
-    );
+    ).sort((a: any, b: any) => {
+        const titleA = (a?.title || "").toString().trim().toLowerCase();
+        const titleB = (b?.title || "").toString().trim().toLowerCase();
+        return titleA.localeCompare(titleB);
+    });
 
     const handleCardClick = (item: any) => {
         // Track play
@@ -114,7 +119,7 @@ export default function AllChannels() {
                 </div>
 
                 {/* CHANNELS GRID */}
-                <div className="card-grid">
+                <div className="card-grid channels-grid">
                     {filtered.map((item: any) => (
                         <div key={item.id} className="home-card-wrapper channel-wrapper">
                             <ChannelCard

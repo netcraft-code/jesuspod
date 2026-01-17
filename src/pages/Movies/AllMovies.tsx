@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MovieCard from "../../components/MoviesSection/MovieCard";
 import "../Radio/Radio.css"; // Reuse Radio CSS
+import "./AllMovies.css";
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { useSelector, useDispatch } from "react-redux";
 import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice";
@@ -49,7 +50,11 @@ export default function AllMovies() {
     // Local Search Filter
     const filtered = sourceMovies.filter((item: any) =>
         item.name?.toLowerCase().includes(search.toLowerCase())
-    );
+    ).sort((a: any, b: any) => {
+        const titleA = (a?.name || "").toString().trim().toLowerCase();
+        const titleB = (b?.name || "").toString().trim().toLowerCase();
+        return titleA.localeCompare(titleB);
+    });
 
     const handleCardClick = (item: any) => {
         // Track play
@@ -114,7 +119,7 @@ export default function AllMovies() {
                 </div>
 
                 {/* MOVIES GRID */}
-                <div className="card-grid">
+                <div className="card-grid movies-grid">
                     {filtered.length > 0 ? (
                         filtered.map((item: any) => (
                             <div key={item.id} className="home-card-wrapper channel-wrapper">

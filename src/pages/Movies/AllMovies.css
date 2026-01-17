@@ -1,0 +1,27 @@
+.movies-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    padding-bottom: 2rem;
+}
+
+/* Override fixed width from MovieCard sidebar variant */
+.movies-grid .movies-card-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    /* Allow height to scale or fix it */
+    aspect-ratio: 16/9;
+    /* Maintain consistent ratio */
+}
+
+/* Ensure content overlays match spacing */
+.movies-grid .movies-card-content {
+    padding: 10px;
+}
+
+@media (max-width: 600px) {
+    .movies-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+}

@@ -61,11 +61,7 @@ export default function SplashScreen({ isVisible }: SplashScreenProps) {
             <div className="splash-content">
                 <div className="logo-container">
                     <h1 className="splash-logo">
-                        {["J", "E", "S", "U", "S", "P", "O", "D"].map((letter, index) => (
-                            <span key={index} style={{ animationDelay: `${index * 0.1}s` }} className="jumping-letter">
-                                {letter}
-                            </span>
-                        ))}
+                        JESUSPOD
                     </h1>
                     <p className="splash-tagline">RADIO &bull; PODCAST &bull; LIVE</p>
                 </div>

@@ -28,7 +28,11 @@ export default function AllRadio() {
 
   const filtered = radioList.filter((r: RadioItem) =>
     r.title.toLowerCase().includes(search.toLowerCase())
-  );
+  ).sort((a: any, b: any) => {
+    const titleA = (a?.title || "").toString().trim().toLowerCase();
+    const titleB = (b?.title || "").toString().trim().toLowerCase();
+    return titleA.localeCompare(titleB);
+  });
 
   return (
     <div className="main-content">

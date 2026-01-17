@@ -3,7 +3,22 @@
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 16px;
   /* padding-bottom: 50px; */
-/* Increased padding */
+  /* Increased padding */
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
 }
 
 .podcast-category-header {
@@ -542,7 +557,8 @@
   }
 
   .player-image {
-    height: 250px;
+    width: 100%;
+    height: auto;
     border-radius: 16px;
   }
 

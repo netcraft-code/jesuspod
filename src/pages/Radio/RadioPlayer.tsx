@@ -332,6 +332,15 @@ export default function RadioPlayer() {
             <p className="player-desc">Live Music Streaming</p>
 
             <div className="player-controls">
+
+              {/* SHARE BUTTON - ADDED */}
+              <button
+                className="podcast-ctrl-btn"
+                onClick={handleShare}
+                title="Share Station"
+              >
+                <img src={share} alt="share" style={{ width: 22, height: 22 }} />
+              </button>
               {/* VOLUME DOWN */}
               <div className="volume-feedback-wrapper">
                 <button className="podcast-ctrl-btn" onClick={decreaseVolume}>
@@ -389,14 +398,7 @@ export default function RadioPlayer() {
                 )}
               </button>
 
-              {/* SHARE BUTTON - ADDED */}
-              <button
-                className="podcast-ctrl-btn"
-                onClick={handleShare}
-                title="Share Station"
-              >
-                <img src={share} alt="share" style={{ width: 22, height: 22 }} />
-              </button>
+
             </div>
           </div>
 

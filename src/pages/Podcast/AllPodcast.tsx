@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Card from "../../components/Cards/Card";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./Podcast.css";
 
 export default function AllPodcast() {
     const [search, setSearch] = useState("");
@@ -18,9 +19,13 @@ export default function AllPodcast() {
     const isSavedFilter = location.state?.filter === 'saved';
     const dataToDisplay = isSavedFilter ? savedPodcasts : podcasts;
 
-    const filtered = dataToDisplay.filter((p: any) =>
-        p.title.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = [...dataToDisplay].filter((p: any) =>
+        (p?.title || "").toLowerCase().includes(search.toLowerCase())
+    ).sort((a: any, b: any) => {
+        const titleA = (a?.title || "").toString().trim().toLowerCase();
+        const titleB = (b?.title || "").toString().trim().toLowerCase();
+        return titleA.localeCompare(titleB);
+    });
 
     return (
         <div className="main-content">
