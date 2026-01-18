@@ -90,12 +90,38 @@ export default function PodcastDetail() {
       const getChannel = async () => {
         setLoading(true);
         try {
+          // 1. Try Document ID (Primary)
           const docRef = doc(firestore, "Newchannels", id);
           const docSnap = await getDoc(docRef);
+
           if (docSnap.exists()) {
             setFetchedChannel({ id: docSnap.id, ...docSnap.data() });
           } else {
-            console.log("No such document!");
+            console.log("⚠️ Document not found by Key, attempting fallback lookup for ID:", id);
+
+            // 2. Fallback: Query by '_id' (Internal ID)
+            const channelsRef = collection(firestore, "Newchannels");
+            let q = query(channelsRef, where("_id", "==", id));
+            let snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+              const docData = snapshot.docs[0];
+              console.log("✅ Found channel by _id");
+              setFetchedChannel({ id: docData.id, ...docData.data() });
+            } else {
+              // 3. Last resort: Query by 'id' field
+              q = query(channelsRef, where("id", "==", id));
+              snapshot = await getDocs(q);
+
+              if (!snapshot.empty) {
+                const docData = snapshot.docs[0];
+                console.log("✅ Found channel by id field");
+                setFetchedChannel({ id: docData.id, ...docData.data() });
+              } else {
+                console.log("❌ No channel found with this ID");
+                // Optionally handle not found state (redirect or show error)
+              }
+            }
           }
         } catch (error) {
           console.error("Error fetching channel:", error);

@@ -117,8 +117,37 @@ export const getMostListenedPodcasts = async (
             return [];
         }
 
-        const channels = await getDocumentsByIds(CHANNELS_COLLECTION, channelIds);
-        console.log("📻 Channel objects fetched:", channels.length);
+        // 1. Try fetching by Document ID (Primary method)
+        let channels = await getDocumentsByIds(CHANNELS_COLLECTION, channelIds);
+        console.log(`📻 Channels found by Doc ID: ${channels.length}`);
+
+        // 2. Identify missing IDs
+        const foundIds = new Set(channels.map((c: any) => c.id));
+        const missingIds = channelIds.filter((id) => !foundIds.has(id));
+
+        if (missingIds.length > 0) {
+            console.log(`⚠️ Missing ${missingIds.length} channels, attempting fallback lookup...`, missingIds);
+
+            // 3. Fallback: Query by 'id' field or '_id' field
+            // We do this in parallel for efficiency
+            const fallbackPromises = missingIds.map(async (missingId) => {
+                // Try 'id' field
+                let docs = await getDocWithQuery(CHANNELS_COLLECTION, ["id", "==", missingId]);
+                if (docs.length > 0) return docs[0];
+
+                // Try '_id' field
+                docs = await getDocWithQuery(CHANNELS_COLLECTION, ["_id", "==", missingId]);
+                if (docs.length > 0) return docs[0];
+
+                return null;
+            });
+
+            const fallbackResults = await Promise.all(fallbackPromises);
+            const foundFallback = fallbackResults.filter((doc) => doc !== null);
+            console.log(`✅ Found ${foundFallback.length} channels via fallback lookup`);
+
+            channels = [...channels, ...foundFallback];
+        }
 
         // Sort channels by playCount order
         const analyticsMap = new Map();
@@ -130,9 +159,26 @@ export const getMostListenedPodcasts = async (
         });
 
         channels.sort((a, b) => {
-            const aCount = analyticsMap.get(a.id) || analyticsMap.get(a._id) || 0;
-            const bCount = analyticsMap.get(b.id) || analyticsMap.get(b._id) || 0;
-            return bCount - aCount;
+            // Check Document ID, then 'id' field, then '_id' field
+            // const aId = a.id;
+            // const bId = b.id;
+
+            // We need to resolve which analytics ID corresponds to this channel
+            // It might match the doc.id, doc.data.id, or doc.data._id
+            const getCount = (doc: any) => {
+                if (analyticsMap.has(doc.id)) return analyticsMap.get(doc.id);
+                if (analyticsMap.has(doc.id)) return analyticsMap.get(doc.id); // Check internal id field if exists
+                if (analyticsMap.has(doc._id)) return analyticsMap.get(doc._id);
+
+                // Reverse lookup: check if any analytics ID matches this doc's IDs
+                // (This is a bit expensive but robust)
+                for (const [key, val] of analyticsMap.entries()) {
+                    if (key === doc.id || key === doc.id || key === doc._id) return val;
+                }
+                return 0;
+            };
+
+            return getCount(b) - getCount(a);
         });
 
         console.log("✅ Most listened podcasts fetched successfully:", channels.length);
