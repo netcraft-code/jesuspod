@@ -4,9 +4,9 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Card from "../../components/Cards/Card";
 import { useState } from "react";
-import { images } from "../../assets/images";
-import { logEvent } from "firebase/analytics";
-import { analytics } from "../../services/firebase";
+// import { images } from "../../assets/images";
+// import { logEvent } from "firebase/analytics";
+// import { analytics } from "../../services/firebase";
 
 export default function PodcastCategory() {
     const { state } = useLocation();
@@ -26,28 +26,28 @@ export default function PodcastCategory() {
         )
     );
 
-    const handleShare = async () => {
-        const shareUrl = `${window.location.origin}/podcast-category?category=${encodeURIComponent(category)}`;
-        const shareData = {
-            title: `${category} Podcasts`,
-            text: `Check out these ${category} podcasts on JesusPOD!`,
-            url: shareUrl,
-        };
+    // const handleShare = async () => {
+    //     const shareUrl = `${window.location.origin}/podcast-category?category=${encodeURIComponent(category)}`;
+    //     const shareData = {
+    //         title: `${category} Podcasts`,
+    //         text: `Check out these ${category} podcasts on JesusPOD!`,
+    //         url: shareUrl,
+    //     };
 
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-                logEvent(analytics, "Share_Category", {
-                    category: category,
-                });
-            } else {
-                await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
-            }
-        } catch (err) {
-            console.error("Error sharing:", err);
-        }
-    };
+    //     try {
+    //         if (navigator.share) {
+    //             await navigator.share(shareData);
+    //             logEvent(analytics, "Share_Category", {
+    //                 category: category,
+    //             });
+    //         } else {
+    //             await navigator.clipboard.writeText(shareUrl);
+    //             alert("Link copied to clipboard!");
+    //         }
+    //     } catch (err) {
+    //         console.error("Error sharing:", err);
+    //     }
+    // };
 
     return (
         <>
@@ -59,16 +59,16 @@ export default function PodcastCategory() {
             />
 
             <div className="content">
-                <div className="podcast-category-header">
+                <div >
                     <h2>{category}</h2>
-                    <button
+                    {/* <button
                         className="share-btn"
                         onClick={handleShare}
                         title="Share Category"
                     >
                         <img src={images.share} alt="share" />
                         <span>Share</span>
-                    </button>
+                    </button> */}
                 </div>
 
                 <div className="card-grid">

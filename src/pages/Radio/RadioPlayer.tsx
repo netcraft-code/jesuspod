@@ -245,6 +245,32 @@ export default function RadioPlayer() {
     }
   };
 
+  const handleItemShare = async (e: React.MouseEvent, item: RadioItem) => {
+    e.stopPropagation(); // Prevent changing station when clicking share
+    const shareUrl = `${window.location.origin}/radio-player?type=${encodeURIComponent(item.type || "")}&id=${item.id}`;
+    const shareData = {
+      title: item.title,
+      text: `Listen to ${item.title} on JesusPOD Radio`,
+      url: shareUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        logEvent(analytics, "Share_Radio_List", {
+          radioId: item.id,
+          radioTitle: item.title,
+          type: item.type
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Share failed", err);
+    }
+  };
+
   useEffect(() => {
     if (current && user) {
       const userId = user.uid;
@@ -294,6 +320,12 @@ export default function RadioPlayer() {
                     alt={item.title}
                     className="radio-img"
                   />
+                  <div
+                    className="radio-share-overlay"
+                    onClick={(e) => handleItemShare(e, item)}
+                  >
+                    <img src={images.share} alt="share" style={{ width: 16, height: 16, objectFit: 'contain' }} />
+                  </div>
                 </div>
                 <h3 className="radio-card-title">{item.title}</h3>
               </div>

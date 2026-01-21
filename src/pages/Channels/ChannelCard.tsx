@@ -1,5 +1,6 @@
 import React from "react";
 import "./ChannelCard.css";
+import { images } from "../../assets/images";
 
 /* 🔹 Types (Reusing similar types for consistency) */
 export interface Item {
@@ -18,6 +19,9 @@ interface ChannelCardProps {
     onToggleSave?: (item: Item, status: boolean) => void;
     variant?: string;
     subtitle?: string;
+    showFav?: boolean;
+    showShare?: boolean;
+    onShare?: (item: Item) => void;
 }
 
 export default function ChannelCard({
@@ -25,13 +29,23 @@ export default function ChannelCard({
     onClick,
     isSaved = false,
     onToggleSave,
-    subtitle
+    subtitle,
+    showFav = true,
+    showShare = false,
+    onShare
 }: ChannelCardProps) {
 
     const handleHeartClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent card click
         if (onToggleSave) {
             onToggleSave(item, isSaved);
+        }
+    };
+
+    const handleShareClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onShare) {
+            onShare(item);
         }
     };
 
@@ -61,23 +75,37 @@ export default function ChannelCard({
                 />
 
                 {/* SAVE ICON */}
-                <div
-                    className="channel-save-badge"
-                    onClick={handleHeartClick}
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill={isSaved ? "red" : "none"}
-                        stroke={isSaved ? "red" : "white"}
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                {showFav && (
+                    <div
+                        className="channel-save-badge"
+                        onClick={handleHeartClick}
                     >
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                </div>
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill={isSaved ? "red" : "none"}
+                            stroke={isSaved ? "red" : "white"}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                )}
+
+                {/* SHARE ICON */}
+                {showShare && (
+                    <div
+                        className="channel-save-badge"
+                        style={{ right: '12px', left: 'auto' }} // Position right
+                        onClick={handleShareClick}
+                    >
+                        <img src={images.share} alt="share" />
+
+                    </div>
+                )}
 
                 {/* TITLE */}
                 <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', zIndex: 2 }}>

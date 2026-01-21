@@ -250,6 +250,26 @@ export const fetchSavedChannels = async (userId?: string) => {
 
 
 
+
+/**
+ * Fetch all television channels
+ */
+export const fetchTelevisionChannels = async () => {
+  try {
+    const docs = await getAllDocs("Telivision");
+    return docs
+      .map((doc: any) => ({
+        ...doc,
+        imageUrl: doc.imageUrl || doc.image, // Ensure image field consistency
+        title: doc.title || doc.name,
+      }))
+      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+  } catch (error) {
+    console.error("Error fetching TV channels:", error);
+    return [];
+  }
+};
+
 /**
  * Toggle save status of a channel
  */

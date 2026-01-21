@@ -109,6 +109,12 @@
     transition: transform 0.2s;
 }
 
+.channel-save-badge img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
 .channel-save-badge:hover {
     transform: scale(1.1);
 }

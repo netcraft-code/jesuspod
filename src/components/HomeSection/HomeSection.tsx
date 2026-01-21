@@ -17,6 +17,9 @@ interface HomeSectionProps {
     user?: any;
     emptyMessage?: string;
     isBook?: boolean;
+    showFav?: boolean;
+    showShare?: boolean;
+    onShare?: (item: any) => void;
 }
 
 export default function HomeSection({
@@ -30,7 +33,10 @@ export default function HomeSection({
     onToggleSave,
     user,
     emptyMessage,
-    isBook = false
+    isBook = false,
+    showFav = true,
+    showShare = false,
+    onShare
 }: HomeSectionProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -102,6 +108,9 @@ export default function HomeSection({
                                             isSaved={item.star?.includes(user?.uid)}
                                             onToggleSave={onToggleSave}
                                             subtitle={type}
+                                            showFav={showFav}
+                                            showShare={showShare}
+                                            onShare={onShare}
                                         />
                                     );
                                 }

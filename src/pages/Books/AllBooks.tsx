@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
@@ -14,8 +14,14 @@ import type { RootState } from "../../redux/store";
 
 export default function AllBooks() {
     // const navigate = useNavigate();
+    // const navigate = useNavigate();
     const location = useLocation();
-    const categoryFilter = location.state?.category;
+    const [searchParams] = useSearchParams();
+
+    // Priority: 1. URL Param, 2. State
+    const categoryParam = searchParams.get("category");
+    const categoryFromState = location.state?.category;
+    const activeCategory = categoryParam || categoryFromState;
 
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.auth.user);
@@ -48,8 +54,8 @@ export default function AllBooks() {
                 b.type?.toLowerCase() === countryFromState.toLowerCase()
             );
         }
-    } else if (categoryFilter) {
-        sourceBooks = allBooks.filter((b: any) => b.category === categoryFilter);
+    } else if (activeCategory) {
+        sourceBooks = allBooks.filter((b: any) => b.category === activeCategory);
     }
 
     // Local Search & Sort
@@ -104,7 +110,7 @@ export default function AllBooks() {
                     <h2 className="sub-title">
                         {filterState === 'saved'
                             ? "Books to Love"
-                            : (countryFromState ? `${countryFromState} Books` : (categoryFilter ? `${categoryFilter} Books` : "All Books"))
+                            : (countryFromState ? `${countryFromState} Books` : (activeCategory ? `${activeCategory} Books` : "All Books"))
                         }
                     </h2>
                     <input

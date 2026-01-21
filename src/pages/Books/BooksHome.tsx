@@ -1,11 +1,10 @@
 
-
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import Section from "../../components/Section/Section";
+import HomeSection from "../../components/HomeSection/HomeSection";
 
 import type { RootState } from "../../redux/store";
 
@@ -15,6 +14,7 @@ import { refreshSavedBooks, toggleBookSaveState } from "../../redux/dataSlice";
 import { toggleBookSave } from "../../services/dataService";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import usePageTitle from "../../hooks/usePageTitle";
+import { images } from "../../assets/images";
 
 interface BookItem {
     id: string;
@@ -89,6 +89,38 @@ export default function BooksHome() {
         }
     };
 
+
+    const handleSharePage = () => {
+        const shareData = {
+            title: "Jesus Pod - Books",
+            text: "Check out the latest books on Jesus Pod!",
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
+        } else {
+            navigator.clipboard.writeText(shareData.url);
+            alert("Link copied to clipboard!");
+        }
+    };
+
+    const handleCategoryShare = (categoryName: string) => {
+        const shareUrl = `${window.location.origin}/all-books?category=${encodeURIComponent(categoryName)}`;
+        const shareData = {
+            title: `${categoryName} Books`,
+            text: `Check out these ${categoryName} books on Jesus Pod!`,
+            url: shareUrl,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
+        } else {
+            navigator.clipboard.writeText(shareData.url);
+            alert("Link copied to clipboard!");
+        }
+    };
+
     return (
         <div className="main-content">
             <Header
@@ -99,8 +131,17 @@ export default function BooksHome() {
             />
 
             <div className="content">
-                {/* GLOBAL SEARCH BAR */}
-                <div style={{ padding: '0 20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+
+
+                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
+                    <button
+                        className="share-btn"
+                        onClick={handleSharePage}
+                        title="Share Podcast Page"
+                    >
+                        <img src={images.share} alt="share" />
+                        <span>Share</span>
+                    </button>
                     <input
                         type="text"
                         className="search-input"
@@ -113,13 +154,14 @@ export default function BooksHome() {
                     />
                 </div>
 
+
                 {/* Most Read Books */}
                 {filteredMostRead.length > 0 && (
-                    <Section
+                    <HomeSection
                         title="Most Read Books"
                         onViewAll={() => navigate("/all-books")}
                         data={filteredMostRead}
-
+                        loading={loading}
                         onCardClick={handleBookClick}
                         isBook={true}
                         onToggleSave={handleToggleSave}
@@ -128,13 +170,38 @@ export default function BooksHome() {
                 )}
 
 
+                {/* Categorized Book Sections */}
+                {categories.map((category: any) => {
+                    const categoryBooks = books.filter((b: any) =>
+                        b.category === category &&
+                        (!searchTerm || b.title?.toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+
+                    if (categoryBooks.length === 0) return null;
+
+                    return (
+                        <div key={category} style={{ marginBottom: '40px' }}>
+                            <HomeSection
+                                title={category.toUpperCase()}
+                                onViewAll={() => navigate("/all-books", { state: { category: category } })}
+                                data={categoryBooks}
+                                loading={loading}
+                                onCardClick={handleBookClick}
+                                isBook={true}
+                                onToggleSave={handleToggleSave}
+                                user={user}
+                            />
+                        </div>
+                    );
+                })}
+
                 {/* Books to Love */}
                 {filteredSaved.length > 0 && (
-                    <Section
+                    <HomeSection
                         title="Books to Love"
                         onViewAll={() => navigate("/all-books", { state: { filter: 'saved' } })}
                         data={filteredSaved}
-
+                        loading={loading}
                         onCardClick={handleBookClick}
                         isBook={true}
                         onToggleSave={handleToggleSave}
@@ -147,8 +214,8 @@ export default function BooksHome() {
                 {/* Search for Books (Category Grid) */}
                 <div className="search-radio-section">
                     <div className="search-radio-header">
-                        <h2 className="sub-title">By Categories</h2>
-                        {/* Removed Local Search Input */}
+                        <h2 className="sub-title">Books Categories</h2>
+
                     </div>
 
                     <div className="podcast-category-grid">
@@ -165,7 +232,8 @@ export default function BooksHome() {
                                     key={cat}
                                     title={cat}
                                     localImage={categoryImages[index % categoryImages.length]}
-                                    onClick={() => navigate("/books-category", { state: { category: cat } })}
+                                    onClick={() => navigate("/all-books", { state: { category: cat } })}
+                                    onShare={() => handleCategoryShare(cat)}
                                 />
                             ))
                         )}

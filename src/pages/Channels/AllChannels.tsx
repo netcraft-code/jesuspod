@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import ChannelCard from "./ChannelCard";
@@ -8,10 +8,11 @@ import "./AllChannels.css";
 import { trackChannelPlay } from "../../services/channelAnalytics.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { getFilteredChannels, refreshSavedChannels, toggleChannelSaveState } from "../../redux/dataSlice";
-import { toggleChannelSave } from "../../services/dataService";
+import { toggleChannelSave, fetchTelevisionChannels } from "../../services/dataService";
 
 export default function AllChannels() {
     const [search, setSearch] = useState<string>("");
+    const [tvChannels, setTvChannels] = useState<any[]>([]);
     const [active, setActive] = useState<string>("Channels");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
 
@@ -19,6 +20,22 @@ export default function AllChannels() {
     const user = useSelector((state: any) => state.auth.user);
 
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+
+    // Prioritize query params, fallback to state
+    const countryFromState = searchParams.get("country") || location.state?.country;
+    const filterState = searchParams.get("filter") || location.state?.filter;
+
+    // Fetch TV Channels if filter is 'tv'
+    useEffect(() => {
+        if (filterState === 'tv') {
+            const getTvData = async () => {
+                const data = await fetchTelevisionChannels();
+                setTvChannels(data);
+            };
+            getTvData();
+        }
+    }, [filterState]); // Depend on filterState to re-fetch if it changes
 
     // 1. Get ALL channels directly, to filter locally if needed
     const allChannels = useSelector((state: any) => state.data.channels);
@@ -31,13 +48,14 @@ export default function AllChannels() {
     // If location.state.country exists, filter raw channels by it.
     // If location.state.filter === 'saved', use savedChannels.
     // Otherwise, use the global Redux filtered list.
-    const countryFromState = location.state?.country;
-    const filterState = location.state?.filter;
+
 
     let sourceChannels = reduxFilteredChannels;
 
     if (filterState === 'saved') {
         sourceChannels = savedChannels;
+    } else if (filterState === 'tv') {
+        sourceChannels = tvChannels;
     } else if (countryFromState) {
         if (countryFromState === "Global") {
             sourceChannels = allChannels;
@@ -86,6 +104,25 @@ export default function AllChannels() {
         }
     };
 
+    const handleShare = async (item: any) => {
+        const shareLink = item.url || item.channelLink || window.location.href;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: item.title,
+                    text: `Check out ${item.title} on JesusPOD`,
+                    url: shareLink,
+                });
+            } catch (err) {
+                console.error("Share failed:", err);
+            }
+        } else {
+            // Fallback
+            navigator.clipboard.writeText(shareLink);
+            alert("Channel link copied to clipboard!");
+        }
+    };
+
     return (
         <div className="main-content">
             {/* HEADER */}
@@ -103,7 +140,9 @@ export default function AllChannels() {
                     <h2 className="sub-title">
                         {filterState === 'saved'
                             ? "Channels to Love"
-                            : (countryFromState ? `All Channels (${countryFromState})` : "All Channels")
+                            : filterState === 'tv'
+                                ? "TV Channels"
+                                : (countryFromState ? `All Channels (${countryFromState})` : "All Channels")
                         }
                     </h2>
 
@@ -127,6 +166,9 @@ export default function AllChannels() {
                                 onClick={handleCardClick}
                                 isSaved={item.star?.includes(user?.uid)}
                                 onToggleSave={handleToggleSave}
+                                showFav={filterState !== 'tv'}
+                                showShare={filterState === 'tv'}
+                                onShare={handleShare}
                             />
                         </div>
                     ))}

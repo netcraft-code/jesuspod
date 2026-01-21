@@ -6,15 +6,15 @@ import Footer from "../../components/Footer/Footer";
 import "./Podcast.css"
 
 import { useState } from "react";
-import Section from "../../components/Section/Section";
+import HomeSection from "../../components/HomeSection/HomeSection";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import { categoryImages } from "../../assets/images/CatImages";
 import usePageTitle from "../../hooks/usePageTitle";
 import { togglePodcastSave } from "../../services/dataService";
 import { refreshSavedPodcasts, togglePodcastSaveState } from "../../redux/dataSlice";
-// import { images } from "../../assets/images";
-// import { logEvent } from "firebase/analytics";
-// import { analytics } from "../../services/firebase";
+import { images } from "../../assets/images";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../services/firebase";
 
 
 export default function PodcastHome() {
@@ -31,7 +31,7 @@ export default function PodcastHome() {
     const savedPodcasts = useSelector((state: any) => state.data.savedPodcasts) || [];
     // const newNoteworthyPodcasts = useSelector((state: any) => state.data.newNoteworthyPodcasts) || [];
 
-    const [podcastCategory, setPodcastCategory] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     // unique categories
     const categories = Array.from(
@@ -50,9 +50,18 @@ export default function PodcastHome() {
 
 
 
-    const filteredCategories = categories.filter((cat: any) =>
-        cat.name.toLowerCase().includes(podcastCategory.toLowerCase())
+    // --- GLOBAL SEARCH FILTERING ---
+    const filteredMostListened = mostListenedPodcasts.filter((item: any) =>
+        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const filteredSaved = savedPodcasts.filter((item: any) =>
+        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // const filteredCategories = categories.filter((cat: any) =>
+    //     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
@@ -74,26 +83,47 @@ export default function PodcastHome() {
         }
     };
 
-    // const handleShare = async () => {
-    //     const shareUrl = window.location.href;
-    //     const shareData = {
-    //         title: "JesusPOD Podcast",
-    //         text: "Listen to the best Christian podcasts on JesusPOD!",
-    //         url: shareUrl,
-    //     };
+    const handleCategoryShare = async (categoryName: string) => {
+        const shareUrl = `${window.location.origin}/podcast-category?category=${encodeURIComponent(categoryName)}`;
+        const shareData = {
+            title: `${categoryName} Podcasts`,
+            text: `Check out these ${categoryName} podcasts on JesusPOD!`,
+            url: shareUrl,
+        };
 
-    //     try {
-    //         if (navigator.share) {
-    //             await navigator.share(shareData);
-    //             logEvent(analytics, "Share_PodcastHome", {});
-    //         } else {
-    //             await navigator.clipboard.writeText(shareUrl);
-    //             alert("Link copied to clipboard!");
-    //         }
-    //     } catch (err) {
-    //         console.error("Error sharing:", err);
-    //     }
-    // };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+                logEvent(analytics, "Share_Category", { category: categoryName });
+            } else {
+                await navigator.clipboard.writeText(shareUrl);
+                alert("Link copied to clipboard!");
+            }
+        } catch (err) {
+            console.error("Error sharing:", err);
+        }
+    };
+
+    const handleSharePage = async () => {
+        const shareUrl = window.location.href;
+        const shareData = {
+            title: "JesusPOD Podcast",
+            text: "Listen to the best Christian podcasts on JesusPOD!",
+            url: shareUrl,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+                logEvent(analytics, "Share_PodcastHome", {});
+            } else {
+                await navigator.clipboard.writeText(shareUrl);
+                alert("Link copied to clipboard!");
+            }
+        } catch (err) {
+            console.error("Error sharing:", err);
+        }
+    };
 
     return (
         <div className="main-content">
@@ -106,60 +136,105 @@ export default function PodcastHome() {
 
             <div className="content">
 
+                {/* GLOBAL SEARCH BAR */}
+                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
+                    <button
+                        className="share-btn"
+                        onClick={handleSharePage}
+                        title="Share Podcast Page"
+                    >
+                        <img src={images.share} alt="share" />
+                        <span>Share</span>
+                    </button>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search podcasts..."
+                        value={searchTerm}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchTerm(e.target.value)
+                        }
+                        style={{ width: '100%', maxWidth: '400px' }}
+                    />
+                </div>
+
                 {/* TOP PODCAST */}
-                <Section
-                    title="Top Podcasts"
-                    onViewAll={() => navigate("/all-podcast")}
-                    data={mostListenedPodcasts}
-                    onCardClick={(item) =>
-                        navigate(`/podcastplayer/${item.id}`, {
-                            state: { channel: item },
-                        })
-                    }
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                />
+                {filteredMostListened.length > 0 && (
+                    <HomeSection
+                        title="Top Podcasts"
+                        onViewAll={() => navigate("/all-podcast")}
+                        data={filteredMostListened}
+                        onCardClick={(item) =>
+                            navigate(`/podcastplayer/${item.id}`, {
+                                state: { channel: item },
+                            })
+                        }
+                        onToggleSave={handleToggleSave}
+                        user={user}
+                    />
+                )}
+
+                {/* Categorized Podcast Sections */}
+                {categories.map((catEntry: any) => {
+                    // catEntry is [key, valueObj] because we did Array.from(map.values())? 
+                    // Wait, previous code was Array.from(map.values()), so catEntry IS the value object {id, name, ...}
+                    // Let's verify the line: values() returns iterator of values. Array.from makes it an array of values.
+                    // So catEntry is the object.
+
+                    const catName = catEntry.name;
+                    const categoryPodcasts = podcasts.filter((p: any) =>
+                        p.category?.name?.trim() === catName &&
+                        (!searchTerm || p.title?.toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+
+                    if (categoryPodcasts.length === 0) return null;
+
+                    return (
+                        <div key={catName} style={{ marginBottom: '40px' }}>
+                            <HomeSection
+                                title={catName}
+                                onViewAll={() => navigate("/podcast-category", { state: { category: catName } })}
+                                data={categoryPodcasts}
+                                onCardClick={(item) =>
+                                    navigate(`/podcastplayer/${item.id}`, {
+                                        state: { channel: item },
+                                    })
+                                }
+                                // onToggleSave={handleToggleSave}
+                                user={user}
+                            />
+                        </div>
+                    );
+                })}
 
                 {/* My Podcast (Favorites) */}
-                <Section
-                    title="My Podcast"
-                    onViewAll={() => navigate("/all-podcast", { state: { filter: 'saved' } })}
-                    data={savedPodcasts}
-                    onCardClick={(item) =>
-                        navigate(`/podcastplayer/${item.id}`, {
-                            state: { channel: item },
-                        })
-                    }
-                    onToggleSave={handleToggleSave}
-                    user={user}
-                    emptyMessage="Start saving podcasts to see them here ❤️"
-                />
+                {filteredSaved.length > 0 && (
+                    <HomeSection
+                        title="My Podcast"
+                        onViewAll={() => navigate("/all-podcast", { state: { filter: 'saved' } })}
+                        data={filteredSaved}
+                        onCardClick={(item) =>
+                            navigate(`/podcastplayer/${item.id}`, {
+                                state: { channel: item },
+                            })
+                        }
+                        onToggleSave={handleToggleSave}
+                        user={user}
+                        emptyMessage="Start saving podcasts to see them here ❤️"
+                    />
+                )}
 
 
                 <div className="search-radio-section">
 
                     <div className="search-radio-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <h2 className="sub-title">Search For Podcast</h2>
-                            {/* <button
-                                onClick={handleShare}
-                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-                                title="Share Podcast Page"
-                            >
-                                <img src={images.share} alt="share" style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }} />
-                            </button> */}
+                            <h2 className="sub-title">Podcast Categories</h2>
                         </div>
-
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search podcast..."
-                            value={podcastCategory}
-                            onChange={(e) => setPodcastCategory(e.target.value)}
-                        />
+                        {/* Removed local search input */}
                     </div>
                     <div className="podcast-category-grid">
-                        {filteredCategories.map((cat: any, index: number) => (
+                        {categories.map((cat: any, index: number) => (
                             <CircleImageCard
                                 key={cat.name}
                                 title={cat.name}
@@ -170,6 +245,7 @@ export default function PodcastHome() {
                                         state: { category: cat.name },
                                     });
                                 }}
+                                onShare={() => handleCategoryShare(cat.name)}
                             />
                         ))}
                     </div>

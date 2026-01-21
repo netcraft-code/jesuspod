@@ -552,3 +552,38 @@
   width: 100%;
   margin-right: 0;
 }
+
+/* RADIO SHARE OVERLAY */
+.radio-img-wrapper {
+  position: relative;
+}
+
+.radio-share-overlay {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  /* Always visible */
+  transition: all 0.2s ease;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.radio-share-overlay:hover {
+  background: #ff2d2d;
+  transform: scale(1.1);
+  border-color: #ff2d2d;
+}
+
+.radio-share-overlay img {
+  filter: brightness(0) invert(1);
+}

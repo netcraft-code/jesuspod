@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MovieCard from "../../components/MoviesSection/MovieCard";
@@ -29,21 +29,23 @@ export default function AllMovies() {
     const savedMovies = useSelector((state: RootState) => state.data.savedMovies);
 
     // 3. Determine which source to use
-    // If location.state.category exists, filter raw movies by it.
-    // If location.state.filter === 'saved', use savedMovies.
-    // Otherwise, use allMovies.
+    // Priority: 1. URL Param, 2. State
+    const [searchParams] = useSearchParams();
+    const categoryParam = searchParams.get("category");
     const categoryFromState = location.state?.category;
+
+    const activeCategory = categoryParam || categoryFromState;
     const filterState = location.state?.filter;
 
     let sourceMovies = allMovies;
 
     if (filterState === 'saved') {
         sourceMovies = savedMovies;
-    } else if (categoryFromState) {
-        if (categoryFromState === "All") {
+    } else if (activeCategory) {
+        if (activeCategory === "All") {
             sourceMovies = allMovies;
         } else {
-            sourceMovies = allMovies.filter((m: any) => m.category === categoryFromState);
+            sourceMovies = allMovies.filter((m: any) => m.category === activeCategory);
         }
     }
 
@@ -103,7 +105,7 @@ export default function AllMovies() {
                     <h2 className="sub-title">
                         {filterState === 'saved'
                             ? "Movies to Love"
-                            : (categoryFromState ? `${categoryFromState} Movies` : "All Movies")
+                            : (activeCategory ? `${activeCategory} Movies` : "All Movies")
                         }
                     </h2>
 

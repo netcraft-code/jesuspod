@@ -11,6 +11,7 @@ import "../Radio/Radio.css"; // Reuse Radio CSS for grid
 import { toggleMovieSave } from "../../services/dataService";
 import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice";
 import { trackMoviePlay } from "../../services/movieAnalytics";
+import { images } from "../../assets/images";
 
 export default function MoviesList() {
     usePageTitle("Movies");
@@ -89,6 +90,37 @@ export default function MoviesList() {
         }
     };
 
+    const handleSharePage = () => {
+        const shareData = {
+            title: "Jesus Pod - Movies",
+            text: "Check out the latest movies on Jesus Pod!",
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
+        } else {
+            navigator.clipboard.writeText(shareData.url);
+            alert("Link copied to clipboard!");
+        }
+    };
+
+    const handleCategoryShare = (categoryName: string) => {
+        const shareUrl = `${window.location.origin}/all-movies?category=${encodeURIComponent(categoryName)}`;
+        const shareData = {
+            title: `${categoryName} Movies`,
+            text: `Check out these ${categoryName} movies on Jesus Pod!`,
+            url: shareUrl,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
+        } else {
+            navigator.clipboard.writeText(shareData.url);
+            alert("Link copied to clipboard!");
+        }
+    };
+
     return (
         <div className="home-wrapper">
             <Header
@@ -101,7 +133,17 @@ export default function MoviesList() {
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
                 {/* Global Search Bar */}
-                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end' }}>
+
+
+                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
+                    <button
+                        className="share-btn"
+                        onClick={handleSharePage}
+                        title="Share Podcast Page"
+                    >
+                        <img src={images.share} alt="share" />
+                        <span>Share</span>
+                    </button>
                     <input
                         type="text"
                         className="search-input"
@@ -194,6 +236,7 @@ export default function MoviesList() {
                                 title={cat}
                                 imageUrl={`https://ui-avatars.com/api/?name=${cat}&background=random&color=fff&size=200`}
                                 onClick={() => handleCategorySelect(cat)}
+                                onShare={() => handleCategoryShare(cat)}
                             />
                         ))}
                     </div>
