@@ -30,10 +30,15 @@ $collection = "";
 // ------------------------------
 // 4. Resolve Type
 // ------------------------------
+$episodeQuery = "";
+if (isset($_GET['episodeId'])) {
+    $episodeQuery = "?episodeId=" . urlencode($_GET['episodeId']);
+}
+
 if ($type === "podcast" && $id) {
     // Matches React app 'Newchannels' collection
     $collection  = "Newchannels"; 
-    $redirectUrl = "https://jesuspod.netcraftglobal.com/podcastplayer/" . urlencode($id);
+    $redirectUrl = "https://jesuspod.netcraftglobal.com/podcastplayer/" . urlencode($id) . $episodeQuery;
 } elseif ($type === "radio" && $id) {
     $collection  = "Radio";
     $redirectUrl = "https://jesuspod.netcraftglobal.com/radio-player?id=" . urlencode($id);
@@ -81,6 +86,18 @@ if ($collection && $id) {
 
 // Current URL for OG tag
 $currentUrl = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+// ------------------------------
+// 6. Bot Detection & Redirect
+// ------------------------------
+$userAgent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+$isBot = preg_match('/facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot/i', $userAgent);
+
+if (!$isBot) {
+    // Real user -> direct 302 redirect (no HTML body downloaded)
+    header("Location: $redirectUrl", true, 302);
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,19 +124,11 @@ $currentUrl = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 <!-- Auto Redirect -->
 <script>
-setTimeout(function () {
-    window.location.href = "<?php echo $redirectUrl; ?>";
-}, 800);
+    window.location.replace("<?php echo $redirectUrl; ?>");
 </script>
 </head>
 
 <body>
-<div style="font-family:Arial, sans-serif;text-align:center;padding:40px;">
-    <img src="<?php echo htmlspecialchars($image); ?>" style="max-width:220px;border-radius:14px;"><br><br>
-    <h2><?php echo htmlspecialchars($title); ?></h2>
-    <p style="max-width:500px;margin:auto;"><?php echo htmlspecialchars($description); ?></p>
-    <p style="opacity:0.6;">Redirecting to JesusPOD...</p>
-    <a href="<?php echo $redirectUrl; ?>">Click here if not redirected</a>
-</div>
+    <!-- Empty body for invisible redirect -->
 </body>
 </html>

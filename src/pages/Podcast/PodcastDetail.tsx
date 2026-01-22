@@ -446,10 +446,9 @@ export default function PodcastDetail() {
 
     // We encode the episode identifier to handle spaces or special chars
     // Using GUID from RSS which is usually reliable for identifying episodes
-    // For episodes, share.php might need logic update, or simplified sharing
-    // Ideally share.php should support episodeId too, but for now we link to app
-    // Actually, let's keep episode sharing direct for now OR point to podcast channel share
-    const shareLink = `${window.location.origin}/podcastplayer/${channel?.id}?episodeId=${encodeURIComponent(episodeGuid)}`;
+
+    // Use share.php with episodeId for preview + deep link
+    const shareLink = `${window.location.origin}/share.php?type=podcast&id=${channel?.id}&episodeId=${encodeURIComponent(episodeGuid)}`;
 
     try {
       if (navigator.share) {

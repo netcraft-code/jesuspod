@@ -221,7 +221,9 @@ export default function RadioPlayer() {
   const handleShare = async () => {
     if (!current) return;
 
-    const shareUrl = `${window.location.origin}/radio-player?type=${encodeURIComponent(current.type || "")}&id=${current.id}`;
+    // Use share.php for link preview
+    const shareUrl = `${window.location.origin}/share.php?type=radio&id=${current.id}`;
+
     const shareData = {
       title: current.title,
       text: `Listen to ${current.title} on JesusPOD Radio`,
