@@ -247,7 +247,10 @@ export default function RadioPlayer() {
 
   const handleItemShare = async (e: React.MouseEvent, item: RadioItem) => {
     e.stopPropagation(); // Prevent changing station when clicking share
-    const shareUrl = `${window.location.origin}/radio-player?type=${encodeURIComponent(item.type || "")}&id=${item.id}`;
+
+    // Use share.php for link preview
+    const shareUrl = `${window.location.origin}/share.php?type=radio&id=${item.id}`;
+
     const shareData = {
       title: item.title,
       text: `Listen to ${item.title} on JesusPOD Radio`,
