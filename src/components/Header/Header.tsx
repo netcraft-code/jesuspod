@@ -109,12 +109,31 @@ export default function Header({
             <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
           </div>
 
-          <div ref={profileButtonRef}>
-            <ProfileButton
-              letter={firstLetter}
-              onClick={() => setProfileOpen(!profileOpen)}
-            />
-          </div>
+          {user ? (
+            <div ref={profileButtonRef}>
+              <ProfileButton
+                letter={firstLetter}
+                onClick={() => setProfileOpen(!profileOpen)}
+              />
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                backgroundColor: '#E50914',
+                color: '#fff',
+                border: 'none',
+                padding: '8px 20px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                marginLeft: '12px'
+              }}
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </header>
 

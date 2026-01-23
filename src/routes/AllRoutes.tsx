@@ -34,7 +34,8 @@ import HelpCenter from "../pages/HelpCenter/HelpCenter";
 // Component to handle base URL redirect
 function BaseRedirect() {
   const token = localStorage.getItem("token");
-  return <Navigate to={token ? "/home" : "/login"} replace />;
+  // Always redirect to home, whether logged in or not
+  return <Navigate to="/home" replace />;
 }
 
 export default function AllRoutes() {
@@ -49,48 +50,49 @@ export default function AllRoutes() {
       <Route path="/forgot" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
       {/* Protected Routes - App pages */}
-      <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+      {/* Now Publicly Accessible */}
+      <Route path="/home" element={<Home />} />
 
       {/* Radio Routes */}
-      <Route path="/radio" element={<PrivateRoute><RadioList /></PrivateRoute>} />
-      <Route path="/radio-player" element={<PrivateRoute><RadioPlayer /></PrivateRoute>} />
-      <Route path="/all-radio" element={<PrivateRoute><AllRadio /></PrivateRoute>} />
+      <Route path="/radio" element={<RadioList />} />
+      <Route path="/radio-player" element={<RadioPlayer />} />
+      <Route path="/all-radio" element={<AllRadio />} />
       <Route path="/favorite-radios" element={<PrivateRoute><FavoriteRadios /></PrivateRoute>} />
 
       {/* Podcast Routes */}
-      <Route path="/podcast" element={<PrivateRoute><PodcastHome /></PrivateRoute>} />
-      <Route path="/all-podcast" element={<PrivateRoute><AllPodcast /></PrivateRoute>} />
-      <Route path="/podcast-category" element={<PrivateRoute><PodcastCategory /></PrivateRoute>} />
-      <Route path="/podcastplayer/:id" element={<PrivateRoute><PodcastDetail /></PrivateRoute>} />
+      <Route path="/podcast" element={<PodcastHome />} />
+      <Route path="/all-podcast" element={<AllPodcast />} />
+      <Route path="/podcast-category" element={<PodcastCategory />} />
+      <Route path="/podcastplayer/:id" element={<PodcastDetail />} />
 
       {/* Channels Route */}
-      <Route path="/channel-listing" element={<PrivateRoute><ChannelListing /></PrivateRoute>} />
-      <Route path="/all-channels" element={<PrivateRoute><AllChannels /></PrivateRoute>} />
+      <Route path="/channel-listing" element={<ChannelListing />} />
+      <Route path="/all-channels" element={<AllChannels />} />
 
       {/* Shorts */}
-      <Route path="/shorts" element={<PrivateRoute><Shorts /></PrivateRoute>} />
+      <Route path="/shorts" element={<Shorts />} />
       <Route path="/saved-shorts" element={<PrivateRoute><SavedShorts /></PrivateRoute>} />
 
       {/* Books Routes */}
-      <Route path="/books" element={<PrivateRoute><BooksHome /></PrivateRoute>} />
-      <Route path="/all-books" element={<PrivateRoute><AllBooks /></PrivateRoute>} />
-      <Route path="/books-category" element={<PrivateRoute><BooksCategory /></PrivateRoute>} />
+      <Route path="/books" element={<BooksHome />} />
+      <Route path="/all-books" element={<AllBooks />} />
+      <Route path="/books-category" element={<BooksCategory />} />
 
-      {/* Profile Routes */}
+      {/* Profile Routes - KEEP PRIVATE */}
       <Route path="/subscriptions" element={<PrivateRoute><Subscriptions /></PrivateRoute>} />
       <Route path="/downloads" element={<PrivateRoute><Downloads /></PrivateRoute>} />
 
       {/* Live Routes */}
-      <Route path="/live-list" element={<PrivateRoute><LiveList /></PrivateRoute>} />
-      <Route path="/live-player" element={<PrivateRoute><LivePlayer /></PrivateRoute>} />
+      <Route path="/live-list" element={<LiveList />} />
+      <Route path="/live-player" element={<LivePlayer />} />
 
       {/* Movies Routes */}
-      <Route path="/movies" element={<PrivateRoute><MoviesList /></PrivateRoute>} />
-      <Route path="/all-movies" element={<PrivateRoute><AllMovies /></PrivateRoute>} />
+      <Route path="/movies" element={<MoviesList />} />
+      <Route path="/all-movies" element={<AllMovies />} />
 
-      {/* Profile Menu Routes */}
-      <Route path="/privacy-policy" element={<PrivateRoute><PrivacyPolicy /></PrivateRoute>} />
-      <Route path="/help-center" element={<PrivateRoute><HelpCenter /></PrivateRoute>} />
+      {/* Profile Menu Routes - Maybe public? Let's make them public */}
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/help-center" element={<HelpCenter />} />
 
       {/* 404 Route */}
       <Route path="*" element={<div style={{ padding: 40 }}>404 - Not Found</div>} />

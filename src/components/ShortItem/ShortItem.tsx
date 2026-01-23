@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "../../redux/store";
 import { useState, useEffect, useCallback } from "react";
 import YouTubePlayer from "./YouTubePlayer";
 import { FaHeart, FaRegHeart, FaBookmark, FaRegBookmark, FaShare } from "react-icons/fa";
@@ -14,6 +17,9 @@ export default function ShortItem({
     onSaveToggle,
     onViewIncrement,
 }: ShortItemProps) {
+    const user = useSelector((state: RootState) => state.auth.user);
+    const navigate = useNavigate();
+
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(isSaved);
     const [localLikeCount, setLocalLikeCount] = useState(item.likeCount || 0);
@@ -32,6 +38,10 @@ export default function ShortItem({
 
     // Handle like button click
     const handleLike = useCallback(async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         try {
             const newLikedState = !liked;
             setLiked(newLikedState);
@@ -43,10 +53,14 @@ export default function ShortItem({
             setLiked(!liked);
             setLocalLikeCount((prev) => (liked ? prev + 1 : prev - 1));
         }
-    }, [liked, item.id, onLikeToggle]);
+    }, [liked, item.id, onLikeToggle, user, navigate]);
 
     // Handle save button click
     const handleSave = useCallback(async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         try {
             const newSavedState = !saved;
             setSaved(newSavedState);
@@ -56,7 +70,7 @@ export default function ShortItem({
             // Revert on error
             setSaved(!saved);
         }
-    }, [saved, item.id, onSaveToggle]);
+    }, [saved, item.id, onSaveToggle, user, navigate]);
 
     // Handle share button click
     const handleShare = useCallback(async () => {

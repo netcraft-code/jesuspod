@@ -20,6 +20,10 @@ interface BookCardProps {
     subtitle?: string;
 }
 
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "../../redux/store";
+
 export default function BookCard({
     item,
     onClick,
@@ -27,9 +31,17 @@ export default function BookCard({
     onToggleSave,
     subtitle
 }: BookCardProps) {
+    const user = useSelector((state: RootState) => state.auth.user);
+    const navigate = useNavigate();
 
     const handleHeartClick = (e: React.MouseEvent) => {
         e.stopPropagation();
+
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
         if (onToggleSave) {
             onToggleSave(item, isSaved);
         }

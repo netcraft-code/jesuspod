@@ -1,4 +1,4 @@
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -45,6 +45,7 @@ interface CountryItem {
 export default function RadioPlayer() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const paramType = searchParams.get("type");
   const paramId = searchParams.get("id");
 
@@ -180,7 +181,7 @@ export default function RadioPlayer() {
 
   const toggleFavorite = async (): Promise<void> => {
     if (!user || !current) {
-      alert("Please login to save favorites");
+      navigate('/login');
       return;
     }
 

@@ -1,4 +1,4 @@
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useLocation, useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
@@ -32,6 +32,7 @@ export default function PodcastDetail() {
   const { state } = useLocation();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const episodeIdFromUrl = searchParams.get("episodeId");
 
   const [fetchedChannel, setFetchedChannel] = useState<any>(null);
@@ -365,7 +366,7 @@ export default function PodcastDetail() {
 
   const handleSubscribe = async () => {
     if (!user?.uid) {
-      alert("Please login to subscribe to this podcast");
+      navigate('/login');
       return;
     }
 
@@ -472,7 +473,7 @@ export default function PodcastDetail() {
 
   const handleDownloadEpisode = async (episode: any) => {
     if (!user?.uid) {
-      alert("Please login to download episodes");
+      navigate('/login');
       return;
     }
 
