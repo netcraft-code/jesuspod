@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/share.php",
+            "destination": "/api/share"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
