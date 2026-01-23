@@ -417,7 +417,7 @@ export default function PodcastDetail() {
 
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
-    const shareLink = `${window.location.origin}/share.php?type=podcast&id=${channel?.id}`;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channel?.id}`;
 
     try {
       if (navigator.share) {
@@ -448,7 +448,7 @@ export default function PodcastDetail() {
     // Using GUID from RSS which is usually reliable for identifying episodes
 
     // Use share.php with episodeId for preview + deep link
-    const shareLink = `${window.location.origin}/share.php?type=podcast&id=${channel?.id}&episodeId=${encodeURIComponent(episodeGuid)}`;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channel?.id}&episodeId=${encodeURIComponent(episodeGuid)}`;
 
     try {
       if (navigator.share) {
