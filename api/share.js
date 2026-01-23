@@ -3,17 +3,17 @@ export default async function handler(req, res) {
     const projectId = "new-jesuspod";
 
     // 1. Resolve Target URL
-    let redirectUrl = "https://jesuspod.netcraftglobal.com/";
+    let redirectUrl = "https://www.jesuspod.com/";
     let collection = "";
 
     const episodeQuery = episodeId ? `?episodeId=${encodeURIComponent(episodeId)}` : "";
 
     if (type === "podcast" && id) {
         collection = "Newchannels";
-        redirectUrl = `https://jesuspod.netcraftglobal.com/podcastplayer/${encodeURIComponent(id)}${episodeQuery}`;
+        redirectUrl = `https://www.jesuspod.com/podcastplayer/${encodeURIComponent(id)}${episodeQuery}`;
     } else if (type === "radio" && id) {
         collection = "Radio";
-        redirectUrl = `https://jesuspod.netcraftglobal.com/radio-player?id=${encodeURIComponent(id)}`;
+        redirectUrl = `https://www.jesuspod.com/radio-player?id=${encodeURIComponent(id)}`;
     }
 
     // 2. Bot Detection
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     // 3. Fetch Data for Bots
     let title = "JesusPOD";
     let description = "Listen to Christian Podcasts and Radio Stations on JesusPOD.";
-    let image = "https://jesuspod.netcraftglobal.com/icon.png";
+    let image = "https://www.jesuspod.com/icon.png";
 
     if (collection && id) {
         try {
