@@ -83,6 +83,8 @@ export default async function handler(req, res) {
     </html>
     `;
 
+    // Cache response for 24 hours (Vercel Edge Cache)
+    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate');
     res.status(200).send(html);
 }
 
