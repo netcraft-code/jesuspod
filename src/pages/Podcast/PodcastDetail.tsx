@@ -1,6 +1,6 @@
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
+
 import axios from "axios";
 import { logEvent } from "firebase/analytics";
 import { analytics, firestore } from "../../services/firebase";
@@ -534,84 +534,7 @@ export default function PodcastDetail() {
         setProfileOpen={setProfileOpen}
       />
 
-      <Helmet>
-        {/* Basic Open Graph Tags */}
-        <title>{currentEpisode?.title?.[0] || channel?.title || "JesusPOD"}</title>
-        <meta
-          name="description"
-          content={
-            currentEpisode?.description?.[0]
-              ? stripHtml(currentEpisode.description[0]).slice(0, 150)
-              : description
-                ? stripHtml(description).slice(0, 150)
-                : "Listen to the best podcasts on JesusPOD"
-          }
-        />
 
-        {/* Facebook / Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:url"
-          content={
-            currentEpisode
-              ? `${window.location.origin}/podcastplayer/${channel?.id}?episodeId=${encodeURIComponent(
-                currentEpisode?.guid?.[0]?._ || currentEpisode?.title?.[0]
-              )}`
-              : `${window.location.origin}/podcastplayer/${channel?.id}`
-          }
-        />
-        <meta
-          property="og:title"
-          content={currentEpisode?.title?.[0] || channel?.title || "JesusPOD Podcast"}
-        />
-        <meta
-          property="og:description"
-          content={
-            currentEpisode?.description?.[0]
-              ? stripHtml(currentEpisode.description[0]).slice(0, 200) + "..."
-              : description
-                ? stripHtml(description).slice(0, 200) + "..."
-                : "Listen to this amazing podcast on JesusPOD"
-          }
-        />
-        <meta
-          property="og:image"
-          content={
-            currentEpisode?.["itunes:image"]?.[0]?.$?.href ||
-            channel?.imageUrl ||
-            "https://jesuspod.com/default-share-image.png" // Fallback image if needed
-          }
-        />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta
-          property="twitter:url"
-          content={window.location.href}
-        />
-        <meta
-          property="twitter:title"
-          content={currentEpisode?.title?.[0] || channel?.title || "JesusPOD Podcast"}
-        />
-        <meta
-          property="twitter:description"
-          content={
-            currentEpisode?.description?.[0]
-              ? stripHtml(currentEpisode.description[0]).slice(0, 200) + "..."
-              : description
-                ? stripHtml(description).slice(0, 200) + "..."
-                : "Listen to this amazing podcast on JesusPOD"
-          }
-        />
-        <meta
-          property="twitter:image"
-          content={
-            currentEpisode?.["itunes:image"]?.[0]?.$?.href ||
-            channel?.imageUrl ||
-            ""
-          }
-        />
-      </Helmet>
 
       <div className="container">
         <div className="podcast-layout">
