@@ -158,7 +158,7 @@ export default function Home() {
 
   const handleToggleSave = async (item: any, isSaved: boolean) => {
     if (!user?.uid) {
-      alert("Please login to save books");
+      alert("Please login to save items");
       return;
     }
 

@@ -1,4 +1,4 @@
-import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -45,7 +45,7 @@ interface CountryItem {
 export default function RadioPlayer() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const paramType = searchParams.get("type");
   const paramId = searchParams.get("id");
 
@@ -90,25 +90,46 @@ export default function RadioPlayer() {
   // Handle Deep Linking / URL Params
   useEffect(() => {
     // Only run if we DON'T have state but DO have params
-    if (!state && paramType && allRadios.length > 0) {
-      // 1. Filter radios by type (Country)
-      const countryRadios = allRadios.filter(
-        (r: RadioItem) => r.type?.toLowerCase() === paramType.toLowerCase()
-      );
+    if (!state && allRadios.length > 0) {
+      if (paramId) {
+        // Search globally by ID first (Robust approach)
+        const foundRadio = allRadios.find((r: RadioItem) => r.id === paramId || r._id === paramId);
 
-      if (countryRadios.length > 0) {
-        setPlaylist(countryRadios);
-        setPlaylistTitle(paramType);
-
-        // 2. Find specific radio by ID
-        if (paramId) {
-          const foundRadio = countryRadios.find((r: RadioItem) => r.id === paramId || r._id === paramId);
-          if (foundRadio) {
-            setCurrent(foundRadio);
+        if (foundRadio) {
+          setCurrent(foundRadio);
+          // Also set the playlist to its type/category
+          const type = foundRadio.type || paramType;
+          if (type) {
+            setPlaylistTitle(type);
+            const typeRadios = allRadios.filter((r: RadioItem) => r.type?.toLowerCase() === type.toLowerCase());
+            if (typeRadios.length > 0) {
+              setPlaylist(typeRadios);
+            } else {
+              setPlaylist([foundRadio]); // Fallback
+            }
           } else {
-            setCurrent(countryRadios[0]); // Fallback
+            setPlaylist([foundRadio]);
           }
-        } else {
+        } else if (paramType) {
+          // Fallback: Filter by type if ID not found
+          const countryRadios = allRadios.filter(
+            (r: RadioItem) => r.type?.toLowerCase() === paramType.toLowerCase()
+          );
+          if (countryRadios.length > 0) {
+            setPlaylist(countryRadios);
+            setPlaylistTitle(paramType);
+            setCurrent(countryRadios[0]);
+          }
+        }
+      } else if (paramType) {
+        // Logic for just Type param
+        const countryRadios = allRadios.filter(
+          (r: RadioItem) => r.type?.toLowerCase() === paramType.toLowerCase()
+        );
+
+        if (countryRadios.length > 0) {
+          setPlaylist(countryRadios);
+          setPlaylistTitle(paramType);
           setCurrent(countryRadios[0]);
         }
       }

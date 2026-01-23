@@ -1,4 +1,4 @@
-import { useLocation, useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
@@ -32,7 +32,7 @@ export default function PodcastDetail() {
   const { state } = useLocation();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const episodeIdFromUrl = searchParams.get("episodeId");
 
   const [fetchedChannel, setFetchedChannel] = useState<any>(null);
@@ -418,7 +418,8 @@ export default function PodcastDetail() {
 
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
-    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channel?.id}`;
+    const channelId = channel?.id || channel?._id;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channelId}`;
 
     try {
       if (navigator.share) {
@@ -447,9 +448,10 @@ export default function PodcastDetail() {
 
     // We encode the episode identifier to handle spaces or special chars
     // Using GUID from RSS which is usually reliable for identifying episodes
+    const channelId = channel?.id || channel?._id;
 
     // Use share.php with episodeId for preview + deep link
-    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channel?.id}&episodeId=${encodeURIComponent(episodeGuid)}`;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channelId}&episodeId=${encodeURIComponent(episodeGuid)}`;
 
     try {
       if (navigator.share) {

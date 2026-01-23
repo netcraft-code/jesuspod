@@ -26,7 +26,7 @@ interface Card {
 }
 
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../redux/store";
 
 export default function Card({
@@ -39,7 +39,7 @@ export default function Card({
   onToggleSave
 }: Card) {
   const user = useSelector((state: RootState) => state.auth.user);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click

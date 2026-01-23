@@ -21,7 +21,7 @@ interface BookCardProps {
 }
 
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../redux/store";
 
 export default function BookCard({
@@ -32,7 +32,7 @@ export default function BookCard({
     subtitle
 }: BookCardProps) {
     const user = useSelector((state: RootState) => state.auth.user);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const handleHeartClick = (e: React.MouseEvent) => {
         e.stopPropagation();
