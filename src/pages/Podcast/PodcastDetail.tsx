@@ -366,7 +366,7 @@ export default function PodcastDetail() {
 
   const handleSubscribe = async () => {
     if (!user?.uid) {
-      navigate('/login');
+      alert("Please login to subscribe to this podcast");
       return;
     }
 
@@ -473,7 +473,7 @@ export default function PodcastDetail() {
 
   const handleDownloadEpisode = async (episode: any) => {
     if (!user?.uid) {
-      navigate('/login');
+      alert("Please login to download episodes");
       return;
     }
 

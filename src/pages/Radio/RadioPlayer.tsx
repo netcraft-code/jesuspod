@@ -181,7 +181,7 @@ export default function RadioPlayer() {
 
   const toggleFavorite = async (): Promise<void> => {
     if (!user || !current) {
-      navigate('/login');
+      alert("Please login to save favorites");
       return;
     }
 

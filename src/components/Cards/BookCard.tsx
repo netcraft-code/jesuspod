@@ -38,7 +38,7 @@ export default function BookCard({
         e.stopPropagation();
 
         if (!user) {
-            navigate('/login');
+            alert("Please login to like this book");
             return;
         }
 

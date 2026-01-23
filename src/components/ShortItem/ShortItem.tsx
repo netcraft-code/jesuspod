@@ -39,7 +39,7 @@ export default function ShortItem({
     // Handle like button click
     const handleLike = useCallback(async () => {
         if (!user) {
-            navigate('/login');
+            alert("Please login to like shorts");
             return;
         }
         try {
@@ -58,7 +58,7 @@ export default function ShortItem({
     // Handle save button click
     const handleSave = useCallback(async () => {
         if (!user) {
-            navigate('/login');
+            alert("Please login to save shorts");
             return;
         }
         try {

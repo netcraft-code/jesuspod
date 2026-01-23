@@ -45,7 +45,7 @@ export default function Card({
     e.stopPropagation(); // Prevent card click
 
     if (!user) {
-      navigate('/login');
+      alert("Please login to save favorites");
       return;
     }
 

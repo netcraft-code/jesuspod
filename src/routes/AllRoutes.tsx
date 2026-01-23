@@ -33,7 +33,7 @@ import HelpCenter from "../pages/HelpCenter/HelpCenter";
 
 // Component to handle base URL redirect
 function BaseRedirect() {
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   // Always redirect to home, whether logged in or not
   return <Navigate to="/home" replace />;
 }
