@@ -244,7 +244,7 @@ export default function RadioPlayer() {
     if (!current) return;
 
     // Use share.php for link preview
-    const shareUrl = `${window.location.origin}/api/share?type=radio&id=${current.id}`;
+    const shareUrl = `${window.location.origin}/api/share?type=radio&id=${encodeURIComponent(current.id)}`;
 
     const shareData = {
       title: current.title,
@@ -273,7 +273,7 @@ export default function RadioPlayer() {
     e.stopPropagation(); // Prevent changing station when clicking share
 
     // Use share.php for link preview
-    const shareUrl = `${window.location.origin}/api/share?type=radio&id=${item.id}`;
+    const shareUrl = `${window.location.origin}/api/share?type=radio&id=${encodeURIComponent(item.id)}`;
 
     const shareData = {
       title: item.title,

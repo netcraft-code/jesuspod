@@ -9,6 +9,9 @@ import { trackChannelPlay } from "../../services/channelAnalytics.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { getFilteredChannels, refreshSavedChannels, toggleChannelSaveState } from "../../redux/dataSlice";
 import { toggleChannelSave, fetchTelevisionChannels } from "../../services/dataService";
+import { images } from "../../assets/images";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../services/firebase";
 
 export default function AllChannels() {
     const [search, setSearch] = useState<string>("");
@@ -145,6 +148,26 @@ export default function AllChannels() {
                                 : (countryFromState ? `All Channels (${countryFromState})` : "All Channels")
                         }
                     </h2>
+                    <button
+                        className="share-btn"
+                        onClick={() => {
+                            const shareUrl = window.location.href;
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: "JesusPOD Channels",
+                                    url: shareUrl,
+                                }).then(() => {
+                                    logEvent(analytics, "Share_AllChannels", { filter: filterState || countryFromState || "all" });
+                                });
+                            } else {
+                                navigator.clipboard.writeText(shareUrl);
+                                alert("Link copied to clipboard!");
+                            }
+                        }}
+                        style={{ marginLeft: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                        <img src={images.share} alt="share" />
+                    </button>
 
                     <input
                         className="search-input"

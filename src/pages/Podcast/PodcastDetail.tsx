@@ -419,7 +419,7 @@ export default function PodcastDetail() {
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
     const channelId = channel?.id || channel?._id;
-    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channelId}`;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${encodeURIComponent(channelId)}`;
 
     try {
       if (navigator.share) {
@@ -451,7 +451,7 @@ export default function PodcastDetail() {
     const channelId = channel?.id || channel?._id;
 
     // Use share.php with episodeId for preview + deep link
-    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${channelId}&episodeId=${encodeURIComponent(episodeGuid)}`;
+    const shareLink = `${window.location.origin}/api/share?type=podcast&id=${encodeURIComponent(channelId)}&episodeId=${encodeURIComponent(episodeGuid)}`;
 
     try {
       if (navigator.share) {

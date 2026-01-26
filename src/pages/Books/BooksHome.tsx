@@ -45,7 +45,7 @@ export default function BooksHome() {
     // const top10USA = useSelector((state: RootState) => state.data.topUSABooks);
     const savedBooks = useSelector((state: RootState) => state.data.savedBooks);
     // Categories Data
-    const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean);
+    const categories = Array.from(new Set(books.map(b => b.category))).filter(Boolean).sort((a, b) => a.localeCompare(b));
 
     // --- GLOBAL SEARCH FILTERING ---
     const filteredMostRead = mostReadBooks.filter((book: any) =>
@@ -175,7 +175,7 @@ export default function BooksHome() {
                     const categoryBooks = books.filter((b: any) =>
                         b.category === category &&
                         (!searchTerm || b.title?.toLowerCase().includes(searchTerm.toLowerCase()))
-                    );
+                    ).sort((a: any, b: any) => (a.title || "").localeCompare(b.title || ""));
 
                     if (categoryBooks.length === 0) return null;
 
@@ -183,7 +183,7 @@ export default function BooksHome() {
                         <div key={category} style={{ marginBottom: '40px' }}>
                             <HomeSection
                                 title={category.toUpperCase()}
-                                onViewAll={() => navigate("/all-books", { state: { category: category } })}
+                                onViewAll={() => navigate(`/all-books?category=${encodeURIComponent(category)}`)}
                                 data={categoryBooks}
                                 loading={loading}
                                 onCardClick={handleBookClick}
@@ -199,7 +199,7 @@ export default function BooksHome() {
                 {filteredSaved.length > 0 && (
                     <HomeSection
                         title="Books to Love"
-                        onViewAll={() => navigate("/all-books", { state: { filter: 'saved' } })}
+                        onViewAll={() => navigate("/all-books?filter=saved")}
                         data={filteredSaved}
                         loading={loading}
                         onCardClick={handleBookClick}
@@ -232,7 +232,7 @@ export default function BooksHome() {
                                     key={cat}
                                     title={cat}
                                     localImage={categoryImages[index % categoryImages.length]}
-                                    onClick={() => navigate("/all-books", { state: { category: cat } })}
+                                    onClick={() => navigate(`/all-books?category=${encodeURIComponent(cat)}`)}
                                     onShare={() => handleCategoryShare(cat)}
                                 />
                             ))

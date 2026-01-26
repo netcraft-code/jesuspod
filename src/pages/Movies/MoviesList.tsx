@@ -43,7 +43,7 @@ export default function MoviesList() {
     const filteredSaved = filterMovies(savedMovies);
 
     // Get Unique Categories
-    const categories = Array.from(new Set(allMovies.map((m: any) => m.category).filter(Boolean)));
+    const categories = Array.from(new Set(allMovies.map((m: any) => m.category).filter(Boolean))).sort();
 
     // Filter Categories based on search (existing logic remains for bottom grid)
     const filteredCategories = categories.filter((c: any) =>
@@ -64,7 +64,7 @@ export default function MoviesList() {
     const handleCategorySelect = (category: string | null) => {
         // Navigate to All Movies with category filter
         if (category) {
-            navigate("/all-movies", { state: { category: category } });
+            navigate(`/all-movies?category=${category}`, { state: { category: category } });
         } else {
             navigate("/all-movies");
         }
@@ -170,6 +170,23 @@ export default function MoviesList() {
                     </div>
                 )}
 
+                {/* 2. Movies to Love (Favorites) */}
+                {(filteredSaved.length > 0 || !searchQuery) && (
+                    <div style={{ marginBottom: '40px' }}>
+                        <HomeSection
+                            title="My Movies"
+                            data={filteredSaved}
+                            loading={loading}
+                            cardVariant="channel"
+                            onViewAll={() => navigate("/all-movies", { state: { filter: 'saved' } })}
+                            onCardClick={handleCardClick}
+                            onToggleSave={handleToggleSave}
+                            user={user}
+                            emptyMessage={searchQuery ? "No saved movies match your search" : "Start saving movies to see them here ❤️"}
+                        />
+                    </div>
+                )}
+
 
                 {/* 3. Categorized Movie Sections */}
                 {categories.map((category: any) => {
@@ -177,7 +194,11 @@ export default function MoviesList() {
                     const categoryMovies = allMovies.filter((m: any) =>
                         m.category === category &&
                         (!searchQuery || m.title?.toLowerCase().includes(searchQuery.toLowerCase()))
-                    );
+                    ).sort((a: any, b: any) => {
+                        const titleA = (a.title || a.name || "").toString().trim().toLowerCase();
+                        const titleB = (b.title || b.name || "").toString().trim().toLowerCase();
+                        return titleA.localeCompare(titleB);
+                    });
 
                     if (categoryMovies.length === 0) return null;
 
@@ -198,22 +219,6 @@ export default function MoviesList() {
                 })}
 
 
-                {/* 2. Movies to Love (Favorites) */}
-                {(filteredSaved.length > 0 || !searchQuery) && (
-                    <div style={{ marginBottom: '40px' }}>
-                        <HomeSection
-                            title="My Movies"
-                            data={filteredSaved}
-                            loading={loading}
-                            cardVariant="channel"
-                            onViewAll={() => navigate("/all-movies", { state: { filter: 'saved' } })}
-                            onCardClick={handleCardClick}
-                            onToggleSave={handleToggleSave}
-                            user={user}
-                            emptyMessage={searchQuery ? "No saved movies match your search" : "Start saving movies to see them here ❤️"}
-                        />
-                    </div>
-                )}
 
                 {/* 4. Search for Category (Category Grid) - Kept at bottom as requested/existing */}
                 <div className="search-radio-section" style={{ marginTop: 60 }}>

@@ -11,6 +11,9 @@ import { trackBookRead } from "../../services/booksAnalytics";
 import { toggleBookSave } from "../../services/dataService";
 import { getFilteredBooks, refreshSavedBooks, toggleBookSaveState } from "../../redux/dataSlice";
 import type { RootState } from "../../redux/store";
+import { images } from "../../assets/images";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../services/firebase";
 
 export default function AllBooks() {
     // const navigate = useNavigate();
@@ -22,6 +25,8 @@ export default function AllBooks() {
     const categoryParam = searchParams.get("category");
     const categoryFromState = location.state?.category;
     const activeCategory = categoryParam || categoryFromState;
+    const filterFromQuery = searchParams.get("filter");
+    const filterState = filterFromQuery || location.state?.filter;
 
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.auth.user);
@@ -39,7 +44,7 @@ export default function AllBooks() {
 
     // 3. Determine source
     const countryFromState = location.state?.country;
-    const filterState = location.state?.filter;
+    // const filterState = location.state?.filter; // Moved up
 
 
     let sourceBooks = reduxFilteredBooks;
@@ -113,13 +118,54 @@ export default function AllBooks() {
                             : (countryFromState ? `${countryFromState} Books` : (activeCategory ? `${activeCategory} Books` : "All Books"))
                         }
                     </h2>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search books by title and author..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <button
+                            className="share-btn"
+                            onClick={() => {
+                                const shareUrl = window.location.href;
+                                if (navigator.share) {
+                                    navigator.share({
+                                        title: "JesusPOD Books",
+                                        url: shareUrl,
+                                    }).then(() => {
+                                        logEvent(analytics, "Share_AllBooks", { filter: filterState || activeCategory || "all" });
+                                    });
+                                } else {
+                                    navigator.clipboard.writeText(shareUrl);
+                                    alert("Link copied to clipboard!");
+                                }
+                            }}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                cursor: 'pointer',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#fb4a4a';
+                                e.currentTarget.style.transform = 'scale(1.1)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                        >
+                            <img src={images.share} alt="share" style={{ width: '20px', height: '20px', filter: 'brightness(0) invert(1)' }} />
+                        </button>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search books by title and author..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div className="book-grid">

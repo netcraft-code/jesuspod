@@ -288,7 +288,7 @@ export default function Home() {
           title="Radio"
           data={radioList.slice(103, 150)}
           loading={isLoading}
-          onViewAll={() => navigate("/all-radio")}
+          onViewAll={() => navigate("/radio")}
           onCardClick={(item) => {
             const sameTypeList = radioList.filter(
               (r: MediaItem) =>
@@ -311,7 +311,7 @@ export default function Home() {
           title="Movies"
           data={movies}
           loading={isLoading}
-          onViewAll={() => navigate("/all-movies")}
+          onViewAll={() => navigate("/movies")}
           onCardClick={(item) => {
             // Track play (optional here if MoviesSection doesn't do it)
             // Using logic from MoviesList
@@ -329,7 +329,7 @@ export default function Home() {
           title="Podcast"
           data={podcasts.slice(50, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
           loading={isLoading}
-          onViewAll={() => navigate("/all-podcast")}
+          onViewAll={() => navigate("/podcast")}
           onCardClick={(item) =>
             navigate(`/podcastplayer/${item.id}`, {
               state: { channel: item },
@@ -345,7 +345,7 @@ export default function Home() {
           data={filteredChannels.slice(100, 150)}
           loading={isLoading}
           cardVariant="channel"
-          onViewAll={() => navigate("/all-channels")}
+          onViewAll={() => navigate("/channel-listing")}
           onCardClick={(item) => {
             if (item.channelLink) {
               window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
@@ -365,7 +365,7 @@ export default function Home() {
           title="Books"
           data={books.slice(50, 100)}
           loading={isLoading}
-          onViewAll={() => navigate("/all-books")}
+          onViewAll={() => navigate("/books")}
           onCardClick={handleBookClick}
           isBook={true}
           user={user}

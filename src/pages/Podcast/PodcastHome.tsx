@@ -46,7 +46,7 @@ export default function PodcastHome() {
                     },
                 ])
         ).values()
-    );
+    ).sort((a: any, b: any) => a.name.localeCompare(b.name));
 
 
 
@@ -183,9 +183,13 @@ export default function PodcastHome() {
 
                     const catName = catEntry.name;
                     const categoryPodcasts = podcasts.filter((p: any) =>
-                        p.category?.name?.trim() === catName &&
+                        p.category?.name?.trim().toLowerCase() === catName.toLowerCase() &&
                         (!searchTerm || p.title?.toLowerCase().includes(searchTerm.toLowerCase()))
-                    );
+                    ).sort((a: any, b: any) => {
+                        const titleA = (a?.title || a?.name || "").toString().trim().toLowerCase();
+                        const titleB = (b?.title || b?.name || "").toString().trim().toLowerCase();
+                        return titleA.localeCompare(titleB);
+                    });
 
                     if (categoryPodcasts.length === 0) return null;
 
@@ -193,7 +197,7 @@ export default function PodcastHome() {
                         <div key={catName} style={{ marginBottom: '40px' }}>
                             <HomeSection
                                 title={catName}
-                                onViewAll={() => navigate("/podcast-category", { state: { category: catName } })}
+                                onViewAll={() => navigate(`/podcast-category?category=${encodeURIComponent(catName)}`, { state: { category: catName } })}
                                 data={categoryPodcasts}
                                 onCardClick={(item) =>
                                     navigate(`/podcastplayer/${item.id}`, {
@@ -240,8 +244,7 @@ export default function PodcastHome() {
                                 title={cat.name}
                                 localImage={categoryImages[index % categoryImages.length]}
                                 onClick={() => {
-
-                                    navigate("/podcast-category", {
+                                    navigate(`/podcast-category?category=${encodeURIComponent(cat.name)}`, {
                                         state: { category: cat.name },
                                     });
                                 }}

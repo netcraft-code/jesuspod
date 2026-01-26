@@ -91,7 +91,7 @@ $currentUrl = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 // 6. Bot Detection & Redirect
 // ------------------------------
 $userAgent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-$isBot = preg_match('/facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot/i', $userAgent);
+$isBot = preg_match('/facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot|applebot|yandexbot|pinterest/i', $userAgent);
 
 if (!$isBot) {
     // Real user -> direct 302 redirect (no HTML body downloaded)

@@ -12,6 +12,7 @@ import { toggleMovieSave } from "../../services/dataService";
 import type { RootState } from "../../redux/store";
 
 import usePageTitle from "../../hooks/usePageTitle";
+import { images } from "../../assets/images";
 
 export default function AllMovies() {
     usePageTitle("All Movies");
@@ -88,6 +89,33 @@ export default function AllMovies() {
         }
     };
 
+    const handleShare = async () => {
+        let shareUrl = window.location.origin + "/all-movies";
+        let title = "All Movies";
+
+        if (activeCategory && filterState !== 'saved') {
+            shareUrl += `?category=${encodeURIComponent(activeCategory)}`;
+            title = `${activeCategory} Movies`;
+        }
+
+        const shareData = {
+            title: title,
+            text: `Check out ${title} on JesusPOD`,
+            url: shareUrl,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(shareUrl);
+                alert("Link copied to clipboard!");
+            }
+        } catch (err) {
+            console.error("Error sharing:", err);
+        }
+    };
+
     return (
         <div className="main-content">
             {/* HEADER */}
@@ -109,15 +137,28 @@ export default function AllMovies() {
                         }
                     </h2>
 
-                    <input
-                        className="search-input"
-                        type="text"
-                        placeholder="Search movies..."
-                        value={search}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearch(e.target.value)
-                        }
-                    />
+                    {/* Filter container for share and search */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {filterState !== 'saved' && (
+                            <button
+                                className="share-btn"
+                                onClick={handleShare}
+                                title="Share this category"
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                            >
+                                <img src={images.share} alt="share" style={{ width: 24, height: 24 }} />
+                            </button>
+                        )}
+                        <input
+                            className="search-input"
+                            type="text"
+                            placeholder="Search movies..."
+                            value={search}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setSearch(e.target.value)
+                            }
+                        />
+                    </div>
                 </div>
 
                 {/* MOVIES GRID */}

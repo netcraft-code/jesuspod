@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     // 2. Bot Detection
     const userAgent = (req.headers['user-agent'] || '').toLowerCase();
-    const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot/i.test(userAgent);
+    const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot|applebot|yandexbot|pinterest/i.test(userAgent);
 
     if (!isBot) {
         // Real User -> Instant Redirect

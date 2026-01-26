@@ -29,12 +29,15 @@ export default function ChannelListing() {
     const [tvChannels, setTvChannels] = useState<any[]>([]);
 
     const countries = useSelector((state: RootState) => state.data.Countries);
+    // Sort countries alphabetically
+    const sortedCountries = [...(countries || [])].sort((a: any, b: any) =>
+        (a.title || "").localeCompare(b.title || "")
+    );
     const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
     const loading = useSelector((state: RootState) => state.data.loading);
 
     // Analytics data
     const allMostWatchedChannels = useSelector((state: RootState) => state.data.mostWatchedChannels) || [];
-    const topUSAChannels = useSelector((state: RootState) => state.data.topUSAChannels) || [];
     const savedChannels = useSelector((state: RootState) => state.data.savedChannels) || [];
 
     // Filter Most Watched based on selected country
@@ -47,9 +50,7 @@ export default function ChannelListing() {
         item.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const filteredTopUSA = topUSAChannels.filter((item: any) =>
-        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+
 
     const filteredSaved = savedChannels.filter((item: any) =>
         item.title?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -92,8 +93,11 @@ export default function ChannelListing() {
     };
 
     const handleCountrySelect = (countryName: string | null) => {
-        // dispatch(setSelectedCountry(countryName)); // Removed global filter update
-        navigate("/all-channels", { state: { country: countryName } });
+        if (countryName) {
+            navigate(`/all-channels?country=${encodeURIComponent(countryName)}`);
+        } else {
+            navigate("/all-channels?country=Global");
+        }
     };
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
@@ -210,6 +214,24 @@ export default function ChannelListing() {
                     />
                 </div>
 
+                {/* 1. Television Channels (Moved to Top) */}
+                {filteredTvChannels.length > 0 && (
+                    <div style={{ marginBottom: '40px' }}>
+                        <HomeSection
+                            title="TV Channels"
+                            data={filteredTvChannels}
+                            loading={loading}
+                            cardVariant="channel"
+                            onViewAll={() => navigate("/all-channels?filter=tv")}
+                            onCardClick={handleCardClick}
+                            user={user}
+                            showFav={false}
+                            showShare={true}
+                            onShare={handleShare}
+                        />
+                    </div>
+                )}
+
                 {/* 1. Most Watched Channels */}
                 {filteredMostWatched.length > 0 && (
                     <div style={{ marginBottom: '40px' }}>
@@ -226,39 +248,9 @@ export default function ChannelListing() {
                     </div>
                 )}
 
-                {/* 2. Top 10 in USA */}
-                {filteredTopUSA.length > 0 && (
-                    <div style={{ marginBottom: '40px' }}>
-                        <HomeSection
-                            title="Top 10 in USA"
-                            data={filteredTopUSA}
-                            loading={loading}
-                            cardVariant="channel"
-                            onViewAll={() => navigate("/all-channels")}
-                            onCardClick={handleCardClick}
-                            onToggleSave={handleToggleSave}
-                            user={user}
-                        />
-                    </div>
-                )}
 
-                {/* 4. Television Channels */}
-                {filteredTvChannels.length > 0 && (
-                    <div style={{ marginBottom: '40px' }}>
-                        <HomeSection
-                            title="TV Channels"
-                            data={filteredTvChannels}
-                            loading={loading}
-                            cardVariant="channel"
-                            onViewAll={() => navigate("/all-channels", { state: { filter: 'tv' } })}
-                            onCardClick={handleCardClick}
-                            user={user}
-                            showFav={false}
-                            showShare={true}
-                            onShare={handleShare}
-                        />
-                    </div>
-                )}
+
+
 
                 {/* 3. Channels to Love */}
                 {filteredSaved.length > 0 && (
@@ -267,7 +259,7 @@ export default function ChannelListing() {
                         data={filteredSaved}
                         loading={loading}
                         cardVariant="channel"
-                        onViewAll={() => navigate("/all-channels", { state: { filter: 'saved' } })}
+                        onViewAll={() => navigate("/all-channels?filter=saved")}
                         onCardClick={handleCardClick}
                         onToggleSave={handleToggleSave}
                         user={user}
@@ -290,9 +282,10 @@ export default function ChannelListing() {
                             title="Global"
                             imageUrl="https://flagcdn.com/w80/un.png" // Placeholder or from assets
                             onClick={() => handleCountrySelect(null)}
+                            onShare={() => handleCountryShare("Global")}
                         />
 
-                        {countries.map((country: any) => (
+                        {sortedCountries.map((country: any) => (
                             <CircleImageCard
                                 key={country.id}
                                 title={country.title === "Espanol" ? "Español" : country.title}

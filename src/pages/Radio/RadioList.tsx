@@ -44,9 +44,9 @@ export default function RadioList() {
 
   const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
 
-  const countries = useSelector<RootState, CountryItem[]>(
+  const countries = [...useSelector<RootState, CountryItem[]>(
     (state) => state.data.Countries
-  );
+  )].sort((a, b) => a.title.localeCompare(b.title));
 
   // Analytics data from Redux with fallback to empty arrays
   const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
@@ -131,7 +131,7 @@ export default function RadioList() {
     console.log("📋 Filtered playlist:", sameTypeList.length, "radios");
     console.log("📋 Playlist items:", sameTypeList);
 
-    navigate("/radio-player", {
+    navigate(`/radio-player?type=${encodeURIComponent(item.type || 'Radio')}`, {
       state: {
         current: item,
         list: sameTypeList,
@@ -229,7 +229,7 @@ export default function RadioList() {
                   if (!currentRadio) return; // agar koi match nahi
 
                   // Navigate to radio-player
-                  navigate("/radio-player", {
+                  navigate(`/radio-player?type=${encodeURIComponent(item.title)}`, {
                     state: {
                       current: currentRadio,
                       list: sameTypeList,
