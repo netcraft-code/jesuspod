@@ -286,7 +286,7 @@ export default function Home() {
         {/* ================= RADIO ================= */}
         <HomeSection
           title="Radio"
-          data={radioList.slice(103, 150)}
+          data={radioList}
           loading={isLoading}
           onViewAll={() => navigate("/radio")}
           onCardClick={(item) => {
@@ -327,7 +327,7 @@ export default function Home() {
         {/* ================= PODCAST ================= */}
         <HomeSection
           title="Podcast"
-          data={podcasts.slice(50, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
+          data={podcasts.slice(20, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
           loading={isLoading}
           onViewAll={() => navigate("/podcast")}
           onCardClick={(item) =>
@@ -342,7 +342,7 @@ export default function Home() {
         {/* ================= VIDEO CHANNELS ================= */}
         <HomeSection
           title="Video Channels"
-          data={filteredChannels.slice(100, 150)}
+          data={filteredChannels}
           loading={isLoading}
           cardVariant="channel"
           onViewAll={() => navigate("/channel-listing")}
@@ -363,7 +363,7 @@ export default function Home() {
         {/* ================= BOOKS ================= */}
         <HomeSection
           title="Books"
-          data={books.slice(50, 100)}
+          data={books.slice(20, 100)}
           loading={isLoading}
           onViewAll={() => navigate("/books")}
           onCardClick={handleBookClick}

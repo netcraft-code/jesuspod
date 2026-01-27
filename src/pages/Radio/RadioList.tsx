@@ -50,7 +50,7 @@ export default function RadioList() {
 
   // Analytics data from Redux with fallback to empty arrays
   const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
-  const topUSARadios = useSelector((state: RootState) => state.data.topUSARadios) || [];
+  // const topUSARadios = useSelector((state: RootState) => state.data.topUSARadios) || [];
   const savedRadios = useSelector((state: RootState) => state.data.savedRadios) || [];
 
   // Filter ONLY Most Listener Radio based on selected country
@@ -65,9 +65,9 @@ export default function RadioList() {
     item.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredTopUSA = topUSARadios.filter((item: RadioItem) =>
-    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredTopUSA = topUSARadios.filter((item: RadioItem) =>
+  //   item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const filteredSaved = savedRadios.filter((item: RadioItem) =>
     item.title?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -185,20 +185,10 @@ export default function RadioList() {
           />
         )}
 
-        {/* ================= TOP 10 USA ================= */}
-        {filteredTopUSA.length > 0 && (
-          <Section
-            title="Top 10 in USA"
-            data={filteredTopUSA}
-            onViewAll={() => navigate("/all-radio")}
-            onCardClick={handleRadioClick}
-          />
-        )}
-
-        {/* ================= RADIO TO LOVE ================= */}
+        {/* ================= MY RADIO (Moved & Renamed) ================= */}
         {filteredSaved.length > 0 && (
           <Section
-            title="Radio To Love"
+            title="My Radio"
             data={filteredSaved}
             onViewAll={() => navigate("/favorite-radios")}
             onCardClick={handleRadioClick}

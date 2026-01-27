@@ -169,6 +169,21 @@ export default function BooksHome() {
                     />
                 )}
 
+                {/* My Books (Moved & Renamed) */}
+                {filteredSaved.length > 0 && (
+                    <HomeSection
+                        title="My Books"
+                        onViewAll={() => navigate("/all-books?filter=saved")}
+                        data={filteredSaved}
+                        loading={loading}
+                        onCardClick={handleBookClick}
+                        isBook={true}
+                        onToggleSave={handleToggleSave}
+                        user={user}
+                        emptyMessage="Start saving books to see them here ❤️"
+                    />
+                )}
+
 
                 {/* Categorized Book Sections */}
                 {categories.map((category: any) => {
@@ -195,20 +210,7 @@ export default function BooksHome() {
                     );
                 })}
 
-                {/* Books to Love */}
-                {filteredSaved.length > 0 && (
-                    <HomeSection
-                        title="Books to Love"
-                        onViewAll={() => navigate("/all-books?filter=saved")}
-                        data={filteredSaved}
-                        loading={loading}
-                        onCardClick={handleBookClick}
-                        isBook={true}
-                        onToggleSave={handleToggleSave}
-                        user={user}
-                        emptyMessage="Start saving books to see them here ❤️"
-                    />
-                )}
+
 
                 {/* Search for Books (Country Grid - Matching Channels) */}
                 {/* Search for Books (Category Grid) */}

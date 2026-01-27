@@ -21,7 +21,7 @@ export default function MoviesList() {
 
     const [active, setActive] = useState("Movies");
     const [profileOpen, setProfileOpen] = useState(false);
-    const [categorySearch, setCategorySearch] = useState("");
+    // const [categorySearch, setCategorySearch] = useState("");
     const [searchQuery, setSearchQuery] = useState(""); // Global movie search
 
     const loading = useSelector((state: RootState) => state.data.loading);
@@ -46,9 +46,9 @@ export default function MoviesList() {
     const categories = Array.from(new Set(allMovies.map((m: any) => m.category).filter(Boolean))).sort();
 
     // Filter Categories based on search (existing logic remains for bottom grid)
-    const filteredCategories = categories.filter((c: any) =>
-        c.toLowerCase().includes(categorySearch.toLowerCase())
-    );
+    // const filteredCategories = categories.filter((c: any) =>
+    //     c.toLowerCase().includes(categorySearch.toLowerCase())
+    // );
 
     // Handlers
     const handleCardClick = (item: any) => {
@@ -224,18 +224,12 @@ export default function MoviesList() {
                 <div className="search-radio-section" style={{ marginTop: 60 }}>
                     <div className="search-radio-header">
                         <h2 className="sub-title">By Categories</h2>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search category..."
-                            value={categorySearch}
-                            onChange={(e) => setCategorySearch(e.target.value)}
-                        />
+
                     </div>
 
                     {/* Category Grid */}
                     <div className="country-grid">
-                        {filteredCategories.map((cat: any) => (
+                        {categories.map((cat: any) => (
                             <CircleImageCard
                                 key={cat}
                                 title={cat}

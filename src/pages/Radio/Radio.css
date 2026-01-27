@@ -473,10 +473,17 @@
 
 .country-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+  justify-content: center;
+  padding-bottom: 20px;
+}
 
-  grid-template-columns: repeat(auto-fit, minmax(125px, max-content));
-  gap: 12px;
-
+@media (max-width: 480px) {
+  .country-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
 }
 
 .radio-card-title {
