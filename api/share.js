@@ -17,8 +17,10 @@ export default async function handler(req, res) {
     }
 
     // 2. Bot Detection
+
     const userAgent = (req.headers['user-agent'] || '').toLowerCase();
-    const isBot = /facebookexternalhit|whatsapp|twitterbot|telegrambot|linkedinbot|discordbot|slackbot|googlebot|bingbot|applebot|yandexbot|pinterest/i.test(userAgent);
+
+    const isBot = /bot|crawler|spider|facebookexternalhit|whatsapp|telegram|twitter|linkedin|discord/i.test(userAgent);
 
     if (!isBot) {
         // Real User -> Instant Redirect
@@ -118,31 +120,46 @@ export default async function handler(req, res) {
         }
     }
 
-    // 4. Return HTML for Bots
-    const html = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${escapeHtml(title)} - JesusPOD</title>
-        <meta name="description" content="${escapeHtml(description)}">
 
-        <meta property="og:type" content="website">
-        <meta property="og:site_name" content="JesusPOD">
-        <meta property="og:title" content="${escapeHtml(title)}">
-        <meta property="og:description" content="${escapeHtml(description)}">
-        <meta property="og:image" content="${escapeHtml(image)}">
-        ${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${escapeHtml(image)}">` : ''}
-        
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="${escapeHtml(title)}">
-        <meta name="twitter:description" content="${escapeHtml(description)}">
-        <meta name="twitter:image" content="${escapeHtml(image)}">
-    </head>
-    <body></body>
-    </html>
-    `;
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>${escapeHtml(title)} - JesusPOD</title>
+<meta name="description" content="${escapeHtml(description)}">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="JesusPOD">
+<meta property="og:title" content="${escapeHtml(title)}">
+<meta property="og:description" content="${escapeHtml(description)}">
+<meta property="og:image" content="${escapeHtml(image)}">
+${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${escapeHtml(image)}">` : ''}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escapeHtml(title)}">
+<meta name="twitter:description" content="${escapeHtml(description)}">
+<meta name="twitter:image" content="${escapeHtml(image)}">
+
+<!-- ✅ AUTO REDIRECT FOR REAL USERS -->
+<meta http-equiv="refresh" content="0; url=${redirectUrl}" />
+
+<script>
+  // Extra safety for browsers
+  setTimeout(() => {
+    window.location.href = "${redirectUrl}";
+  }, 100);
+</script>
+</head>
+
+<body>
+<p>Redirecting...</p>
+</body>
+</html>
+`;
+
 
     // Cache response for 24 hours (Vercel Edge Cache)
     res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate');
