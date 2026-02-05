@@ -121,15 +121,15 @@ export default function RadioList() {
 
   /** 🔹 Common click handler */
   const handleRadioClick = (item: RadioItem) => {
-    console.log("🎵 Radio clicked:", item);
-    console.log("📻 Radio type/country:", item.type);
+    // console.log("🎵 Radio clicked:", item);
+    // console.log("📻 Radio type/country:", item.type);
 
     const sameTypeList = radio.filter(
       (r: RadioItem) => r.type?.toLowerCase() === item.type?.toLowerCase()
     );
 
-    console.log("📋 Filtered playlist:", sameTypeList.length, "radios");
-    console.log("📋 Playlist items:", sameTypeList);
+    // console.log("📋 Filtered playlist:", sameTypeList.length, "radios");
+    // console.log("📋 Playlist items:", sameTypeList);
 
     navigate(`/radio-player?type=${encodeURIComponent(item.type || 'Radio')}`, {
       state: {

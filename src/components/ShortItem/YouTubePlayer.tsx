@@ -115,7 +115,7 @@ export default function YouTubePlayer({
                     },
                     events: {
                         onReady: (event: any) => {
-                            console.log("Player ready for video:", videoId);
+                            // console.log("Player ready for video:", videoId);
                             setIsPlayerReady(true);
                             setIsLoading(false);
 

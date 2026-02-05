@@ -28,7 +28,7 @@ export const trackRadioPlay = async (
     country: string
 ) => {
     try {
-        console.log("🎵 Tracking radio play:", { radioId, radioTitle, country });
+        // console.log("🎵 Tracking radio play:", { radioId, radioTitle, country });
 
         // Log to Firebase Analytics
         logEvent(analytics, "Radio", {
@@ -37,14 +37,14 @@ export const trackRadioPlay = async (
             description: "Radio_event",
             country: country,
         });
-        console.log("✅ Analytics event logged");
+        // console.log("✅ Analytics event logged");
 
         // Update Firestore analytics
         const radioDocRef = doc(firestore, ANALYTICS_COLLECTION, radioId);
-        console.log("📄 Document reference created:", ANALYTICS_COLLECTION, radioId);
+        // console.log("📄 Document reference created:", ANALYTICS_COLLECTION, radioId);
 
         const radioDoc = await getDoc(radioDocRef);
-        console.log("📊 Document exists:", radioDoc.exists());
+        // console.log("📊 Document exists:", radioDoc.exists());
 
         if (radioDoc.exists()) {
             // Increment play count
@@ -56,7 +56,7 @@ export const trackRadioPlay = async (
                 },
                 { merge: true }
             );
-            console.log("✅ Play count incremented");
+            // console.log("✅ Play count incremented");
         } else {
             // Create new analytics document
             await setDoc(radioDocRef, {
@@ -66,7 +66,7 @@ export const trackRadioPlay = async (
                 playCount: 1,
                 lastPlayed: serverTimestamp(),
             });
-            console.log("✅ New analytics document created");
+            // console.log("✅ New analytics document created");
         }
 
         console.log(`✅ Radio play tracked successfully: ${radioTitle}`);
@@ -91,7 +91,7 @@ export const getMostListenedRadios = async (
     countryFilter?: string
 ): Promise<any[]> => {
     try {
-        console.log("📊 Fetching most listened radios...", { limitCount, countryFilter });
+        // console.log("📊 Fetching most listened radios...", { limitCount, countryFilter });
 
         const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
 
@@ -112,14 +112,14 @@ export const getMostListenedRadios = async (
         }
 
         const querySnapshot = await getDocs(q);
-        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+        // console.log("📈 Analytics documents found:", querySnapshot.docs.length);
 
         // ✅ Filter out undefined/null radioIds
         const radioIds = querySnapshot.docs
             .map((doc) => doc.data().radioId)
             .filter((id) => id !== undefined && id !== null && id !== "");
 
-        console.log("🎵 Radio IDs:", radioIds);
+        // console.log("🎵 Radio IDs:", radioIds);
 
         // Fetch actual radio objects from Radio collection
         if (radioIds.length === 0) {
@@ -128,7 +128,7 @@ export const getMostListenedRadios = async (
         }
 
         const radios = await getDocumentsByIds(RADIO_COLLECTION, radioIds);
-        console.log("📻 Radio objects fetched:", radios.length);
+        // console.log("📻 Radio objects fetched:", radios.length);
 
         // Sort radios by playCount order
         const analyticsMap = new Map();
@@ -145,7 +145,7 @@ export const getMostListenedRadios = async (
             return bCount - aCount;
         });
 
-        console.log("✅ Most listened radios fetched successfully:", radios.length);
+        // console.log("✅ Most listened radios fetched successfully:", radios.length);
         return radios;
     } catch (error) {
         console.error("❌ Error fetching most listened radios:", error);

@@ -52,7 +52,7 @@ export default function LivePlayer() {
 
     const handleVideoSelect = (video: any) => {
         setCurrentVideo(video);
-        console.log("video", video)
+        // console.log("video", video)
     };
 
     if (!currentVideo) {

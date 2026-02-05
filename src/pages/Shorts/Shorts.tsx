@@ -47,8 +47,8 @@ export default function Shorts() {
                 ? await ShortsService.getUserViewHistory(user.uid)
                 : { viewedShorts: [], tagPreferences: {}, savedShorts: [], likedShorts: [] };
 
-            console.log(`User has viewed ${userHistory.viewedShorts.length} shorts`);
-            console.log("User tag preferences:", userHistory.tagPreferences);
+            // console.log(`User has viewed ${userHistory.viewedShorts.length} shorts`);
+            // console.log("User tag preferences:", userHistory.tagPreferences);
 
             if (userHistory.savedShorts) {
                 setSavedShortIds(new Set(userHistory.savedShorts));
@@ -118,7 +118,7 @@ export default function Shorts() {
                             },
                             { merge: true }
                         );
-                        console.log(`Increased preference for tag: ${primaryTag}`);
+                        // console.log(`Increased preference for tag: ${primaryTag}`);
                     }
                 }
             } catch (error) {
@@ -189,7 +189,7 @@ export default function Shorts() {
                     }
 
                     await setDoc(userRef, updateData, { merge: true });
-                    console.log(`Tracked view for video ${shortId}`);
+                    // console.log(`Tracked view for video ${shortId}`);
                 }
             }
         } catch (error) {

@@ -30,7 +30,7 @@ export const trackPodcastPlay = async (
     episodeTitle?: string
 ) => {
     try {
-        console.log("🎧 Tracking podcast play:", { channelId, channelTitle, episodeTitle });
+        // console.log("🎧 Tracking podcast play:", { channelId, channelTitle, episodeTitle });
 
         // Log to Firebase Analytics
         logEvent(analytics, "Podcast_Play", {
@@ -39,14 +39,14 @@ export const trackPodcastPlay = async (
             episodeTitle: episodeTitle || "Unknown",
             description: "Podcast_Play_Event",
         });
-        console.log("✅ Analytics event logged");
+        // console.log("✅ Analytics event logged");
 
         // Update Firestore analytics
         const podcastDocRef = doc(firestore, ANALYTICS_COLLECTION, channelId);
-        console.log("📄 Document reference created:", ANALYTICS_COLLECTION, channelId);
+        // console.log("📄 Document reference created:", ANALYTICS_COLLECTION, channelId);
 
         const podcastDoc = await getDoc(podcastDocRef);
-        console.log("📊 Document exists:", podcastDoc.exists());
+        // console.log("📊 Document exists:", podcastDoc.exists());
 
         if (podcastDoc.exists()) {
             // Increment play count
@@ -58,7 +58,7 @@ export const trackPodcastPlay = async (
                 },
                 { merge: true }
             );
-            console.log("✅ Play count incremented");
+            // console.log("✅ Play count incremented");
         } else {
             // Create new analytics document
             await setDoc(podcastDocRef, {
@@ -68,10 +68,10 @@ export const trackPodcastPlay = async (
                 lastPlayed: serverTimestamp(),
                 createdAt: serverTimestamp(),
             });
-            console.log("✅ New analytics document created");
+            // console.log("✅ New analytics document created");
         }
 
-        console.log(`✅ Podcast play tracked successfully: ${channelTitle}`);
+        // console.log(`✅ Podcast play tracked successfully: ${channelTitle}`);
     } catch (error) {
         console.error("❌ Error tracking podcast play:", error);
         console.error("Error details:", {
@@ -91,7 +91,7 @@ export const getMostListenedPodcasts = async (
     limitCount: number = 30
 ): Promise<any[]> => {
     try {
-        console.log("📊 Fetching most listened podcasts...", { limitCount });
+        // console.log("📊 Fetching most listened podcasts...", { limitCount });
 
         const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
 
@@ -102,14 +102,14 @@ export const getMostListenedPodcasts = async (
         );
 
         const querySnapshot = await getDocs(q);
-        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+        // console.log("📈 Analytics documents found:", querySnapshot.docs.length);
 
         // Filter out undefined/null channelIds
         const channelIds = querySnapshot.docs
             .map((doc) => doc.data().channelId)
             .filter((id) => id !== undefined && id !== null && id !== "");
 
-        console.log("🎧 Channel IDs:", channelIds);
+        // console.log("🎧 Channel IDs:", channelIds);
 
         // Fetch actual channel objects from Newchannels collection
         if (channelIds.length === 0) {
@@ -119,14 +119,14 @@ export const getMostListenedPodcasts = async (
 
         // 1. Try fetching by Document ID (Primary method)
         let channels = await getDocumentsByIds(CHANNELS_COLLECTION, channelIds);
-        console.log(`📻 Channels found by Doc ID: ${channels.length}`);
+        // console.log(`📻 Channels found by Doc ID: ${channels.length}`);
 
         // 2. Identify missing IDs
         const foundIds = new Set(channels.map((c: any) => c.id));
         const missingIds = channelIds.filter((id) => !foundIds.has(id));
 
         if (missingIds.length > 0) {
-            console.log(`⚠️ Missing ${missingIds.length} channels, attempting fallback lookup...`, missingIds);
+            // console.log(`⚠️ Missing ${missingIds.length} channels, attempting fallback lookup...`, missingIds);
 
             // 3. Fallback: Query by 'id' field or '_id' field
             // We do this in parallel for efficiency
@@ -144,7 +144,7 @@ export const getMostListenedPodcasts = async (
 
             const fallbackResults = await Promise.all(fallbackPromises);
             const foundFallback = fallbackResults.filter((doc) => doc !== null);
-            console.log(`✅ Found ${foundFallback.length} channels via fallback lookup`);
+            // console.log(`✅ Found ${foundFallback.length} channels via fallback lookup`);
 
             channels = [...channels, ...foundFallback];
         }
@@ -181,7 +181,7 @@ export const getMostListenedPodcasts = async (
             return getCount(b) - getCount(a);
         });
 
-        console.log("✅ Most listened podcasts fetched successfully:", channels.length);
+        // console.log("✅ Most listened podcasts fetched successfully:", channels.length);
         return channels;
     } catch (error) {
         console.error("❌ Error fetching most listened podcasts:", error);
@@ -197,7 +197,7 @@ export const getNewNoteworthyPodcasts = async (
     limitCount: number = 15
 ): Promise<any[]> => {
     try {
-        console.log("📊 Fetching new & noteworthy podcasts...", { limitCount });
+        // console.log("📊 Fetching new & noteworthy podcasts...", { limitCount });
 
         const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
 
@@ -209,7 +209,7 @@ export const getNewNoteworthyPodcasts = async (
         );
 
         const querySnapshot = await getDocs(q);
-        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+        // console.log("📈 Analytics documents found:", querySnapshot.docs.length);
 
         // Filter: playCount between 1-50 (not too popular, not brand new)
         const recentChannelIds = querySnapshot.docs
@@ -225,17 +225,17 @@ export const getNewNoteworthyPodcasts = async (
             .filter((id) => id !== null && id !== undefined && id !== "")
             .slice(0, limitCount);
 
-        console.log("🎧 New & Noteworthy Channel IDs:", recentChannelIds);
+        // console.log("🎧 New & Noteworthy Channel IDs:", recentChannelIds);
 
         if (recentChannelIds.length === 0) {
-            console.log("⚠️ No new & noteworthy data found");
+            // console.log("⚠️ No new & noteworthy data found");
             return [];
         }
 
         const channels = await getDocumentsByIds(CHANNELS_COLLECTION, recentChannelIds);
-        console.log("📻 Channel objects fetched:", channels.length);
+        // console.log("📻 Channel objects fetched:", channels.length);
 
-        console.log("✅ New & noteworthy podcasts fetched successfully:", channels.length);
+        // console.log("✅ New & noteworthy podcasts fetched successfully:", channels.length);
         return channels;
     } catch (error) {
         console.error("❌ Error fetching new & noteworthy podcasts:", error);
@@ -261,7 +261,7 @@ export const getSubscribedPodcasts = async (userId?: string): Promise<any[]> => 
             userId,
         ]);
 
-        console.log("✅ Subscribed podcasts fetched:", subscribedPodcasts.length);
+        // console.log("✅ Subscribed podcasts fetched:", subscribedPodcasts.length);
         return subscribedPodcasts;
     } catch (error) {
         console.error("Error fetching subscribed podcasts:", error);

@@ -24,7 +24,7 @@ export default function AllRadio() {
 
   // ✅ Use filtered radio selector
   const radioList = useSelector(getFilteredRadio);
-  console.log("radio", radioList)
+  // console.log("radio", radioList)
 
   const filtered = radioList.filter((r: RadioItem) =>
     r.title.toLowerCase().includes(search.toLowerCase())

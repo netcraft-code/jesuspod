@@ -37,21 +37,80 @@ export default async function handler(req, res) {
             const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}/${docId}`;
 
             const response = await fetch(url);
+            let fields = {};
+
             if (response.ok) {
                 const data = await response.json();
-                const fields = data.fields || {};
+                fields = data.fields || {};
+            } else {
+                // FALLBACK: If direct document fetch by ID fails, attempt a query by _id or id field
+                // This handles "virtual" IDs passed to the share link
+                const queryUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
+                const queryPayload = {
+                    structuredQuery: {
+                        from: [{ collectionId: collection }],
+                        where: {
+                            compositeFilter: {
+                                op: "OR",
+                                filters: [
+                                    { fieldFilter: { field: { fieldPath: "_id" }, op: "EQUAL", value: { stringValue: id } } },
+                                    { fieldFilter: { field: { fieldPath: "id" }, op: "EQUAL", value: { stringValue: id } } }
+                                ]
+                            }
+                        },
+                        limit: 1
+                    }
+                };
 
-                if (fields.title?.stringValue) {
-                    title = fields.title.stringValue;
+                const qResponse = await fetch(queryUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(queryPayload)
+                });
+
+                if (qResponse.ok) {
+                    const qData = await qResponse.json();
+                    if (qData && qData.length > 0 && qData[0].document) {
+                        fields = qData[0].document.fields || {};
+                    }
                 }
+            }
+
+            if (Object.keys(fields).length > 0) {
+                // Map Title
+                title = fields.title?.stringValue || fields.name?.stringValue || title;
+
+                // Map Description
                 if (fields.description?.stringValue) {
                     const rawDesc = fields.description.stringValue.replace(/<[^>]*>?/gm, '');
                     description = rawDesc.substring(0, 160) + (rawDesc.length > 160 ? "..." : "");
-                } else {
+                } else if (title) {
                     description = `Listen to ${title} on JesusPOD.`;
                 }
-                if (fields.imageUrl?.stringValue) {
-                    image = fields.imageUrl.stringValue;
+
+                // Map Image (Check all common field names)
+                const rawImage = fields.image?.stringValue ||
+                    fields.imageUrl?.stringValue ||
+                    fields.thumbnail?.stringValue ||
+                    fields.thumbnailUrl?.stringValue ||
+                    fields.image_url?.stringValue ||
+                    fields.img?.stringValue ||
+                    fields.poster?.stringValue ||
+                    fields.download?.mapValue?.fields?.imageUrl?.stringValue;
+
+                if (rawImage) {
+                    image = rawImage;
+                }
+
+                // Ensure image is an absolute URL
+                if (image && image.startsWith('/')) {
+                    image = `https://www.jesuspod.com${image}`;
+                }
+
+                // If it's an episode share, we can optionally append episode info to title
+                if (episodeId && type === "podcast") {
+                    // Since we can't easily fetch episode title from RSS here without slowing down,
+                    // we just improve the channel title to indicate it's an episode
+                    title = `${title} (Podcast Episode)`;
                 }
             }
         } catch (error) {
@@ -70,9 +129,11 @@ export default async function handler(req, res) {
         <meta name="description" content="${escapeHtml(description)}">
 
         <meta property="og:type" content="website">
+        <meta property="og:site_name" content="JesusPOD">
         <meta property="og:title" content="${escapeHtml(title)}">
         <meta property="og:description" content="${escapeHtml(description)}">
         <meta property="og:image" content="${escapeHtml(image)}">
+        ${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${escapeHtml(image)}">` : ''}
         
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="${escapeHtml(title)}">

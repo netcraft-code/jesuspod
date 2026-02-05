@@ -29,7 +29,7 @@ export const trackBookRead = async (
     country: string
 ) => {
     try {
-        console.log("📖 Tracking book read:", { bookId, bookTitle, country });
+        // console.log("📖 Tracking book read:", { bookId, bookTitle, country });
 
         // Log to Firebase Analytics
         logEvent(analytics, "Book", {

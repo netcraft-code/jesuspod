@@ -11,6 +11,7 @@ import CircleImageCard from "../../components/Cards/CircleImageCard";
 import { categoryImages } from "../../assets/images/CatImages";
 import usePageTitle from "../../hooks/usePageTitle";
 import { togglePodcastSave } from "../../services/dataService";
+
 import { refreshSavedPodcasts, togglePodcastSaveState } from "../../redux/dataSlice";
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
@@ -51,6 +52,8 @@ export default function PodcastHome() {
 
 
     // --- GLOBAL SEARCH FILTERING ---
+    // Deduplicate most listened podcasts to avoid key collisions
+
     const filteredMostListened = mostListenedPodcasts.filter((item: any) =>
         item.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -124,7 +127,7 @@ export default function PodcastHome() {
             console.error("Error sharing:", err);
         }
     };
-
+    console.log("filteredMostListened  check", filteredMostListened)
     return (
         <div className="main-content">
             <Header
@@ -165,7 +168,7 @@ export default function PodcastHome() {
                         onViewAll={() => navigate("/all-podcast")}
                         data={filteredMostListened}
                         onCardClick={(item) =>
-                            navigate(`/podcastplayer/${item.id}`, {
+                            navigate(`/podcastplayer/${item._id}`, {
                                 state: { channel: item },
                             })
                         }
@@ -192,7 +195,7 @@ export default function PodcastHome() {
                     });
 
                     if (categoryPodcasts.length === 0) return null;
-
+                    console.log("podcast category check", categoryPodcasts)
                     return (
                         <div key={catName} style={{ marginBottom: '40px' }}>
                             <HomeSection

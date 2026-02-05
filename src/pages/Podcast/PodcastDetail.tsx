@@ -76,9 +76,7 @@ export default function PodcastDetail() {
   const user = useSelector((state: any) => state.auth.user);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const [currentEpisode, setCurrentEpisode] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -87,8 +85,11 @@ export default function PodcastDetail() {
 
   const remainingTime = Math.max(duration - currentTime, 0);
 
+  const hasTracked = useRef(false);
+
   useEffect(() => {
-    if (!channel && id) {
+    // Only fetch if we don't have the real object key or if we are loading via ID
+    if (id) {
       const getChannel = async () => {
         setLoading(true);
         try {
@@ -97,10 +98,8 @@ export default function PodcastDetail() {
           const docSnap = await getDoc(docRef);
 
           if (docSnap.exists()) {
-            setFetchedChannel({ id: docSnap.id, ...docSnap.data() });
+            setFetchedChannel({ id: docSnap.id, ...docSnap.data(), _realId: docSnap.id });
           } else {
-            console.log("⚠️ Document not found by Key, attempting fallback lookup for ID:", id);
-
             // 2. Fallback: Query by '_id' (Internal ID)
             const channelsRef = collection(firestore, "Newchannels");
             let q = query(channelsRef, where("_id", "==", id));
@@ -108,8 +107,7 @@ export default function PodcastDetail() {
 
             if (!snapshot.empty) {
               const docData = snapshot.docs[0];
-              console.log("✅ Found channel by _id");
-              setFetchedChannel({ id: docData.id, ...docData.data() });
+              setFetchedChannel({ id: docData.id, ...docData.data(), _realId: docData.id, _virtualId: id });
             } else {
               // 3. Last resort: Query by 'id' field
               q = query(channelsRef, where("id", "==", id));
@@ -117,11 +115,9 @@ export default function PodcastDetail() {
 
               if (!snapshot.empty) {
                 const docData = snapshot.docs[0];
-                console.log("✅ Found channel by id field");
-                setFetchedChannel({ id: docData.id, ...docData.data() });
+                setFetchedChannel({ id: docData.id, ...docData.data(), _realId: docData.id, _virtualId: id });
               } else {
                 console.log("❌ No channel found with this ID");
-                // Optionally handle not found state (redirect or show error)
               }
             }
           }
@@ -133,7 +129,7 @@ export default function PodcastDetail() {
       };
       getChannel();
     }
-  }, [id, channel]);
+  }, [id]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -208,28 +204,38 @@ export default function PodcastDetail() {
   };
 
   useEffect(() => {
-    if (channel?.url) {
+    // Only proceed if we have a valid channel URL
+    if (channel?.url && !hasTracked.current) {
       setEpisodes([]);
       setPage(1);
       setHasMore(true);
       fetchEpisodes(1);
-      checkSubscriptionStatus();
-      fetchDownloadedEpisodes();
+
+      // Use the resolved real ID if available, otherwise fallback to the channel object ID
+      const realChannelId = fetchedChannel?.id || channel?._id || channel?.id;
+
+      if (realChannelId) {
+        checkSubscriptionStatus(realChannelId);
+        fetchDownloadedEpisodes();
+        incrementHits("Newchannels", realChannelId);
+
+        if (channel?.title) {
+          trackPodcastPlay(realChannelId, channel.title);
+        }
+
+        // Mark as tracked to prevent duplicates on re-renders or dependency changes
+        hasTracked.current = true;
+      } else {
+        // Fallback just in case we haven't fetched resolved channel yet
+        checkSubscriptionStatus(channel?.id);
+      }
 
       logEvent(analytics, "PodcastChannel", {
         item: JSON.stringify(channel),
         description: "PodcastChannel_event",
       });
-
-      if (channel?.id && channel?.title) {
-        trackPodcastPlay(channel.id, channel.title);
-      }
-
-      if (channel?.id) {
-        incrementHits("Newchannels", channel.id);
-      }
     }
-  }, [channel?.url]);
+  }, [channel?.url, fetchedChannel?.id, channel?.title]); // Added channel.title as it's used inside
 
   useEffect(() => {
     if (page > 1) {
@@ -332,11 +338,23 @@ export default function PodcastDetail() {
     }, 0);
   };
 
-  const checkSubscriptionStatus = async () => {
-    const channelIdToQuery = channel?._id || channel?.id;
+  const checkSubscriptionStatus = async (overrideId?: string) => {
+    const channelIdToQuery = overrideId || fetchedChannel?.id || channel?._id || channel?.id;
     if (!user?.uid || !channelIdToQuery) return;
 
     try {
+      // 1. Try checking strictly by ID (if it's a key)
+      const docRef = doc(firestore, "Newchannels", channelIdToQuery);
+      let docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const channelData = docSnap.data();
+        const subscribers = channelData?.sub || [];
+        setIsSubscribed(subscribers.includes(user.uid));
+        return;
+      }
+
+      // 2. Fallback: Query by _id
       const channelsRef = collection(firestore, "Newchannels");
       const q = query(channelsRef, where("_id", "==", channelIdToQuery));
       const snapshot = await getDocs(q);
@@ -370,21 +388,55 @@ export default function PodcastDetail() {
       return;
     }
 
-    const channelIdToQuery = channel?._id || channel?.id;
-    if (!channelIdToQuery) {
+    // Always prefer the fetched Firestore Key
+    const channelKey = fetchedChannel?.id || channel?.id;
+
+    // We strictly use the Document Key logic for updates if possible
+    if (!channelKey) {
       alert("Channel ID not found");
       return;
     }
 
     setSubscribeLoading(true);
     try {
-      const channelsRef = collection(firestore, "Newchannels");
-      const q = query(channelsRef, where("_id", "==", channelIdToQuery));
-      const snapshot = await getDocs(q);
+      // Direct update using key (assuming channelKey is the document ID)
+      // If we are not sure it's the key, we should query first, but fetchedChannel.id IS the key.
+      // If we only have channel.id (virtual), we must find the key first.
 
-      if (!snapshot.empty) {
-        const docRef = doc(firestore, "Newchannels", snapshot.docs[0].id);
-        const channelData = snapshot.docs[0].data();
+      let docRef;
+      let channelData;
+
+      // Try resolving document if we suspect virtual ID or just wanna be safe
+      if (fetchedChannel?.id) {
+        docRef = doc(firestore, "Newchannels", fetchedChannel.id);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          channelData = snap.data();
+        }
+      }
+
+      // If direct fetch failed or we don't have fetchedChannel yet, query
+      if (!channelData) {
+        const channelsRef = collection(firestore, "Newchannels");
+        // Try query by _id with the ID we have
+        const q = query(channelsRef, where("_id", "==", channelKey));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          docRef = doc(firestore, "Newchannels", snapshot.docs[0].id);
+          channelData = snapshot.docs[0].data();
+        } else {
+          // Try query by id
+          const q2 = query(channelsRef, where("id", "==", channelKey));
+          const s2 = await getDocs(q2);
+          if (!s2.empty) {
+            docRef = doc(firestore, "Newchannels", s2.docs[0].id);
+            channelData = s2.docs[0].data();
+          }
+        }
+      }
+
+      if (docRef && channelData) {
         const currentSubs = channelData?.sub || [];
 
         let updatedSubs;
@@ -402,7 +454,7 @@ export default function PodcastDetail() {
         setIsSubscribed(!isSubscribed);
 
         logEvent(analytics, isSubscribed ? "Unsubscribe" : "Subscribe", {
-          channelId: channelIdToQuery,
+          channelId: channelKey,
           channelTitle: channel.title,
         });
       } else {
@@ -418,7 +470,7 @@ export default function PodcastDetail() {
 
   const handleShareChannel = async () => {
     const shareTitle = channel?.title || "Podcast";
-    const channelId = channel?.id || channel?._id;
+    const channelId = channel?._id || channel?.id;
     const shareLink = `${window.location.origin}/api/share?type=podcast&id=${encodeURIComponent(channelId)}`;
 
     try {
@@ -448,7 +500,7 @@ export default function PodcastDetail() {
 
     // We encode the episode identifier to handle spaces or special chars
     // Using GUID from RSS which is usually reliable for identifying episodes
-    const channelId = channel?.id || channel?._id;
+    const channelId = channel?._id || channel?.id;
 
     // Use share.php with episodeId for preview + deep link
     const shareLink = `${window.location.origin}/api/share?type=podcast&id=${encodeURIComponent(channelId)}&episodeId=${encodeURIComponent(episodeGuid)}`;

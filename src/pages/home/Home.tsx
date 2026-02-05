@@ -162,7 +162,7 @@ export default function Home() {
       return;
     }
 
-    console.log("item", item);
+    // console.log("item", item);
 
     if (item.entityType === 'Book' || (!item.entityType && item.author)) {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));

@@ -30,7 +30,7 @@ export const trackChannelPlay = async (
     country: string
 ) => {
     try {
-        console.log("📺 Tracking channel play:", { channelId, channelTitle, country });
+        // console.log("📺 Tracking channel play:", { channelId, channelTitle, country });
 
         // Log to Firebase Analytics
         logEvent(analytics, "Channel", {
@@ -39,7 +39,7 @@ export const trackChannelPlay = async (
             description: "Channel_event",
             country: country,
         });
-        console.log("✅ Analytics event logged");
+        // console.log("✅ Analytics event logged");
 
         // Update Firestore analytics
         const channelDocRef = doc(firestore, ANALYTICS_COLLECTION, channelId);
@@ -56,7 +56,7 @@ export const trackChannelPlay = async (
                 },
                 { merge: true }
             );
-            console.log("✅ Watch count incremented");
+            // console.log("✅ Watch count incremented");
         } else {
             // Create new analytics document
             await setDoc(channelDocRef, {
@@ -66,10 +66,10 @@ export const trackChannelPlay = async (
                 playCount: 1,
                 lastPlayed: serverTimestamp(),
             });
-            console.log("✅ New analytics document created");
+            // console.log("✅ New analytics document created");
         }
 
-        console.log(`✅ Channel play tracked successfully: ${channelTitle}`);
+        // console.log(`✅ Channel play tracked successfully: ${channelTitle}`);
     } catch (error) {
         console.error("❌ Error tracking channel play:", error);
     }
@@ -85,7 +85,7 @@ export const getMostWatchedChannels = async (
     countryFilter?: string
 ): Promise<any[]> => {
     try {
-        console.log("📊 Fetching most watched channels...", { limitCount, countryFilter });
+        // console.log("📊 Fetching most watched channels...", { limitCount, countryFilter });
 
         const analyticsRef = collection(firestore, ANALYTICS_COLLECTION);
 
@@ -104,7 +104,7 @@ export const getMostWatchedChannels = async (
         );
 
         const querySnapshot = await getDocs(q);
-        console.log("📈 Analytics documents found:", querySnapshot.docs.length);
+        // console.log("📈 Analytics documents found:", querySnapshot.docs.length);
 
         // Filter by country if needed AND filter valids
         let validDocs = querySnapshot.docs;
@@ -124,15 +124,15 @@ export const getMostWatchedChannels = async (
             .map((doc) => doc.data().channelId)
             .filter((id) => id !== undefined && id !== null && id !== "");
 
-        console.log("🎵 Channel IDs (Filtered):", channelIds);
+        // console.log("🎵 Channel IDs (Filtered):", channelIds);
 
         if (channelIds.length === 0) {
-            console.log("⚠️ No analytics data found after filter");
+            // console.log("⚠️ No analytics data found after filter");
             return [];
         }
 
         const channels = await getDocumentsByIds(CHANNELS_COLLECTION, channelIds);
-        console.log("📺 Channel objects fetched:", channels.length);
+        // console.log("📺 Channel objects fetched:", channels.length);
 
         // Sort channels by playCount order
         const analyticsMap = new Map();
@@ -204,7 +204,7 @@ export const getSavedChannels = async (userId?: string): Promise<any[]> => {
  */
 export const toggleChannelSave = async (channelId: string, userId: string, isSaved: boolean) => {
     try {
-        console.log(`❤️ Toggling channel save: ${channelId}, User: ${userId}, IsSaved: ${isSaved}`);
+        // console.log(`❤️ Toggling channel save: ${channelId}, User: ${userId}, IsSaved: ${isSaved}`);
 
         const channelRef = doc(firestore, CHANNELS_COLLECTION, channelId);
 
@@ -213,13 +213,13 @@ export const toggleChannelSave = async (channelId: string, userId: string, isSav
             await updateDoc(channelRef, {
                 star: arrayRemove(userId)
             });
-            console.log("💔 Channel unsaved");
+            // console.log("💔 Channel unsaved");
         } else {
             // Add user to star array
             await updateDoc(channelRef, {
                 star: arrayUnion(userId)
             });
-            console.log("💖 Channel saved");
+            // console.log("💖 Channel saved");
         }
         return true;
     } catch (error) {

@@ -179,7 +179,7 @@ export const fetchLiveVideos = async () => {
     // Query channels collection where isLive == true
     const liveChannels = await getDocWithQuery("channels", ["isLive", "==", true]);
 
-    console.log(`Found ${liveChannels.length} live channels`);
+    // console.log(`Found ${liveChannels.length} live channels`);
 
     // Sort by liveStartTime (most recent first)
     const sortedChannels = liveChannels.sort((a: any, b: any) => {
