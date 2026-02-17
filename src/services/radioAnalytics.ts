@@ -53,6 +53,8 @@ export const trackRadioPlay = async (
                 {
                     playCount: increment(1),
                     lastPlayed: serverTimestamp(),
+                    radioId: radioId, // Ensure canonical ID is stored
+                    title: radioTitle,
                 },
                 { merge: true }
             );
@@ -60,9 +62,9 @@ export const trackRadioPlay = async (
         } else {
             // Create new analytics document
             await setDoc(radioDocRef, {
-                radioId,
+                radioId, // Canonical Document ID
                 title: radioTitle,
-                country: country || "Unknown",
+                country: country || "Unknown", // Reverted to original `country` as `radioType` is undefined
                 playCount: 1,
                 lastPlayed: serverTimestamp(),
             });
@@ -140,9 +142,13 @@ export const getMostListenedRadios = async (
         });
 
         radios.sort((a, b) => {
-            const aCount = analyticsMap.get(a.id) || analyticsMap.get(a._id) || 0;
-            const bCount = analyticsMap.get(b.id) || analyticsMap.get(b._id) || 0;
-            return bCount - aCount;
+            const getCount = (doc: any) => {
+                if (analyticsMap.has(doc.id)) return analyticsMap.get(doc.id);
+                if (analyticsMap.has(doc._id)) return analyticsMap.get(doc._id);
+                return 0;
+            };
+
+            return getCount(b) - getCount(a);
         });
 
         // console.log("✅ Most listened radios fetched successfully:", radios.length);

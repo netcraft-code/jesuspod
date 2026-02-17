@@ -55,20 +55,21 @@ export const trackPodcastPlay = async (
                 {
                     playCount: increment(1),
                     lastPlayed: serverTimestamp(),
+                    // Ensure channelId is stored for future lookups
+                    channelId: channelId,
+                    title: channelTitle,
                 },
                 { merge: true }
             );
-            // console.log("✅ Play count incremented");
         } else {
             // Create new analytics document
             await setDoc(podcastDocRef, {
-                channelId,
+                channelId, // This is our canonical ID (Doc ID)
                 title: channelTitle,
                 playCount: 1,
                 lastPlayed: serverTimestamp(),
                 createdAt: serverTimestamp(),
             });
-            // console.log("✅ New analytics document created");
         }
 
         // console.log(`✅ Podcast play tracked successfully: ${channelTitle}`);
@@ -159,22 +160,11 @@ export const getMostListenedPodcasts = async (
         });
 
         channels.sort((a, b) => {
-            // Check Document ID, then 'id' field, then '_id' field
-            // const aId = a.id;
-            // const bId = b.id;
-
-            // We need to resolve which analytics ID corresponds to this channel
-            // It might match the doc.id, doc.data.id, or doc.data._id
             const getCount = (doc: any) => {
+                // Check all possible ID formats in the map
                 if (analyticsMap.has(doc.id)) return analyticsMap.get(doc.id);
-                if (analyticsMap.has(doc.id)) return analyticsMap.get(doc.id); // Check internal id field if exists
                 if (analyticsMap.has(doc._id)) return analyticsMap.get(doc._id);
 
-                // Reverse lookup: check if any analytics ID matches this doc's IDs
-                // (This is a bit expensive but robust)
-                for (const [key, val] of analyticsMap.entries()) {
-                    if (key === doc.id || key === doc.id || key === doc._id) return val;
-                }
                 return 0;
             };
 

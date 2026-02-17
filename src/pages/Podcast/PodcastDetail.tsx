@@ -211,8 +211,14 @@ export default function PodcastDetail() {
       setHasMore(true);
       fetchEpisodes(1);
 
-      // Use the resolved real ID if available, otherwise fallback to the channel object ID
-      const realChannelId = fetchedChannel?.id || channel?._id || channel?.id;
+      // Standardized: Always use channel.id as the primary identifier (normalized to Firestore Doc ID)
+      const realChannelId = channel?.id || fetchedChannel?.id || channel?._id;
+
+      console.log("Analytics Debug - Channel Data:", {
+        providedId: channel?.id,
+        fetchedId: fetchedChannel?.id,
+        resolvedId: realChannelId
+      });
 
       if (realChannelId) {
         checkSubscriptionStatus(realChannelId);

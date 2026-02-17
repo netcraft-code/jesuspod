@@ -168,7 +168,7 @@ export default function PodcastHome() {
                         onViewAll={() => navigate("/all-podcast")}
                         data={filteredMostListened}
                         onCardClick={(item) =>
-                            navigate(`/podcastplayer/${item._id}`, {
+                            navigate(`/podcastplayer/${item.id}`, {
                                 state: { channel: item },
                             })
                         }

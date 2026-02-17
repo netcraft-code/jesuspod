@@ -10,7 +10,7 @@ export const fetchChannels = async () => {
     ...doc,
     imageUrl: doc.image || doc.imageUrl || doc.thumbnail, // Map 'image' to 'imageUrl'
     title: doc.name || doc.title, // Map 'name' to 'title'
-    // Ensure id exists if not handled by getAllDocs properly (though it usually is)
+    // id: doc.id - added by getAllDocs
   }));
 };
 
@@ -45,7 +45,7 @@ export const fetchPodcasts = async () => {
     ...doc,
     imageUrl: doc.image || doc.imageUrl || doc.thumbnail, // Standardize image field
     title: doc.name || doc.title, // Standardize title field
-    id: doc._id || doc.id // Ensure ID presence
+    // Note: Do NOT overwrite 'id' with '_id' if they differ, 'id' is the Document ID
   }));
 };
 
@@ -60,6 +60,7 @@ export const fetchMovies = async () => {
     title: doc.name || doc.title, // Standardize title field
     createdAt: doc.createdAt?.toMillis ? doc.createdAt.toMillis() : doc.createdAt,
     updatedAt: doc.updatedAt?.toMillis ? doc.updatedAt.toMillis() : doc.updatedAt,
+    // id: doc.id - added by getAllDocs
   }));
 };
 
