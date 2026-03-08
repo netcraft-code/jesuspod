@@ -54,11 +54,7 @@ export default function MoviesList() {
     const handleCardClick = (item: any) => {
         // Track play
         trackMoviePlay(item.id, item.title, item.category || "Unknown");
-
-        // Open in new tab
-        if (item.movieUrl) {
-            window.open(item.movieUrl, "_blank");
-        }
+        navigate(`/movie/${item.id}`);
     };
 
     const handleCategorySelect = (category: string | null) => {

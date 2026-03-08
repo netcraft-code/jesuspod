@@ -31,8 +31,8 @@ import MoviesList from "../pages/Movies/MoviesList";
 import AllMovies from "../pages/Movies/AllMovies";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
 import HelpCenter from "../pages/HelpCenter/HelpCenter";
-import BookDetail from "../pages/Books/BookDetail";
-import MovieDetail from "../pages/Movies/MovieDetail";
+import BookDetail from "../pages/Books/BookDetail.tsx";
+import MovieDetail from "../pages/Movies/MovieDetail.tsx";
 
 // Component to handle base URL redirect
 function BaseRedirect() {

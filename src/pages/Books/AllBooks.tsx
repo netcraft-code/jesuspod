@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
@@ -16,8 +16,7 @@ import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 
 export default function AllBooks() {
-    // const navigate = useNavigate();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
 
@@ -77,9 +76,7 @@ export default function AllBooks() {
 
     const handleBookClick = (book: any) => {
         trackBookRead(book.id, book.title, book.type || "Unknown");
-        if (book.url) {
-            window.open(book.url, "_blank");
-        }
+        navigate(`/book/${book.id}`);
     };
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {

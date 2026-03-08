@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MovieCard from "../../components/MoviesSection/MovieCard";
@@ -23,6 +23,7 @@ export default function AllMovies() {
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
 
+    const navigate = useNavigate();
     const location = useLocation();
 
     // 1. Get ALL movies
@@ -62,11 +63,7 @@ export default function AllMovies() {
     const handleCardClick = (item: any) => {
         // Track play
         trackMoviePlay(item.id, item.name, item.category || "Unknown");
-
-        // Open in new tab
-        if (item.movieUrl) {
-            window.open(item.movieUrl, "_blank");
-        }
+        navigate(`/movie/${item.id}`);
     };
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {

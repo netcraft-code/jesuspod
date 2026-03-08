@@ -63,10 +63,7 @@ export default function BooksHome() {
     const handleBookClick = (book: any) => {
         // Track analytics
         trackBookRead(book.id, book.title, book.type || "Unknown");
-
-        if (book.url) {
-            window.open(book.url, "_blank");
-        }
+        navigate(`/book/${book.id}`);
     };
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {

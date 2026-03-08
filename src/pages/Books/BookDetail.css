@@ -1,0 +1,218 @@
+.book-detail-container {
+    padding: 120px 4% 40px;
+    /* Aligned with MovieDetail */
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #fff;
+    min-height: 80vh;
+}
+
+.book-detail-main {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 60px;
+    align-items: flex-start;
+}
+
+.book-detail-left {
+    flex: 0 0 350px;
+}
+
+.book-detail-image-wrapper {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    background: #1a1a1a;
+}
+
+.book-detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.book-detail-image:hover {
+    transform: scale(1.05);
+}
+
+.book-detail-right {
+    flex: 1;
+}
+
+.book-detail-title {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    line-height: 1.1;
+    background: linear-gradient(to right, #fff, #ccc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.book-detail-author {
+    font-size: 20px;
+    color: #999;
+    margin-bottom: 25px;
+}
+
+.book-detail-description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #bbb;
+    margin-bottom: 35px;
+    max-width: 700px;
+}
+
+.book-detail-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: #fb4a4a;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary:hover {
+    background: #e63946;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4);
+}
+
+.btn-secondary {
+    background: #222;
+    color: white;
+    border: 1px solid #333;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-secondary:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+.recommended-section {
+    margin-top: 80px;
+}
+
+.recommended-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.recommended-title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.view-all-link {
+    color: #9ea3a8;
+    background: transparent !important;
+    cursor: pointer;
+    border: none !important;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.view-all-link:hover {
+    color: #fff;
+}
+
+.recommended-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.recommended-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+}
+
+.recommended-horizontal-grid {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding: 10px 0;
+}
+
+.recommended-horizontal-grid>* {
+    flex: 0 0 130px !important;
+    width: 130px !important;
+    min-width: 130px !important;
+}
+
+/* Force standard card container to respect the grid item size */
+.recommended-horizontal-grid .book-card-container {
+    width: 130px !important;
+    min-width: 130px !important;
+    margin-right: 0 !important;
+}
+
+/* Ensure images and titles scale accordingly */
+.recommended-horizontal-grid .book-img-wrapper {
+    height: auto !important;
+    aspect-ratio: 2/3 !important;
+}
+
+.recommended-horizontal-grid .book-title {
+    font-size: 12px !important;
+}
+
+@media (max-width: 900px) {
+    .book-detail-main {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .book-detail-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .book-detail-left {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .book-detail-title {
+        font-size: 36px;
+    }
+
+    .book-detail-actions {
+        justify-content: center;
+    }
+}
