@@ -3,6 +3,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
   signOut,
   signInWithPopup,
   getAuth, onAuthStateChanged, OAuthProvider
@@ -15,7 +17,23 @@ export const loginWithEmail = (email: string, password: string) =>
 export const signupWithEmail = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth, email, password);
 
-export const sendResetEmail = (email: string) => sendPasswordResetEmail(auth, email);
+export const sendResetEmail = (email: string) => {
+  const actionCodeSettings = {
+    // URL to redirect back to. The domain (www.example.com) must be
+    // whitelisted in the Firebase Console.
+    url: `${window.location.origin}/reset-password`,
+    // This must be true.
+    handleCodeInApp: true,
+  };
+  return sendPasswordResetEmail(auth, email, actionCodeSettings);
+};
+
+export const resetPassword = (code: string, newPassword: string) =>
+  confirmPasswordReset(auth, code, newPassword);
+
+export const verifyResetCode = (code: string) =>
+  verifyPasswordResetCode(auth, code);
+
 const appleProvider = new OAuthProvider("apple.com");
 
 export const loginWithApple = () => signInWithPopup(auth, appleProvider);

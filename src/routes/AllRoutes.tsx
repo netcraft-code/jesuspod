@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
@@ -30,6 +31,8 @@ import MoviesList from "../pages/Movies/MoviesList";
 import AllMovies from "../pages/Movies/AllMovies";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
 import HelpCenter from "../pages/HelpCenter/HelpCenter";
+import BookDetail from "../pages/Books/BookDetail";
+import MovieDetail from "../pages/Movies/MovieDetail";
 
 // Component to handle base URL redirect
 function BaseRedirect() {
@@ -48,6 +51,7 @@ export default function AllRoutes() {
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
       <Route path="/forgot" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected Routes - App pages */}
       {/* Now Publicly Accessible */}
@@ -77,6 +81,7 @@ export default function AllRoutes() {
       <Route path="/books" element={<BooksHome />} />
       <Route path="/all-books" element={<AllBooks />} />
       <Route path="/books-category" element={<BooksCategory />} />
+      <Route path="/book/:id" element={<BookDetail />} />
 
       {/* Profile Routes - KEEP PRIVATE */}
       <Route path="/subscriptions" element={<PrivateRoute><Subscriptions /></PrivateRoute>} />
@@ -89,6 +94,7 @@ export default function AllRoutes() {
       {/* Movies Routes */}
       <Route path="/movies" element={<MoviesList />} />
       <Route path="/all-movies" element={<AllMovies />} />
+      <Route path="/movie/:id" element={<MovieDetail />} />
 
       {/* Profile Menu Routes - Maybe public? Let's make them public */}
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
