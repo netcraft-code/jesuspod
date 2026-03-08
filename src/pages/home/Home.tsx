@@ -8,8 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
 import {
   getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks,
-  toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies,
-
+  toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies
 } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
@@ -47,10 +46,14 @@ export default function Home() {
   // Initialize splash state: only true if we haven't shown it yet
   const [showSplash, setShowSplash] = useState(!hasShownSplash);
 
-  /** LOADING */
+  /** SELECTORS */
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth?.user);
   const isLoading = useSelector<RootState, boolean>(
     (state) => state.data.loading
   );
+  const podcasts = useSelector((state: RootState) => state.data.podcasts) || [];
+  const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
 
   useEffect(() => {
     // If we've already shown it, force false immediately (safety)
@@ -72,6 +75,7 @@ export default function Home() {
     }
   }, [isLoading]);
 
+
   const navigate = useNavigate();
   usePageTitle("Home");
 
@@ -85,7 +89,6 @@ export default function Home() {
 
   /** PODCAST */
 
-  const podcasts = useSelector((state: any) => state.data.podcasts);
 
 
   // const channels = useSelector<RootState, MediaItem[]>(
@@ -108,47 +111,6 @@ export default function Home() {
   );
 
   /** ANALYTICS DATA (Popular & Trending) */
-  const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
-  const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
-  // const mostWatchedChannels = useSelector((state: RootState) => state.data.mostWatchedChannels) || [];
-  // const mostReadBooks = useSelector((state: RootState) => state.data.mostReadBooks) || [];
-
-  const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
-
-  // Filter ONLY Most Listener Radio based on selected country
-  const mostListenedRadios = selectedCountry
-    ? allMostListenedRadios.filter((r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase())
-    : allMostListenedRadios;
-
-  // MERGE & SORT LOGIC
-  const getPopularity = (item: any) => {
-    // Normalize popularity score. Adjust keys based on real API data. 
-    // Fallback to random/id if no data (for now using 0 to avoid crash).
-    const score = item.views || item.clicks || item.listeners || item.reads || item.popularity || 0;
-    return Number(score);
-  };
-
-  // Get Top 5 from each category first to ensure diversity
-  const topRadios = mostListenedRadios.slice(0, 15).map(item => ({ ...item, entityType: 'Radio', popularity: getPopularity(item) }));
-  const topPodcasts = mostListenedPodcasts.slice(0, 15).map(item => ({ ...item, entityType: 'Podcast', popularity: getPopularity(item) }));
-  // const topChannels = mostWatchedChannels.slice(0, 5).map(item => ({ ...item, entityType: 'Channel', popularity: getPopularity(item) }));
-  // const topBooks = mostReadBooks.slice(0, 5).map(item => ({ ...item, entityType: 'Book', popularity: getPopularity(item) }));
-
-  // Combine and sort the top picks
-  const mixedPopularData = [
-    ...topPodcasts,
-    ...topRadios,
-
-    // ...topChannels,
-    // ...topBooks
-  ].sort((a, b) => b.popularity - a.popularity); // Descending order
-
-  // Debug: Check what data we're getting
-  console.log("mixedPopularData:", mixedPopularData);
-
-
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth?.user);
 
   const handleBookClick = (book: BookItem) => {
     if (book.url) {
@@ -228,38 +190,19 @@ export default function Home() {
         <Banner />
 
         {/* ================= POPULAR & TRENDING ================= */}
-        <HomeSection
-          title="Popular & Trending"
-          cardVariant="large"  /* We will handle mixed types inside HomeSection but keep 'large' as default base style */
-          data={mixedPopularData}
-          loading={isLoading}
-          onCardClick={(item) => {
-            // ROUTING LOGIC BASED ON TYPE
-            if (item.entityType === 'Radio') {
-              const sameTypeList = radioList.filter((r: MediaItem) => r.type?.toLowerCase() === item.type?.toLowerCase());
-              navigate("/radio-player", { state: { current: item, list: sameTypeList, type: item.type } });
-            } else if (item.entityType === 'Podcast') {
-              navigate(`/podcastplayer/${item.id}`, { state: { channel: item } });
-            } else if (item.entityType === 'Channel') {
-              // Open externally or specific page? Matching 'Video Channels' logic:
-              if (item.channelLink) window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
-              else if (item.url) window.open(item.url, "_blank");
-            } else if (item.entityType === 'Book') {
-              handleBookClick(item);
-            } else {
-              // Fallback for existing logic if entityType missing
-              if (item.type) {
-                const sameTypeList = radioList.filter((r: MediaItem) => r.type?.toLowerCase() === item.type?.toLowerCase());
-                navigate("/radio-player", { state: { current: item, list: sameTypeList, type: item.type } });
-              } else {
-                navigate(`/podcastplayer/${item.id}`, { state: { channel: item } });
-              }
+        {mostListenedPodcasts.length > 0 && (
+          <HomeSection
+            title="Popular & Trending"
+            data={mostListenedPodcasts.slice(0, 15)}
+            loading={isLoading}
+            onViewAll={() => navigate("/podcast?filter=popular")}
+            onCardClick={(item) =>
+              navigate(`/podcastplayer/${item.id}`, {
+                state: { channel: item },
+              })
             }
-          }}
-        // Pass handleToggleSave but note it handles books primarily. 
-        // If we want universal save, we need a universal handler. For now passing as is.
-        // onToggleSave={handleToggleSave} // REMOVED as requested by user
-        />
+          />
+        )}
         {/* ================= LIVE ================= */}
         <LiveSection
           title="Live"

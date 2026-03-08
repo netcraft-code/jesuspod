@@ -279,6 +279,7 @@ export default function PodcastDetail() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
     const onTimeUpdate = () => {
       if (!audioRef.current) return;
       setCurrentTime(audioRef.current.currentTime);

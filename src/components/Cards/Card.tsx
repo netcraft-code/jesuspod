@@ -134,6 +134,7 @@ export default function Card({
           </div>
         )}
 
+
         {variant === "video" ? (
           <div className="radio-title video-title">
             {item.title}

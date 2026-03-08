@@ -147,6 +147,7 @@ export const refreshSavedPodcasts = createAsyncThunk(
 );
 
 
+
 const dataSlice = createSlice({
     name: "data",
     initialState: {
@@ -155,7 +156,7 @@ const dataSlice = createSlice({
         Countries: [] as any[],
         movies: [] as any[],
         podcasts: [] as any[],
-        savedPodcasts: [] as any[], // Separate from subscribedPodcasts
+        savedPodcasts: [] as any[],
         channels: [] as any[],
         acts2: [] as any[],
         mostListenedRadios: [] as any[],
