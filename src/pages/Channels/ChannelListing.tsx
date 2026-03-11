@@ -15,6 +15,7 @@ import { trackChannelPlay } from "../../services/channelAnalytics";
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
+import PageInfo from "../../components/UI/PageInfo";
 
 export default function ChannelListing() {
     usePageTitle("Channels");
@@ -192,26 +193,34 @@ export default function ChannelListing() {
 
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
-                {/* GLOBAL SEARCH BAR */}
-                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
-                    <button
-                        className="share-btn"
-                        onClick={handleSharePage}
-                        title="Share Channels Page"
-                    >
-                        <img src={images.share} alt="share" />
-                        <span>Share</span>
-                    </button>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search for channels..."
-                        value={searchTerm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchTerm(e.target.value)
-                        }
-                        style={{ width: '100%', maxWidth: '400px' }}
-                    />
+                {/* Header Row: Page Info + Search/Share */}
+                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1', minWidth: '300px' }}>
+                        <PageInfo
+                            title="Follow Christian YouTube Channels"
+                            description="Access a curated selection of Christian YouTube channels directly within the app. We have organized these channels by country, giving you easy access to international ministries and diverse teaching styles without having to search for them yourself. This variety allows you to explore how the Gospel is being preached across different cultures and find the content that best helps you grow."
+                        />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                        <button
+                            className="share-btn"
+                            onClick={handleSharePage}
+                            title="Share Channels Page"
+                        >
+                            <img src={images.share} alt="share" />
+                            <span>Share</span>
+                        </button>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search for channels..."
+                            value={searchTerm}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setSearchTerm(e.target.value)
+                            }
+                            style={{ width: '100%', maxWidth: '300px' }}
+                        />
+                    </div>
                 </div>
 
                 {/* 1. Television Channels (Moved to Top) */}

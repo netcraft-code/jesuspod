@@ -16,6 +16,7 @@ import MoviesSection from "../../components/MoviesSection/MoviesSection";
 import Banner from "../../components/Banner/Banner";
 import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
 import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
+import PageInfo from "../../components/UI/PageInfo";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -188,6 +189,11 @@ export default function Home() {
 
         {/* ================= BANNER ================= */}
         <Banner />
+
+        <PageInfo
+          title="All Your Favorite Christian Content in One Place"
+          description="Are you looking for a way to grow your faith without searching the whole internet? JesusPod brings together the world’s best Christian resources into a single app designed for your spiritual growth. Instead of hopping between different sites, you can find everything you need to stay encouraged and connected to the Word in one secure place."
+        />
 
         {/* ================= POPULAR & TRENDING ================= */}
         {mostListenedPodcasts.length > 0 && (

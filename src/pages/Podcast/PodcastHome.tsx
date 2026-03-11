@@ -16,6 +16,7 @@ import { refreshSavedPodcasts, togglePodcastSaveState } from "../../redux/dataSl
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
+import PageInfo from "../../components/UI/PageInfo";
 
 
 export default function PodcastHome() {
@@ -139,26 +140,34 @@ export default function PodcastHome() {
 
             <div className="content">
 
-                {/* GLOBAL SEARCH BAR */}
-                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
-                    <button
-                        className="share-btn"
-                        onClick={handleSharePage}
-                        title="Share Podcast Page"
-                    >
-                        <img src={images.share} alt="share" />
-                        <span>Share</span>
-                    </button>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search podcasts..."
-                        value={searchTerm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchTerm(e.target.value)
-                        }
-                        style={{ width: '100%', maxWidth: '400px' }}
-                    />
+                {/* Header Row: Page Info + Search/Share */}
+                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1', minWidth: '300px' }}>
+                        <PageInfo
+                            title="Subscribe to Christian Podcasts"
+                            description="Follow your favorite podcasters and get daily updates across ten specific categories. Whether you are looking for Bible study, family advice, or leadership training, you can subscribe to specific shows to stay consistent with your growth. Our library includes both well-known ministries and new voices to ensure your feed is always filled with the Word."
+                        />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                        <button
+                            className="share-btn"
+                            onClick={handleSharePage}
+                            title="Share Podcast Page"
+                        >
+                            <img src={images.share} alt="share" />
+                            <span>Share</span>
+                        </button>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search podcasts..."
+                            value={searchTerm}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setSearchTerm(e.target.value)
+                            }
+                            style={{ width: '100%', maxWidth: '300px' }}
+                        />
+                    </div>
                 </div>
 
                 {/* TOP PODCAST */}

@@ -12,6 +12,7 @@ import { toggleMovieSave } from "../../services/dataService";
 import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice";
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { images } from "../../assets/images";
+import PageInfo from "../../components/UI/PageInfo";
 
 export default function MoviesList() {
     usePageTitle("Movies");
@@ -128,26 +129,33 @@ export default function MoviesList() {
 
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
-                {/* Global Search Bar */}
+                {/* Header Row: Page Info + Search/Share */}
+                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1', minWidth: '300px' }}>
+                        <PageInfo
+                            title="Watch Faith-Filled Movies"
+                            description="Enjoy a wide selection of films curated to strengthen your walk with Christ. Our movie library includes various genres from dramas and thrillers to Westerns and children’s programs, all centered on the Gospel. Whether you are looking for a classic story or a new release, every film is chosen to provide a safe and inspiring viewing experience for your entire household."
+                        />
+                    </div>
 
-
-                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
-                    <button
-                        className="share-btn"
-                        onClick={handleSharePage}
-                        title="Share Podcast Page"
-                    >
-                        <img src={images.share} alt="share" />
-                        <span>Share</span>
-                    </button>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search for movies..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{ width: '100%', maxWidth: '400px' }}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                        <button
+                            className="share-btn"
+                            onClick={handleSharePage}
+                            title="Share Podcast Page"
+                        >
+                            <img src={images.share} alt="share" />
+                            <span>Share</span>
+                        </button>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search for movies..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{ width: '100%', maxWidth: '300px' }}
+                        />
+                    </div>
                 </div>
 
                 {/* 1. Most Watched Movies */}

@@ -12,6 +12,7 @@ import usePageTitle from "../../hooks/usePageTitle";
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
+import PageInfo from "../../components/UI/PageInfo";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -152,26 +153,34 @@ export default function RadioList() {
 
       <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
-        {/* GLOBAL SEARCH BAR */}
-        <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
-          <button
-            className="share-btn"
-            onClick={handleShare}
-            title="Share Radio Page"
-          >
-            <img src={images.share} alt="share" />
-            <span>Share</span>
-          </button>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search for radios..."
-            value={searchTerm}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchTerm(e.target.value)
-            }
-            style={{ width: '100%', maxWidth: '400px' }}
-          />
+        {/* Header Row: Page Info + Search/Share */}
+        <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1', minWidth: '300px' }}>
+            <PageInfo
+              title="Listen to Global Radio Stations"
+              description="Tune into 24/7 Christian radio stations from around the world. Beyond music, these stations feature talk shows and live question-and-answer sessions all rooted in the Gospel. By organizing these stations by country, JesusPod allows you to hear biblical perspectives from different regions, ensuring you have constant access to the Word no matter where you are."
+            />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+            <button
+              className="share-btn"
+              onClick={handleShare}
+              title="Share Radio Page"
+            >
+              <img src={images.share} alt="share" />
+              <span>Share</span>
+            </button>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search for radios..."
+              value={searchTerm}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchTerm(e.target.value)
+              }
+              style={{ width: '100%', maxWidth: '300px' }}
+            />
+          </div>
         </div>
 
 

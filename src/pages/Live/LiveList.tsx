@@ -5,6 +5,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import LiveCard from "../../components/LiveSection/LiveCard";
 import "./Live.css";
+import PageInfo from "../../components/UI/PageInfo";
 
 export default function LiveList() {
     const [active, setActive] = useState<string>("Live");
@@ -74,6 +75,13 @@ export default function LiveList() {
                 profileOpen={profileOpen}
                 setProfileOpen={setProfileOpen}
             />
+
+            <div style={{ padding: '0 20px', marginTop: '20px' }}>
+                <PageInfo
+                    title="24/7 Christian TV Stations"
+                    description="Stay connected to the Word through live television broadcasts from around the world. This section gives you instant access to global Christian TV stations, featuring live ministry, prophetic sessions, and faith-based news any time of day. By bringing international stations into one place, we make it easy for you to watch anointed content from different continents directly within the app."
+                />
+            </div>
 
             <div className="live-player-container">
                 {/* Left Sidebar */}

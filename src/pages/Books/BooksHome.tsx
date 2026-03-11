@@ -15,6 +15,7 @@ import { toggleBookSave } from "../../services/dataService";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import usePageTitle from "../../hooks/usePageTitle";
 import { images } from "../../assets/images";
+import PageInfo from "../../components/UI/PageInfo";
 
 interface BookItem {
     id: string;
@@ -128,27 +129,35 @@ export default function BooksHome() {
             />
 
             <div className="content">
+                {/* Header Row: Page Info + Search/Share */}
+                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1', minWidth: '300px' }}>
+                        <PageInfo
+                            title="Strengthen Your Walk with Books"
+                            description="Deepen your understanding of God through a library of books covering every area of life. With ten focused categories; including Prayer, Revival, History, and Missions, you have the tools to build your faith in any season. These books are selected to give you biblical depth and practical wisdom for your daily journey with Christ."
+                        />
+                    </div>
 
-
-                <div style={{ padding: '0 20px', marginBottom: '20px', marginTop: '-15px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
-                    <button
-                        className="share-btn"
-                        onClick={handleSharePage}
-                        title="Share Podcast Page"
-                    >
-                        <img src={images.share} alt="share" />
-                        <span>Share</span>
-                    </button>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search for books..."
-                        value={searchTerm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchTerm(e.target.value)
-                        }
-                        style={{ width: '100%', maxWidth: '400px' }}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                        <button
+                            className="share-btn"
+                            onClick={handleSharePage}
+                            title="Share Podcast Page"
+                        >
+                            <img src={images.share} alt="share" />
+                            <span>Share</span>
+                        </button>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search for books..."
+                            value={searchTerm}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setSearchTerm(e.target.value)
+                            }
+                            style={{ width: '100%', maxWidth: '300px' }}
+                        />
+                    </div>
                 </div>
 
 
