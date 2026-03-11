@@ -99,7 +99,7 @@ export default function BookDetail() {
 
                     <div className="book-detail-right">
                         <h1 className="book-detail-title">{book.title}</h1>
-                        <p className="book-detail-author">{book.author || "Author Name"}</p>
+                        <p className="book-detail-author">{book.name || "Author Name"}</p>
                         <p className="book-detail-description">
                             {book.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
                         </p>
