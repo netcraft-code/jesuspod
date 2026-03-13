@@ -73,12 +73,15 @@ export default function BookDetail() {
     };
 
     const handleShare = async () => {
-        const shareUrl = window.location.href;
+        const shareUrl = `${window.location.origin}/api/share?type=book&id=${encodeURIComponent(book.id)}`;
+        const shareData = {
+            title: book.title,
+            text: `Check out "${book.title}" on JesusPOD`,
+            url: shareUrl,
+        };
+
         if (navigator.share) {
-            navigator.share({
-                title: book.title,
-                url: shareUrl,
-            });
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareUrl);
             alert("Link copied to clipboard!");

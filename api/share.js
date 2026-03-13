@@ -14,6 +14,12 @@ export default async function handler(req, res) {
     } else if (type === "radio" && id) {
         collection = "Radio";
         redirectUrl = `https://www.jesuspod.com/radio-player?id=${encodeURIComponent(id)}`;
+    } else if (type === "movie" && id) {
+        collection = "movies";
+        redirectUrl = `https://www.jesuspod.com/movie/${encodeURIComponent(id)}`;
+    } else if (type === "book" && id) {
+        collection = "Books";
+        redirectUrl = `https://www.jesuspod.com/book/${encodeURIComponent(id)}`;
     }
 
     // 2. Bot Detection

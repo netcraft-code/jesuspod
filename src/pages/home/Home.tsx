@@ -17,6 +17,8 @@ import Banner from "../../components/Banner/Banner";
 import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
 import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
 import PageInfo from "../../components/UI/PageInfo";
+import { trackMoviePlay } from "../../services/movieAnalytics";
+import { trackBookRead } from "../../services/booksAnalytics";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -114,9 +116,8 @@ export default function Home() {
   /** ANALYTICS DATA (Popular & Trending) */
 
   const handleBookClick = (book: BookItem) => {
-    if (book.url) {
-      window.open(book.url, "_blank");
-    }
+    trackBookRead(book.id, book.title, book.type || "Unknown");
+    navigate(`/book/${book.id}`);
   };
 
   const handleToggleSave = async (item: any, isSaved: boolean) => {
@@ -262,11 +263,8 @@ export default function Home() {
           loading={isLoading}
           onViewAll={() => navigate("/movies")}
           onCardClick={(item) => {
-            // Track play (optional here if MoviesSection doesn't do it)
-            // Using logic from MoviesList
-            if (item.movieUrl) {
-              window.open(item.movieUrl, "_blank");
-            }
+            trackMoviePlay(item.id, item.title, item.category || "Unknown");
+            navigate(`/movie/${item.id}`);
           }}
           onToggleSave={handleToggleSave}
           user={user}

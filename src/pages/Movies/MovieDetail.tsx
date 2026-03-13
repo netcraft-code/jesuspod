@@ -72,12 +72,15 @@ export default function MovieDetail() {
     };
 
     const handleShare = async () => {
-        const shareUrl = window.location.origin + `/movie/${movie.id}`;
+        const shareUrl = `${window.location.origin}/api/share?type=movie&id=${encodeURIComponent(movie.id)}`;
+        const shareData = {
+            title: movie.name,
+            text: `Check out "${movie.name}" on JesusPOD`,
+            url: shareUrl,
+        };
+
         if (navigator.share) {
-            navigator.share({
-                title: movie.name,
-                url: shareUrl,
-            });
+            navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareUrl);
             alert("Link copied to clipboard!");
