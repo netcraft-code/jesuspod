@@ -141,7 +141,7 @@ export default function PodcastHome() {
             <div className="content">
 
                 {/* Header Row: Page Info + Search/Share */}
-                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
                             title="Subscribe to Christian Podcasts"

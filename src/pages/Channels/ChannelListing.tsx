@@ -194,14 +194,14 @@ export default function ChannelListing() {
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
 
                 {/* Header Row: Page Info + Search/Share */}
-                <div className="page-header-row" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
                             title="Follow Christian YouTube Channels"
                             description="Access a curated selection of Christian YouTube channels directly within the app. We have organized these channels by country, giving you easy access to international ministries and diverse teaching styles without having to search for them yourself. This variety allows you to explore how the Gospel is being preached across different cultures and find the content that best helps you grow."
                         />
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <button
                             className="share-btn"
                             onClick={handleSharePage}
