@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaRegEye, FaRegEyeSlash, FaApple } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate, Link } from "react-router-dom";
 import colors from "../../theme/colors";
 import { useDispatch } from "react-redux";
 import { authStart, authSuccess, authFailure } from "../../redux/authSlice";
 import { loginWithEmail } from "../../services/authService";
-import { loginWithGoogle as loginGoogleFn } from "../../services/authService";
+import { loginWithGoogle as loginGoogleFn, loginWithApple } from "../../services/authService";
 
 import usePageTitle from "../../hooks/usePageTitle";
 import { fetchInitialData } from "../../redux/dataSlice";
@@ -126,31 +126,31 @@ export default function Login() {
 
 
 
-    // const handleApple = async () => {
-    //     dispatch(authStart());
-    //     try {
-    //         const res = await loginWithApple();
-    //         const user = res.user;
-    //         const token = await user.getIdToken();
+    const handleApple = async () => {
+        dispatch(authStart());
+        try {
+            const res = await loginWithApple();
+            const user = res.user;
+            const token = await user.getIdToken();
 
-    //         localStorage.setItem("token", token);
+            localStorage.setItem("token", token);
 
-    //         dispatch(
-    //             authSuccess({
-    //                 uid: user.uid,
-    //                 email: user.email,
-    //                 displayName: user.displayName,
-    //                 photoURL: user.photoURL,
-    //             })
-    //         );
+            dispatch(
+                authSuccess({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                })
+            );
 
-    //         navigate("/home");
-    //     } catch (err) {
-    //         alert("Login failed");
-    //         console.error(err.message)
-    //         dispatch(authFailure(err.message));
-    //     }
-    // };
+            navigate("/home");
+        } catch (err: any) {
+            alert("Login failed");
+            console.error(err.message)
+            dispatch(authFailure(err.message));
+        }
+    };
 
     // Disable button if any field empty OR has errors
     const isFormInvalid: boolean =
@@ -282,6 +282,12 @@ export default function Login() {
                         <FcGoogle size={28} />
                     </div>
 
+                    <div onClick={handleApple} style={{
+                        width: 56, height: 56, borderRadius: "50%", backgroundColor: "#2d2d2d",
+                        display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer"
+                    }}>
+                        <FaApple size={28} color="#ffffff" />
+                    </div>
                 </div>
 
                 <div style={{ textAlign: "center", marginTop: 24, fontSize: 14, color: "#9ca3af" }}>
