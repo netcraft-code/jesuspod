@@ -33,6 +33,10 @@ export default async function handler(req, res) {
         return res.redirect(302, redirectUrl);
     }
 
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers['host'];
+    const currentUrl = `${protocol}://${host}${req.url}`;
+
     // 3. Fetch Data for Bots
     let title = "JesusPOD";
     let description = "Listen to Christian Podcasts and Radio Stations on JesusPOD.";
@@ -143,20 +147,20 @@ export default async function handler(req, res) {
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:image" content="${escapeHtml(image)}">
 ${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${escapeHtml(image)}">` : ''}
+<meta property="og:url" content="${escapeHtml(currentUrl)}">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(title)}">
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <meta name="twitter:image" content="${escapeHtml(image)}">
 
-<!-- ✅ AUTO REDIRECT FOR REAL USERS -->
-<meta http-equiv="refresh" content="0; url=${redirectUrl}" />
+<!-- ✅ AUTO REDIRECT FOR BOT / EDGE CASE BROWSERS -->
+<meta http-equiv="refresh" content="3; url=${redirectUrl}" />
 
 <script>
-  // Extra safety for browsers
   setTimeout(() => {
     window.location.href = "${redirectUrl}";
-  }, 100);
+  }, 3000);
 </script>
 </head>
 
@@ -169,6 +173,7 @@ ${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${e
 
     // Cache response for 24 hours (Vercel Edge Cache)
     res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate');
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.status(200).send(html);
 }
 
