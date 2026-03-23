@@ -154,13 +154,11 @@ ${image.startsWith('https') ? `<meta property="og:image:secure_url" content="${e
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <meta name="twitter:image" content="${escapeHtml(image)}">
 
-<!-- ✅ AUTO REDIRECT FOR BOT / EDGE CASE BROWSERS -->
-<meta http-equiv="refresh" content="3; url=${redirectUrl}" />
-
+<!-- ✅ JS REDIRECT FOR IN-APP BROWSERS -->
 <script>
   setTimeout(() => {
     window.location.href = "${redirectUrl}";
-  }, 3000);
+  }, 2500);
 </script>
 </head>
 
