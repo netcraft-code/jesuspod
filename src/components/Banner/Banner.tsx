@@ -2,26 +2,40 @@ import { useEffect, useState, useRef } from "react";
 import { fetchBanners } from "../../services/dataService";
 import "./Banner.css";
 // import { useNavigate } from "react-router-dom";
+interface BannerProps {
+  bannerType?: string;
+}
 
-export default function Banner() {
+export default function Banner({
+  bannerType = "home",
+}: BannerProps) {
     const [banners, setBanners] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
     // const navigate = useNavigate();
 
-    useEffect(() => {
-        const loadBanners = async () => {
-            try {
-                const data = await fetchBanners();
-                setBanners(data);
-            } catch (error) {
-                console.error("Failed to load banners", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadBanners();
-    }, []);
+useEffect(() => {
+  const loadBanners = async () => {
+    try {
+      const data = await fetchBanners();
+
+      const filteredBanners = data.filter(
+        (item: any) =>
+          bannerType === "home"
+            ? (item.bannerType || "home") === "home"
+            : item.bannerType === bannerType
+      );
+
+      setBanners(filteredBanners);
+    } catch (error) {
+      console.error("Failed to load banners", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadBanners();
+}, [bannerType]);
 
     const scrollLeft = () => {
         if (scrollRef.current) {

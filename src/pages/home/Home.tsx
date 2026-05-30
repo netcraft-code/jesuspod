@@ -189,7 +189,7 @@ export default function Home() {
       <main className="radio-container">
 
         {/* ================= BANNER ================= */}
-        <Banner />
+       <Banner bannerType="home" />
 
         <PageInfo
           title="All Your Favorite Christian Content in One Place"

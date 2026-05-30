@@ -13,6 +13,7 @@ import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice"
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { images } from "../../assets/images";
 import PageInfo from "../../components/UI/PageInfo";
+import Banner from "../../components/Banner/Banner";
 
 export default function MoviesList() {
     usePageTitle("Movies");
@@ -128,7 +129,7 @@ export default function MoviesList() {
             />
 
             <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
-
+<Banner bannerType="movie" />
                 {/* Header Row: Page Info + Search/Share */}
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
