@@ -16,6 +16,7 @@ import CircleImageCard from "../../components/Cards/CircleImageCard";
 import usePageTitle from "../../hooks/usePageTitle";
 import { images } from "../../assets/images";
 import PageInfo from "../../components/UI/PageInfo";
+import Banner from "../../components/Banner/Banner";
 
 interface BookItem {
     id: string;
@@ -128,7 +129,8 @@ export default function BooksHome() {
                 setProfileOpen={setProfileOpen}
             />
 
-            <div className="content">
+            <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
+                <Banner bannerType="book" />
                 {/* Header Row: Page Info + Search/Share */}
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
@@ -247,7 +249,7 @@ export default function BooksHome() {
                         )}
                     </div>
                 </div>
-            </div>
+            </main>
 
             <Footer />
         </div>
