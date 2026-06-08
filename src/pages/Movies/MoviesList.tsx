@@ -13,7 +13,6 @@ import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice"
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { images } from "../../assets/images";
 import PageInfo from "../../components/UI/PageInfo";
-import Banner from "../../components/Banner/Banner";
 
 export default function MoviesList() {
     usePageTitle("Movies");
