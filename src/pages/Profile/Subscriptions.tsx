@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "../../context/LanguageContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { firestore } from "../../services/firebase";
 import Header from "../../components/Header/Header";
@@ -19,6 +20,7 @@ interface Channel {
 }
 
 export default function Subscriptions() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const user = useSelector((state: any) => state.auth.user);
     const [active, setActive] = useState<string>("Podcast");
@@ -70,26 +72,26 @@ export default function Subscriptions() {
             <div className="container profile-page">
                 <div className="profile-header-section">
                     <button className="back-btn" onClick={() => navigate(-1)}>
-                        ← Back
+                        ← {t("profilePages.back")}
                     </button>
-                    <h1 className="profile-page-title">My Following</h1>
+                    <h1 className="profile-page-title">{t("profilePages.followingTitle")}</h1>
                     <p className="profile-page-subtitle">
-                        {subscriptions.length} podcast{subscriptions.length !== 1 ? "s" : ""}
+                        {subscriptions.length} {subscriptions.length !== 1 ? t("profilePages.podcasts") : t("profilePages.podcast")}
                     </p>
                 </div>
 
                 {loading ? (
                     <div className="profile-loading">
                         <div className="spinner"></div>
-                        <p>Loading subscriptions...</p>
+                        <p>{t("profilePages.loadingSubscriptions")}</p>
                     </div>
                 ) : subscriptions.length === 0 ? (
                     <div className="profile-empty-state">
                         <div className="empty-icon">📻</div>
-                        <h2>No Following Yet</h2>
-                        <p>Start following your favorite podcasts!</p>
+                        <h2>{t("profilePages.noFollowingYet")}</h2>
+                        <p>{t("profilePages.startFollowingPodcasts")}</p>
                         <button className="primary-btn" onClick={() => navigate("/podcast")}>
-                            Browse Podcasts
+                            {t("profilePages.browsePodcasts")}
                         </button>
                     </div>
                 ) : (

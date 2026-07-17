@@ -12,8 +12,10 @@ import { toggleBookSave } from "../../services/dataService";
 import { refreshSavedBooks, toggleBookSaveState } from "../../redux/dataSlice";
 import { images } from "../../assets/images";
 import usePageTitle from "../../hooks/usePageTitle";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function BookDetail() {
+    const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -24,7 +26,7 @@ export default function BookDetail() {
     const user = useSelector((state: RootState) => state.auth.user);
     const book = books.find((b: any) => b.id === id);
 
-    usePageTitle(book ? book.title : "Book Detail");
+    usePageTitle(book ? book.title : t("books.notFound"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -35,8 +37,8 @@ export default function BookDetail() {
             <div className="main-content">
                 <Header active={active} setActive={setActive} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
                 <div className="book-detail-container">
-                    <h2>Book not found</h2>
-                    <button className="btn-secondary" onClick={() => navigate("/books")}>Back to Books</button>
+                    <h2>{t("books.notFound")}</h2>
+                    <button className="btn-secondary" onClick={() => navigate("/books")}>{t("books.backToBooks")}</button>
                 </div>
                 <Footer />
             </div>
@@ -58,7 +60,7 @@ export default function BookDetail() {
 
     const handleToggleSave = async () => {
         if (!user?.uid) {
-            alert("Please login to save books");
+            alert(t("books.pleaseLogin"));
             return;
         }
 
@@ -68,7 +70,7 @@ export default function BookDetail() {
             dispatch(refreshSavedBooks(user.uid) as any);
         } else {
             dispatch(toggleBookSaveState({ bookId: book.id, userId: user.uid }));
-            alert("Failed to save book");
+            alert(t("books.failedSave"));
         }
     };
 
@@ -84,7 +86,7 @@ export default function BookDetail() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareUrl);
-            alert("Link copied to clipboard!");
+            alert(t("books.linkCopied"));
         }
     };
 
@@ -102,14 +104,14 @@ export default function BookDetail() {
 
                     <div className="book-detail-right">
                         <h1 className="book-detail-title">{book.title}</h1>
-                        <p className="book-detail-author">{book.name || "Author Name"}</p>
+                        <p className="book-detail-author">{book.name || t("books.unknownAuthor")}</p>
                         <p className="book-detail-description">
                             {book.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
                         </p>
 
-                        <div className="book-detail-actions">
+                         <div className="book-detail-actions">
                             <button className="btn-primary" onClick={handleReadNow}>
-                                Read Now
+                                {t("books.readNow")}
                             </button>
                             <button className={`btn-secondary ${isSaved ? 'active' : ''}`} onClick={handleToggleSave}>
                                 <svg
@@ -122,11 +124,11 @@ export default function BookDetail() {
                                 >
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                 </svg>
-                                {isSaved ? "Liked" : "Like"}
+                                {isSaved ? t("books.liked") : t("books.like")}
                             </button>
                             <button className="btn-secondary" onClick={handleShare}>
                                 <img src={images.share} alt="share" style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }} />
-                                Share
+                                {t("books.share")}
                             </button>
                         </div>
                     </div>
@@ -135,9 +137,9 @@ export default function BookDetail() {
                 {recommendedBooks.length > 0 && (
                     <div className="recommended-section">
                         <div className="recommended-header">
-                            <h2 className="recommended-title">Recommended Books</h2>
+                            <h2 className="recommended-title">{t("books.recommended")}</h2>
                             <button className="view-all-link" onClick={() => navigate("/all-books", { state: { category: book.category } })}>
-                                View All
+                                {t("common.viewAll")}
                             </button>
                         </div>
                         <div className="recommended-scroll-wrapper">
@@ -149,10 +151,10 @@ export default function BookDetail() {
                                         onClick={() => navigate(`/book/${item.id}`)}
                                         isSaved={item.star?.includes(user?.uid)}
                                         onToggleSave={(i, s) => {
-                                            if (!user?.uid || !i.id) {
-                                                if (!user?.uid) alert("Please login to save books");
-                                                return;
-                                            }
+                                             if (!user?.uid || !i.id) {
+                                                 if (!user?.uid) alert(t("books.pleaseLogin"));
+                                                 return;
+                                             }
                                             dispatch(toggleBookSaveState({ bookId: i.id as string, userId: user.uid as string }));
                                             toggleBookSave(i.id as string, user.uid as string, s).then(res => {
                                                 if (res) dispatch(refreshSavedBooks(user.uid as string) as any);

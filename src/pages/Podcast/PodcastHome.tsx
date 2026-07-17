@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "../../context/LanguageContext";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
@@ -20,6 +21,7 @@ import PageInfo from "../../components/UI/PageInfo";
 
 
 export default function PodcastHome() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -27,7 +29,7 @@ export default function PodcastHome() {
     const user = useSelector((state: any) => state.auth.user);
     const [active, setActive] = useState<string>("Podcast");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
-    usePageTitle("Podcast");
+    usePageTitle(t("header.podcast"));
     // Get analytics-based podcast data from Redux
     const mostListenedPodcasts = useSelector((state: any) => state.data.mostListenedPodcasts) || [];
     const savedPodcasts = useSelector((state: any) => state.data.savedPodcasts) || [];
@@ -69,7 +71,7 @@ export default function PodcastHome() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save podcasts");
+            alert(t("podcastHome.pleaseLogin"));
             return;
         }
 
@@ -83,15 +85,15 @@ export default function PodcastHome() {
         } else {
             // Revert
             dispatch(togglePodcastSaveState({ podcastId: item.id, userId: user.uid }));
-            alert("Failed to save podcast");
+            alert(t("podcastHome.failedSave"));
         }
     };
 
     const handleCategoryShare = async (categoryName: string) => {
         const shareUrl = `${window.location.origin}/podcast-category?category=${encodeURIComponent(categoryName)}`;
         const shareData = {
-            title: `${categoryName} Podcasts`,
-            text: `Check out these ${categoryName} podcasts on JesusPOD!`,
+            title: `${categoryName} ${t("header.podcast")}`,
+            text: `${t("podcastDetail.shareTextPre")}${categoryName}${t("podcastDetail.shareTextPost")}`,
             url: shareUrl,
         };
 
@@ -101,7 +103,7 @@ export default function PodcastHome() {
                 logEvent(analytics, "Share_Category", { category: categoryName });
             } else {
                 await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
+                alert(t("podcastHome.linkCopied"));
             }
         } catch (err) {
             console.error("Error sharing:", err);
@@ -111,8 +113,8 @@ export default function PodcastHome() {
     const handleSharePage = async () => {
         const shareUrl = window.location.href;
         const shareData = {
-            title: "JesusPOD Podcast",
-            text: "Listen to the best Christian podcasts on JesusPOD!",
+            title: `JesusPOD ${t("header.podcast")}`,
+            text: `${t("podcastDetail.shareTextPre")}${t("header.podcast")}${t("podcastDetail.shareTextPost")}`,
             url: shareUrl,
         };
 
@@ -122,7 +124,7 @@ export default function PodcastHome() {
                 logEvent(analytics, "Share_PodcastHome", {});
             } else {
                 await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
+                alert(t("podcastHome.linkCopied"));
             }
         } catch (err) {
             console.error("Error sharing:", err);
@@ -144,36 +146,35 @@ export default function PodcastHome() {
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
-                            title="Subscribe to Christian Podcasts"
-                            description="Follow your favorite podcasters and get daily updates across ten specific categories. Whether you are looking for Bible study, family advice, or leadership training, you can subscribe to specific shows to stay consistent with your growth. Our library includes both well-known ministries and new voices to ensure your feed is always filled with the Word."
+                            title={t("podcastHome.title")}
+                            description={t("podcastHome.description")}
                         />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
                         <button
-                            className="share-btn"
-                            onClick={handleSharePage}
-                            title="Share Podcast Page"
-                        >
-                            <img src={images.share} alt="share" />
-                            <span>Share</span>
-                        </button>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search podcasts..."
-                            value={searchTerm}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setSearchTerm(e.target.value)
-                            }
-                            style={{ width: '100%', maxWidth: '300px' }}
-                        />
-                    </div>
-                </div>
+                             className="share-btn"
+                             onClick={handleSharePage}
+                             title="Share Podcast Page"
+                         >
+                             <img src={images.share} alt="share" />
+                             <span>{t("podcastHome.share")}</span>
+                         </button>
+                         <input
+                             type="text"
+                             className="search-input"
+                             placeholder={t("podcastHome.searchPlaceholder")}
+                             value={searchTerm}
+                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                 setSearchTerm(e.target.value)
+                             }
+                             style={{ width: '100%', maxWidth: '300px' }}
+                         />
+                     </div>
+                 </div>
 
-                {/* TOP PODCAST */}
                 {filteredMostListened.length > 0 && (
                     <HomeSection
-                        title="Top Podcasts"
+                        title={t("podcastHome.topPodcasts")}
                         onViewAll={() => navigate("/all-podcast")}
                         data={filteredMostListened}
                         onCardClick={(item) =>
@@ -226,7 +227,7 @@ export default function PodcastHome() {
                 {/* My Podcast (Favorites) */}
                 {filteredSaved.length > 0 && (
                     <HomeSection
-                        title="My Podcast"
+                        title={t("podcastHome.myPodcast")}
                         onViewAll={() => navigate("/all-podcast", { state: { filter: 'saved' } })}
                         data={filteredSaved}
                         onCardClick={(item) =>
@@ -236,7 +237,7 @@ export default function PodcastHome() {
                         }
                         onToggleSave={handleToggleSave}
                         user={user}
-                        emptyMessage="Start saving podcasts to see them here ❤️"
+                        emptyMessage={t("podcastHome.emptyMessage")}
                     />
                 )}
 
@@ -245,7 +246,7 @@ export default function PodcastHome() {
 
                     <div className="search-radio-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <h2 className="sub-title">Podcast Categories</h2>
+                            <h2 className="sub-title">{t("podcastHome.podcastCategories")}</h2>
                         </div>
                         {/* Removed local search input */}
                     </div>

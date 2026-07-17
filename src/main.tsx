@@ -6,6 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import App from "./App";
 import { store, persistor } from "./redux/store";
+import { LanguageProvider } from "./context/LanguageContext";
 import "./styles/global.css";
 import "./styles/profile-menu.css";
 
@@ -16,10 +17,13 @@ createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <App />
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
         </BrowserRouter>
       </PersistGate>
     </Provider>
   </React.StrictMode>
 );
+
 

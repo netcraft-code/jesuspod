@@ -9,10 +9,12 @@ import usePageTitle from "../../hooks/usePageTitle";
 import { FaBookmark, FaArrowLeft, FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ShortItem from "../../components/ShortItem/ShortItem";
+import { useTranslation } from "../../context/LanguageContext";
 import "./SavedShorts.css";
 import "../../pages/Shorts/Shorts.css"; // Reuse some styles
 
 export default function SavedShorts() {
+    const { t } = useTranslation();
     const [active, setActive] = useState("Acts2");
     const [profileOpen, setProfileOpen] = useState(false);
     const [shortsData, setShortsData] = useState<Short[]>([]);
@@ -22,7 +24,7 @@ export default function SavedShorts() {
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.auth.user);
 
-    usePageTitle("Saved Shorts - JesusPOD");
+    usePageTitle(`${t("shorts.savedTitle")} - JesusPOD`);
 
     // Load saved shorts
     const loadSavedShorts = useCallback(async () => {
@@ -88,8 +90,8 @@ export default function SavedShorts() {
             <div className="saved-shorts-page">
                 <Header active={active} setActive={setActive} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
                 <div className="empty-state">
-                    <p>Please login to view saved shorts.</p>
-                    <button onClick={() => navigate("/login")}>Login</button>
+                    <p>{t("shorts.pleaseLoginView")}</p>
+                    <button onClick={() => navigate("/login")}>{t("shorts.login")}</button>
                 </div>
                 <Footer />
             </div>
@@ -108,7 +110,7 @@ export default function SavedShorts() {
                             {/* <button className="back-btn" onClick={handleBack}>
                                 <FaArrowLeft />
                             </button> */}
-                            <h1>Favorite Shorts</h1>
+                            <h1>{t("profileMenu.favoriteShorts")}</h1>
                         </div>
 
                         {loading ? (
@@ -116,8 +118,8 @@ export default function SavedShorts() {
                         ) : shortsData.length === 0 ? (
                             <div className="empty-state">
                                 <FaBookmark size={48} color="#666" />
-                                <p>No favorite shorts yet.</p>
-                                <button onClick={() => navigate("/shorts")}>Browse Shorts</button>
+                                <p>{t("shorts.noFavoritesYet")}</p>
+                                <button onClick={() => navigate("/shorts")}>{t("shorts.browseShorts")}</button>
                             </div>
                         ) : (
                             <div className="shorts-grid">
@@ -146,7 +148,7 @@ export default function SavedShorts() {
                     <div className="shorts-wrapper">
                         {/* Override some styles to fit in this page if needed, or just reuse structure */}
                         <button className="close-player-btn" onClick={() => setSelectedVideoIndex(null)}>
-                            <FaArrowLeft /> Back to list
+                            <FaArrowLeft /> {t("shorts.backToList")}
                         </button>
                         <div className="shorts-container single-view">
                             <ShortItem

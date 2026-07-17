@@ -16,6 +16,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { useTranslation } from "../../context/LanguageContext";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Podcast.css";
@@ -29,6 +30,7 @@ import { trackPodcastPlay } from "../../services/podcastAnalytics";
 import { FaPause } from "react-icons/fa";
 
 export default function PodcastDetail() {
+  const { t } = useTranslation();
   const { state } = useLocation();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
@@ -391,7 +393,7 @@ export default function PodcastDetail() {
 
   const handleSubscribe = async () => {
     if (!user?.uid) {
-      alert("Please login to subscribe to this podcast");
+      alert(t("podcastDetail.pleaseLoginSubscribe"));
       return;
     }
 
@@ -400,7 +402,7 @@ export default function PodcastDetail() {
 
     // We strictly use the Document Key logic for updates if possible
     if (!channelKey) {
-      alert("Channel ID not found");
+      alert(t("podcastDetail.channelIdNotFound"));
       return;
     }
 
@@ -465,18 +467,18 @@ export default function PodcastDetail() {
           channelTitle: channel.title,
         });
       } else {
-        alert("Channel not found in database. Please try again.");
+        alert(t("podcastDetail.channelNotFoundDb"));
       }
     } catch (error) {
       console.error("Error updating subscription:", error);
-      alert("Failed to update subscription. Please try again.");
+      alert(t("podcastDetail.failedUpdateSub"));
     } finally {
       setSubscribeLoading(false);
     }
   };
 
   const handleShareChannel = async () => {
-    const shareTitle = channel?.title || "Podcast";
+    const shareTitle = channel?.title || t("podcastDetail.untitled");
     const channelId = channel?._id || channel?.id;
     const shareLink = `${window.location.origin}/api/share?type=podcast&id=${encodeURIComponent(channelId)}`;
 
@@ -484,7 +486,7 @@ export default function PodcastDetail() {
       if (navigator.share) {
         await navigator.share({
           title: shareTitle,
-          text: `Listen to ${shareTitle} on JesusPOD`,
+          text: t("podcastDetail.shareTextPre") + shareTitle + t("podcastDetail.shareTextPost"),
           url: shareLink
         });
         logEvent(analytics, "Share_Channel", {
@@ -493,7 +495,7 @@ export default function PodcastDetail() {
         });
       } else {
         await navigator.clipboard.writeText(shareLink);
-        alert("Link copied to clipboard!");
+        alert(t("podcastDetail.linkCopied"));
       }
     } catch (error) {
       console.error("Error sharing:", error);
@@ -502,7 +504,7 @@ export default function PodcastDetail() {
 
   const handleShareEpisode = async (episode: any, e: any) => {
     e.stopPropagation();
-    const episodeTitle = episode?.title?.[0] || "Episode";
+    const episodeTitle = episode?.title?.[0] || t("podcastDetail.untitled");
     const episodeGuid = episode?.guid?.[0]?._ || episodeTitle;
 
     // We encode the episode identifier to handle spaces or special chars
@@ -516,7 +518,7 @@ export default function PodcastDetail() {
       if (navigator.share) {
         await navigator.share({
           title: episodeTitle,
-          text: `Listen to ${episodeTitle} from ${channel?.title} on JesusPOD`,
+          text: t("podcastDetail.shareTextPre") + episodeTitle + t("podcastDetail.shareTextFrom") + (channel?.title || "") + t("podcastDetail.shareTextPost"),
           url: shareLink
         });
         logEvent(analytics, "Share_Episode", {
@@ -525,7 +527,7 @@ export default function PodcastDetail() {
         });
       } else {
         await navigator.clipboard.writeText(shareLink);
-        alert("Episode link copied to clipboard!");
+        alert(t("podcastDetail.episodeLinkCopied"));
       }
     } catch (error) {
       console.error("Share failed", error);
@@ -534,7 +536,7 @@ export default function PodcastDetail() {
 
   const handleDownloadEpisode = async (episode: any) => {
     if (!user?.uid) {
-      alert("Please login to download episodes");
+      alert(t("podcastDetail.pleaseLoginDownload"));
       return;
     }
 
@@ -543,7 +545,7 @@ export default function PodcastDetail() {
       episode?.["media:content"]?.[0]?.$?.url;
 
     if (!audioUrl) {
-      alert("Audio file not available for download");
+      alert(t("podcastDetail.audioNotAvailable"));
       return;
     }
 
@@ -576,13 +578,11 @@ export default function PodcastDetail() {
 
       fetchDownloadedEpisodes();
 
-      alert(
-        "Episode saved to Downloads! You can play it from your Downloads page."
-      );
+      alert(t("podcastDetail.downloadSuccess"));
       setTimeout(() => setDownloadingEpisode(null), 2000);
     } catch (error) {
       console.error("Error downloading episode:", error);
-      alert("Failed to save episode. Please try again.");
+      alert(t("podcastDetail.downloadFailed"));
       setDownloadingEpisode(null);
     }
   };
@@ -626,7 +626,7 @@ export default function PodcastDetail() {
                           fontSize: "14px",
                         }}
                       >
-                        {channelTitleExpanded ? "Show Less" : "Show More"}
+                        {channelTitleExpanded ? t("podcastDetail.showLess") : t("podcastDetail.showMore")}
                       </span>
                     )}
                   </>
@@ -638,7 +638,7 @@ export default function PodcastDetail() {
               {(() => {
                 const fullDesc = description
                   ? stripHtml(description)
-                  : "No description available";
+                  : t("podcastDetail.noDescription");
                 const shouldTruncate = fullDesc.length > 120;
 
                 return (
@@ -663,7 +663,7 @@ export default function PodcastDetail() {
                           marginTop: "5px",
                         }}
                       >
-                        {channelDescExpanded ? "Show Less" : "Show More"}
+                        {channelDescExpanded ? t("podcastDetail.showLess") : t("podcastDetail.showMore")}
                       </span>
                     )}
                   </>
@@ -680,10 +680,10 @@ export default function PodcastDetail() {
                 <img src={plus} alt="plus" />
                 <span>
                   {subscribeLoading
-                    ? "Loading..."
+                    ? t("podcastDetail.loading")
                     : isSubscribed
-                      ? "Unfollow"
-                      : "Follow"}
+                      ? t("podcastDetail.unfollow")
+                      : t("podcastDetail.follow")}
                 </span>
               </button>
 
@@ -699,10 +699,10 @@ export default function PodcastDetail() {
                 disabled={!currentEpisode || downloadingEpisode !== null}
                 title={
                   downloadingEpisode !== null
-                    ? "Downloading..."
+                    ? t("podcastDetail.downloading")
                     : currentEpisode
-                      ? "Download current episode"
-                      : "Select an episode first"
+                      ? t("podcastDetail.downloadCurrent")
+                      : t("podcastDetail.selectEpisodeFirst")
                 }
                 style={{
                   opacity: downloadingEpisode !== null ? 0.5 : 1,
@@ -747,7 +747,7 @@ export default function PodcastDetail() {
                         style={{ cursor: "pointer" }}
                       >
                         {(() => {
-                          const fullTitle = item.title?.[0] || "Untitled";
+                          const fullTitle = item.title?.[0] || t("podcastDetail.untitled");
                           const isExpanded = expandedTitles.has(index);
                           const shouldTruncate = fullTitle.length > 50;
 
@@ -772,7 +772,7 @@ export default function PodcastDetail() {
                                       fontWeight: "bold",
                                     }}
                                   >
-                                    ✓ SAVED
+                                    ✓ {t("podcastDetail.saved")}
                                   </span>
                                 )}
                               {shouldTruncate && (
@@ -795,7 +795,7 @@ export default function PodcastDetail() {
                                     fontSize: "11px",
                                   }}
                                 >
-                                  {isExpanded ? "Less" : "More"}
+                                  {isExpanded ? t("podcastDetail.less") : t("podcastDetail.more")}
                                 </span>
                               )}
                             </>
@@ -807,7 +807,7 @@ export default function PodcastDetail() {
                         {(() => {
                           const fullDesc = item.description?.[0]
                             ? stripHtml(item.description[0])
-                            : "No description";
+                            : t("podcastDetail.noDescription");
                           const isExpanded = expandedEpisodes.has(index);
                           const shouldTruncate = fullDesc.length > 80;
 
@@ -840,7 +840,7 @@ export default function PodcastDetail() {
                                     fontSize: "12px",
                                   }}
                                 >
-                                  {isExpanded ? "Show Less" : "Show More"}
+                                  {isExpanded ? t("podcastDetail.showLess") : t("podcastDetail.showMore")}
                                 </span>
                               )}
                             </>
@@ -895,7 +895,7 @@ export default function PodcastDetail() {
                   padding: "10px 0",
                 }}
               >
-                Loading more episodes...
+                {t("podcastDetail.loadingEpisodes")}
               </p>
             )}
 
@@ -908,7 +908,7 @@ export default function PodcastDetail() {
                   padding: "10px 0",
                 }}
               >
-                No more episodes
+                {t("podcastDetail.noMoreEpisodes")}
               </p>
             )}
           </div>
@@ -916,10 +916,10 @@ export default function PodcastDetail() {
             {loading && episodes.length === 0 ? (
               <div className="page-loading">
                 <div className="spinner"></div>
-                <p>Loading Channel Data...</p>
+                <p>{t("podcastDetail.loadingChannel")}</p>
               </div>
             ) : !currentEpisode ? (
-              <p style={{ opacity: 0.4 }}>Select an episode to play</p>
+              <p style={{ opacity: 0.4 }}>{t("podcastDetail.selectEpisode")}</p>
             ) : (
               <div className="player-box">
                 <div style={{ textAlign: "center" }}>
@@ -958,7 +958,7 @@ export default function PodcastDetail() {
                               fontSize: "13px",
                             }}
                           >
-                            {playerTitleExpanded ? "Show Less" : "Show More"}
+                            {playerTitleExpanded ? t("podcastDetail.showLess") : t("podcastDetail.showMore")}
                           </span>
                         )}
                       </>
@@ -994,7 +994,7 @@ export default function PodcastDetail() {
                               marginTop: "5px",
                             }}
                           >
-                            {playerDescExpanded ? "Show Less" : "Show More"}
+                            {playerDescExpanded ? t("podcastDetail.showLess") : t("podcastDetail.showMore")}
                           </span>
                         )}
                       </>

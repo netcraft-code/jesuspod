@@ -2,6 +2,7 @@ import "./style.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { useTranslation } from "../../context/LanguageContext";
 
 /* 🔹 Tabs array */
 const tabs: string[] = [
@@ -15,6 +16,17 @@ const tabs: string[] = [
   "Acts2",
 ];
 
+const tabKeyMap: Record<string, string> = {
+  "All": "header.all",
+  "Live": "header.live",
+  "Podcast": "header.podcast",
+  "Radio": "header.radio",
+  "Channels": "header.channels",
+  "Movies": "header.movies",
+  "Books": "header.books",
+  "Acts2": "header.acts2",
+};
+
 /* 🔹 Props typing */
 interface TabsProps {
   active: string;
@@ -24,6 +36,7 @@ interface TabsProps {
 export default function Tabs({ active, setActive }: TabsProps) {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleTabClick = (t: string) => {
     setActive(t);
@@ -43,14 +56,14 @@ export default function Tabs({ active, setActive }: TabsProps) {
     <>
       {/* 🔹 Desktop / Horizontal Tabs (Hidden on Mobile via CSS) */}
       <div className="tab-container desktop-tabs">
-        {tabs.map((t) => (
+        {tabs.map((tabName) => (
           <button
-            key={t}
-            className={`tab-btn ${active === t ? "active" : ""}`}
-            onClick={() => handleTabClick(t)}
+            key={tabName}
+            className={`tab-btn ${active === tabName ? "active" : ""}`}
+            onClick={() => handleTabClick(tabName)}
             type="button"
           >
-            {t}
+            {t(tabKeyMap[tabName] || tabName)}
           </button>
         ))}
       </div>
@@ -69,14 +82,14 @@ export default function Tabs({ active, setActive }: TabsProps) {
               <FaTimes size={24} color="#fff" onClick={() => setIsDrawerOpen(false)} style={{ cursor: "pointer" }} />
             </div>
             <div className="drawer-list">
-              {tabs.map((t) => (
+              {tabs.map((tabName) => (
                 <button
-                  key={t}
-                  className={`drawer-item ${active === t ? "active" : ""}`}
-                  onClick={() => handleTabClick(t)}
+                  key={tabName}
+                  className={`drawer-item ${active === tabName ? "active" : ""}`}
+                  onClick={() => handleTabClick(tabName)}
                   type="button"
                 >
-                  {t}
+                  {t(tabKeyMap[tabName] || tabName)}
                 </button>
               ))}
             </div>
@@ -86,3 +99,4 @@ export default function Tabs({ active, setActive }: TabsProps) {
     </>
   );
 }
+

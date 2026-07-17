@@ -1,4 +1,5 @@
 
+import { useTranslation } from "../../context/LanguageContext";
 import Card from "../Cards/Card";
 import BookCard from "../Cards/BookCard";
 
@@ -22,6 +23,7 @@ export default function Section({
   onToggleSave,
   user
 }: SectionProps) {
+  const { t } = useTranslation();
 
 
   return (
@@ -31,7 +33,7 @@ export default function Section({
 
         {onViewAll && (
           <span onClick={onViewAll} className="view-all">
-            View All
+            {t("common.viewAll")}
           </span>
         )}
       </div>

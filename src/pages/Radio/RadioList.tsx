@@ -13,6 +13,7 @@ import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 import PageInfo from "../../components/UI/PageInfo";
+import { useTranslation } from "../../context/LanguageContext";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -32,6 +33,7 @@ interface CountryItem {
 
 export default function RadioList() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
@@ -92,7 +94,7 @@ export default function RadioList() {
         logEvent(analytics, "Share_RadioHome", {});
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert("Link copied to clipboard!");
+        alert(t("radio.linkCopied"));
       }
     } catch (err) {
       console.error("Error sharing:", err);
@@ -113,7 +115,7 @@ export default function RadioList() {
         logEvent(analytics, "Share_RadioCountry", { country: country.title });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert("Link copied to clipboard!");
+        alert(t("radio.linkCopied"));
       }
     } catch (err) {
       console.error("Error sharing country:", err);
@@ -157,8 +159,8 @@ export default function RadioList() {
         <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '300px' }}>
             <PageInfo
-              title="Listen to Global Radio Stations"
-              description="Tune into 24/7 Christian radio stations from around the world. Beyond music, these stations feature talk shows and live question-and-answer sessions all rooted in the Gospel. By organizing these stations by country, JesusPod allows you to hear biblical perspectives from different regions, ensuring you have constant access to the Word no matter where you are."
+              title={t("radio.title")}
+              description={t("radio.description")}
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
@@ -168,12 +170,12 @@ export default function RadioList() {
               title="Share Radio Page"
             >
               <img src={images.share} alt="share" />
-              <span>Share</span>
+              <span>{t("radio.share")}</span>
             </button>
             <input
               type="text"
               className="search-input"
-              placeholder="Search for radios..."
+              placeholder={t("radio.searchPlaceholder")}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchTerm(e.target.value)
@@ -187,7 +189,7 @@ export default function RadioList() {
         {/* ================= MOST LISTENER ================= */}
         {filteredMostListened.length > 0 && (
           <Section
-            title="Most Listened Radio"
+            title={t("radio.mostListenedRadio")}
             data={filteredMostListened}
             onViewAll={() => navigate("/all-radio")}
             onCardClick={handleRadioClick}
@@ -197,7 +199,7 @@ export default function RadioList() {
         {/* ================= MY RADIO (Moved & Renamed) ================= */}
         {filteredSaved.length > 0 && (
           <Section
-            title="My Radio"
+            title={t("radio.myRadio")}
             data={filteredSaved}
             onViewAll={() => navigate("/favorite-radios")}
             onCardClick={handleRadioClick}
@@ -207,7 +209,7 @@ export default function RadioList() {
         <div className="search-radio-section">
 
           <div className="search-radio-header">
-            <h2 className="sub-title"> By Country</h2>
+            <h2 className="sub-title">{t("radio.byCountry")}</h2>
             {/* Removed Local Search Input */}
           </div>
 

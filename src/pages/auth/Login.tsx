@@ -11,14 +11,16 @@ import { loginWithGoogle as loginGoogleFn, loginWithApple } from "../../services
 import usePageTitle from "../../hooks/usePageTitle";
 import { fetchInitialData } from "../../redux/dataSlice";
 import type { AppDispatch } from "../../redux/store";
+import { useTranslation } from "../../context/LanguageContext";
 type FormType = {
     email: string;
     password: string;
 };
 export default function Login() {
+    const { t } = useTranslation();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    usePageTitle("Login");
+    usePageTitle(t("auth.loginTitle"));
 
     const [showPwd, setShowPwd] = useState(false);
     const [form, setForm] = useState<FormType>({ email: "", password: "" });
@@ -45,9 +47,9 @@ export default function Login() {
         // live validation
         if (name === "email") {
             if (!value.trim()) {
-                setErrors((prev) => ({ ...prev, email: "Please enter email" }));
+                setErrors((prev) => ({ ...prev, email: t("auth.enterEmailError") }));
             } else if (!validateEmailFormat(value)) {
-                setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
+                setErrors((prev) => ({ ...prev, email: t("auth.invalidEmailError") }));
             } else {
                 setErrors((prev) => ({ ...prev, email: "" }));
             }
@@ -55,7 +57,7 @@ export default function Login() {
 
         if (name === "password") {
             if (!value.trim()) {
-                setErrors((prev) => ({ ...prev, password: "Please enter password" }));
+                setErrors((prev) => ({ ...prev, password: t("auth.enterPasswordError") }));
             } else {
                 setErrors((prev) => ({ ...prev, password: "" }));
             }
@@ -69,13 +71,13 @@ export default function Login() {
 
         // final validation before submit
         if (!form.email.trim()) {
-            return setErrors((prev) => ({ ...prev, email: "Please enter email" }));
+            return setErrors((prev) => ({ ...prev, email: t("auth.enterEmailError") }));
         }
         if (!validateEmailFormat(form.email)) {
-            return setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
+            return setErrors((prev) => ({ ...prev, email: t("auth.invalidEmailError") }));
         }
         if (!form.password.trim()) {
-            return setErrors((prev) => ({ ...prev, password: "Please enter password" }));
+            return setErrors((prev) => ({ ...prev, password: t("auth.enterPasswordError") }));
         }
 
         dispatch(authStart());
@@ -90,7 +92,7 @@ export default function Login() {
             dispatch(fetchInitialData(user.uid) as any);
             navigate("/home");
         } catch (err: any) {
-            alert("Invalid Credential")
+            alert(t("auth.invalidCredentialError"));
             dispatch(authFailure(err.message));
         }
 
@@ -119,7 +121,7 @@ export default function Login() {
 
             navigate("/home");
         } catch (err: any) {
-            alert("Invalid Credential")
+            alert(t("auth.invalidCredentialError"));
             dispatch(authFailure(err.message));
         }
     };
@@ -146,7 +148,7 @@ export default function Login() {
 
             navigate("/home");
         } catch (err: any) {
-            alert("Login failed");
+            alert(t("auth.loginFailedAlert"));
             console.error(err.message)
             dispatch(authFailure(err.message));
         }
@@ -171,13 +173,13 @@ export default function Login() {
                 boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
             }}>
                 <div style={{ textAlign: "center", marginBottom: 32 }}>
-                    <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Login to Account</h1>
-                    <p style={{ color: "#9ca3af", fontSize: 16 }}>Login now and access all features now</p>
+                    <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>{t("auth.loginTitle")}</h1>
+                    <p style={{ color: "#9ca3af", fontSize: 16 }}>{t("auth.loginSubtitle")}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                     <div className="input-group">
-                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>Email Address</label>
+                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{t("auth.emailLabel")}</label>
                         <div style={{ position: "relative" }}>
                             <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: colors.red }}>
                                 <FaEnvelope size={18} />
@@ -187,7 +189,7 @@ export default function Login() {
                                 type="text"
                                 value={form.email}
                                 onChange={handleChange}
-                                placeholder="johndoe@gmai.com"
+                                placeholder="johndoe@gmail.com"
                                 style={{
                                     width: "100%",
                                     backgroundColor: "transparent",
@@ -204,7 +206,7 @@ export default function Login() {
                     </div>
 
                     <div className="input-group">
-                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>Password</label>
+                        <label style={{ display: "block", marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{t("auth.passwordLabel")}</label>
                         <div style={{ position: "relative" }}>
                             <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: colors.red }}>
                                 <FaLock size={18} />
@@ -244,7 +246,7 @@ export default function Login() {
                     </div>
 
                     <div style={{ textAlign: "right", marginTop: -8 }}>
-                        <Link to="/forgot" style={{ color: colors.red, fontSize: 14, fontWeight: 500, textDecoration: "none" }}>Forgot Password?</Link>
+                        <Link to="/forgot" style={{ color: colors.red, fontSize: 14, fontWeight: 500, textDecoration: "none" }}>{t("auth.forgotPasswordLink")}</Link>
                     </div>
 
                     <button
@@ -264,13 +266,13 @@ export default function Login() {
                             boxShadow: isFormInvalid ? "none" : "0 4px 14px rgba(255, 43, 43, 0.3)"
                         }}
                     >
-                        {loading ? "Logging..." : "Login"}
+                        {loading ? t("auth.loggingButton") : t("auth.loginButton")}
                     </button>
                 </form>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "32px 0" }}>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
-                    <div style={{ color: "#ffffff", fontSize: 14 }}>Or</div>
+                    <div style={{ color: "#ffffff", fontSize: 14 }}>{t("auth.orSeparator")}</div>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
                 </div>
 
@@ -291,7 +293,7 @@ export default function Login() {
                 </div>
 
                 <div style={{ textAlign: "center", marginTop: 24, fontSize: 14, color: "#9ca3af" }}>
-                    Don’t have an account? <Link to="/signup" style={{ color: colors.red, fontWeight: 600, textDecoration: "none" }}>Signup</Link>
+                    {t("auth.dontHaveAccount")} <Link to="/signup" style={{ color: colors.red, fontWeight: 600, textDecoration: "none" }}>{t("auth.signupLink")}</Link>
                 </div>
             </div>
         </div>

@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../redux/store";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import { useTranslation } from "../../context/LanguageContext";
 
 import "./Radio.css";
 
 export default function FavoriteRadios() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const [search, setSearch] = useState<string>("");
@@ -46,13 +48,13 @@ export default function FavoriteRadios() {
                 {/* TITLE + SEARCH */}
                 <div className="profile-header-section">
                     <button className="back-btn" onClick={() => navigate(-1)}>
-                        ← Back
+                        ← {t("profilePages.back")}
                     </button>
-                    <h1 className="profile-page-title">Favorite Radios</h1>
+                    <h1 className="profile-page-title">{t("favoriteRadios.title")}</h1>
                     <input
                         className="search-input"
                         type="text"
-                        placeholder="Search favorite radios..."
+                        placeholder={t("favoriteRadios.searchPlaceholder")}
                         value={search}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setSearch(e.target.value)
@@ -64,18 +66,18 @@ export default function FavoriteRadios() {
                 {filtered.length === 0 ? (
                     <div className="profile-empty-state">
                         <div className="empty-icon">❤️</div>
-                        <h2>No Favorite Radios {search ? "Found" : "Yet"}</h2>
+                        <h2>{search ? t("favoriteRadios.noFavoritesFound") : t("favoriteRadios.noFavoritesYet")}</h2>
                         <p>
                             {search
-                                ? "Try a different search term"
-                                : "Start adding radios to your favorites!"}
+                                ? t("favoriteRadios.tryDifferentSearch")
+                                : t("favoriteRadios.startAddingFavorites")}
                         </p>
                         {!search && (
                             <button
                                 className="primary-btn"
                                 onClick={() => navigate("/radio")}
                             >
-                                Explore Radios
+                                {t("favoriteRadios.exploreRadios")}
                             </button>
                         )}
                     </div>

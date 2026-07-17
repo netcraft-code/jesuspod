@@ -6,6 +6,7 @@ import "./Radio.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getFilteredRadio } from "../../redux/dataSlice";
+import { useTranslation } from "../../context/LanguageContext";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -16,6 +17,7 @@ interface RadioItem {
 }
 
 export default function AllRadio() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState<string>("");
@@ -48,12 +50,12 @@ export default function AllRadio() {
       <main className="content">
         {/* TITLE + SEARCH */}
         <div className="top-bar">
-          <h2 className="sub-title">All Radio</h2>
+          <h2 className="sub-title">{t("radio.allRadio")}</h2>
 
           <input
             className="search-input"
             type="text"
-            placeholder="Search radio..."
+            placeholder={t("radio.searchPlaceholder")}
             value={search}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearch(e.target.value)

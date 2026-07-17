@@ -9,9 +9,11 @@ import type { Short } from "../../types/shorts";
 import usePageTitle from "../../hooks/usePageTitle";
 import { doc, setDoc, arrayUnion, increment } from "firebase/firestore";
 import { firestore } from "../../services/firebase";
+import { useTranslation } from "../../context/LanguageContext";
 import "./Shorts.css";
 
 export default function Shorts() {
+    const { t } = useTranslation();
     const [active, setActive] = useState("Acts2");
     const [profileOpen, setProfileOpen] = useState(false);
     const [shortsData, setShortsData] = useState<Short[]>([]);
@@ -27,7 +29,7 @@ export default function Shorts() {
     // Get current user from Redux
     const user = useSelector((state: RootState) => state.auth.user);
 
-    usePageTitle("Shorts - Acts2");
+    usePageTitle(`${t("shorts.mainTitle")} - Acts2`);
 
     // Load initial shorts with diverse feed
     const loadShorts = useCallback(async (isLoadMore = false) => {
@@ -86,7 +88,7 @@ export default function Shorts() {
     const handleLikeToggle = useCallback(
         async (shortId: string, isLiked: boolean) => {
             if (!user?.uid) {
-                alert("Please login to like videos");
+                alert(t("shorts.pleaseLoginLike"));
                 return;
             }
 
@@ -133,7 +135,7 @@ export default function Shorts() {
     const handleSaveToggle = useCallback(
         async (shortId: string, isSaved: boolean) => {
             if (!user?.uid) {
-                alert("Please login to save videos");
+                alert(t("shorts.pleaseLoginSave"));
                 return;
             }
 
@@ -299,11 +301,11 @@ export default function Shorts() {
                 {loading && shortsData.length === 0 ? (
                     <div className="shorts-loading">
                         <div className="loading-spinner"></div>
-                        <p>Loading shorts...</p>
+                        <p>{t("shorts.loading")}</p>
                     </div>
                 ) : shortsData.length === 0 ? (
                     <div className="shorts-empty">
-                        <p>No shorts available</p>
+                        <p>{t("shorts.noShorts")}</p>
                     </div>
                 ) : (
                     <div className="shorts-container" ref={containerRef}>

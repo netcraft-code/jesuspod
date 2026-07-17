@@ -5,6 +5,7 @@ import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "../../context/LanguageContext";
 import type { RootState } from "../../redux/store";
 import {
   getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks,
@@ -43,6 +44,7 @@ export const resetSplashState = () => {
 };
 
 export default function Home() {
+  const { t } = useTranslation();
   const [active, setActive] = useState("All");
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -80,7 +82,7 @@ export default function Home() {
 
 
   const navigate = useNavigate();
-  usePageTitle("Home");
+  usePageTitle(t("header.all"));
 
   /** RADIO - Use filtered selector */
   const radioList = useSelector(getFilteredRadio);
@@ -122,7 +124,7 @@ export default function Home() {
 
   const handleToggleSave = async (item: any, isSaved: boolean) => {
     if (!user?.uid) {
-      alert("Please login to save items");
+      alert(t("profilePages.pleaseLoginSave"));
       return;
     }
 
@@ -159,7 +161,7 @@ export default function Home() {
       dispatch(refreshSavedBooks(user.uid) as any);
     } else {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
-      alert("Failed to save book");
+      alert(t("books.failedSave"));
     }
     // ... handle other save types if needed, currently only book save logic was explicit here
     // Default fallback for book saves if passed directly - REMOVED risky fallback, explicit checks preferred
@@ -192,14 +194,14 @@ export default function Home() {
        <Banner bannerType="home" />
 
         <PageInfo
-          title="All Your Favorite Christian Content in One Place"
-          description="Are you looking for a way to grow your faith without searching the whole internet? JesusPod brings together the world’s best Christian resources into a single app designed for your spiritual growth. Instead of hopping between different sites, you can find everything you need to stay encouraged and connected to the Word in one secure place."
+          title={t("home.title")}
+          description={t("home.description")}
         />
 
         {/* ================= POPULAR & TRENDING ================= */}
         {mostListenedPodcasts.length > 0 && (
           <HomeSection
-            title="Popular & Trending"
+            title={t("home.popularTrending")}
             data={mostListenedPodcasts.slice(0, 15)}
             loading={isLoading}
             onViewAll={() => navigate("/podcast?filter=popular")}
@@ -212,7 +214,7 @@ export default function Home() {
         )}
         {/* ================= LIVE ================= */}
         <LiveSection
-          title="Live"
+          title={t("home.live")}
           data={liveVideos}
           loading={isLoading}
           onViewAll={() => navigate("/live-list")}
@@ -235,7 +237,7 @@ export default function Home() {
 
         {/* ================= RADIO ================= */}
         <HomeSection
-          title="Radio"
+          title={t("home.radio")}
           data={radioList}
           loading={isLoading}
           onViewAll={() => navigate("/radio")}
@@ -258,7 +260,7 @@ export default function Home() {
 
         {/* ================= MOVIES ================= */}
         <MoviesSection
-          title="Movies"
+          title={t("home.movies")}
           data={movies}
           loading={isLoading}
           onViewAll={() => navigate("/movies")}
@@ -273,7 +275,7 @@ export default function Home() {
 
         {/* ================= PODCAST ================= */}
         <HomeSection
-          title="Podcast"
+          title={t("home.podcast")}
           data={podcasts.slice(20, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
           loading={isLoading}
           onViewAll={() => navigate("/podcast")}
@@ -288,7 +290,7 @@ export default function Home() {
 
         {/* ================= VIDEO CHANNELS ================= */}
         <HomeSection
-          title="Video Channels"
+          title={t("home.videoChannels")}
           data={filteredChannels}
           loading={isLoading}
           cardVariant="channel"
@@ -309,7 +311,7 @@ export default function Home() {
 
         {/* ================= BOOKS ================= */}
         <HomeSection
-          title="Books"
+          title={t("home.books")}
           data={books.slice(20, 100)}
           loading={isLoading}
           onViewAll={() => navigate("/books")}

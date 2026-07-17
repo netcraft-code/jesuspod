@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "../../context/LanguageContext";
 import LiveCard from "./LiveCard";
 import SkeletonCard from "../Skeletons/SkeletonCard";
 import "./LiveSection.css";
@@ -18,6 +19,7 @@ export default function LiveSection({
     onViewAll,
     onCardClick,
 }: LiveSectionProps) {
+    const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const scrollLeft = () => {
@@ -38,7 +40,7 @@ export default function LiveSection({
                 <h1 className="live-section-title">{title}</h1>
                 {onViewAll && (
                     <span onClick={onViewAll} className="live-view-all">
-                        View All
+                        {t("common.viewAll")}
                     </span>
                 )}
             </div>

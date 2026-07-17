@@ -1,18 +1,20 @@
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import "./Footer.css";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="main-footer">
       <div className="footer-content">
         <div className="footer-left">
-          <p>&copy; 2026 All Rights Reserved</p>
+          <p>&copy; 2026 {t("footer.allRightsReserved")}</p>
         </div>
         <div className="footer-center" style={{ textAlign: "center" }}>
           <div className="footer-logo">JesusPOD</div>
           <span>
-            Crafted By{" "}
+            {t("footer.craftedBy")}{" "}
             <a target="_blank" href="http://netcraftglobal.com">
               NetCraft Global
             </a>{" "}
@@ -50,3 +52,4 @@ export default function Footer() {
     </footer>
   );
 }
+

@@ -13,9 +13,11 @@ import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice"
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { images } from "../../assets/images";
 import PageInfo from "../../components/UI/PageInfo";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function MoviesList() {
-    usePageTitle("Movies");
+    const { t } = useTranslation();
+    usePageTitle(t("header.movies"));
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
@@ -69,7 +71,7 @@ export default function MoviesList() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save movies");
+            alert(t("movies.pleaseLogin"));
             return;
         }
 
@@ -83,14 +85,14 @@ export default function MoviesList() {
         } else {
             // Revert if failed
             dispatch(toggleMovieSaveState({ movieId: item.id, userId: user.uid }));
-            alert("Failed to save movie");
+            alert(t("movies.failedSave"));
         }
     };
 
     const handleSharePage = () => {
         const shareData = {
-            title: "Jesus Pod - Movies",
-            text: "Check out the latest movies on Jesus Pod!",
+            title: `Jesus Pod - ${t("header.movies")}`,
+            text: `Check out the latest ${t("header.movies")} on Jesus Pod!`,
             url: window.location.href,
         };
 
@@ -98,15 +100,15 @@ export default function MoviesList() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard!");
+            alert(t("movies.linkCopied"));
         }
     };
 
     const handleCategoryShare = (categoryName: string) => {
         const shareUrl = `${window.location.origin}/all-movies?category=${encodeURIComponent(categoryName)}`;
         const shareData = {
-            title: `${categoryName} Movies`,
-            text: `Check out these ${categoryName} movies on Jesus Pod!`,
+            title: `${categoryName} ${t("header.movies")}`,
+            text: `Check out these ${categoryName} ${t("header.movies")} on Jesus Pod!`,
             url: shareUrl,
         };
 
@@ -114,7 +116,7 @@ export default function MoviesList() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard!");
+            alert(t("movies.linkCopied"));
         }
     };
 
@@ -133,8 +135,8 @@ export default function MoviesList() {
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
-                            title="Watch Faith-Filled Movies"
-                            description="Enjoy a wide selection of films curated to strengthen your walk with Christ. Our movie library includes various genres from dramas and thrillers to Westerns and children’s programs, all centered on the Gospel. Whether you are looking for a classic story or a new release, every film is chosen to provide a safe and inspiring viewing experience for your entire household."
+                            title={t("movies.title")}
+                            description={t("movies.description")}
                         />
                     </div>
 
@@ -145,12 +147,12 @@ export default function MoviesList() {
                             title="Share Podcast Page"
                         >
                             <img src={images.share} alt="share" />
-                            <span>Share</span>
+                            <span>{t("movies.share")}</span>
                         </button>
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Search for movies..."
+                            placeholder={t("movies.searchPlaceholder")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             style={{ width: '100%', maxWidth: '300px' }}
@@ -162,7 +164,7 @@ export default function MoviesList() {
                 {filteredMostWatched.length > 0 && (
                     <div style={{ marginBottom: '40px' }}>
                         <HomeSection
-                            title="Most Watched Movies"
+                            title={t("movies.mostWatched")}
                             data={filteredMostWatched}
                             loading={loading}
                             cardVariant="channel"
@@ -178,7 +180,7 @@ export default function MoviesList() {
                 {(filteredSaved.length > 0 || !searchQuery) && (
                     <div style={{ marginBottom: '40px' }}>
                         <HomeSection
-                            title="My Movies"
+                            title={t("movies.myMovies")}
                             data={filteredSaved}
                             loading={loading}
                             cardVariant="channel"
@@ -186,7 +188,7 @@ export default function MoviesList() {
                             onCardClick={handleCardClick}
                             onToggleSave={handleToggleSave}
                             user={user}
-                            emptyMessage={searchQuery ? "No saved movies match your search" : "Start saving movies to see them here ❤️"}
+                            emptyMessage={searchQuery ? t("movies.emptySearchMessage") : t("movies.emptyMessage")}
                         />
                     </div>
                 )}
@@ -227,7 +229,7 @@ export default function MoviesList() {
                 {/* 4. Search for Category (Category Grid) - Kept at bottom as requested/existing */}
                 <div className="search-radio-section" style={{ marginTop: 60 }}>
                     <div className="search-radio-header">
-                        <h2 className="sub-title">By Categories</h2>
+                        <h2 className="sub-title">{t("movies.byCategories")}</h2>
 
                     </div>
 

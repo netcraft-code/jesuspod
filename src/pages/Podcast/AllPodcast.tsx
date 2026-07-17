@@ -4,9 +4,11 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Card from "../../components/Cards/Card";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "../../context/LanguageContext";
 import "./Podcast.css";
 
 export default function AllPodcast() {
+    const { t } = useTranslation();
     const [search, setSearch] = useState("");
 
     const [active, setActive] = useState<string>("Podcast");
@@ -38,10 +40,10 @@ export default function AllPodcast() {
 
             <div className="content">
                 <div className="top-bar">
-                    <h2 className="sub-title">{isSavedFilter ? "My Saved Podcasts" : "All Podcasts"}</h2>
+                    <h2 className="sub-title">{isSavedFilter ? t("podcastHome.mySavedPodcasts") : t("podcastHome.allPodcasts")}</h2>
                     <input
                         className="search-input"
-                        placeholder="Search podcast..."
+                        placeholder={t("podcastHome.searchPlaceholder")}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />

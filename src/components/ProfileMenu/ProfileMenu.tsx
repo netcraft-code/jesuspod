@@ -8,6 +8,7 @@ import { authLogout } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearData } from "../../redux/dataSlice";
+import { useTranslation } from "../../context/LanguageContext";
 
 interface ProfileMenuProps {
     user: {
@@ -33,8 +34,10 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
     const handleLogout = () => {
-        if (window.confirm("Are you sure you want to logout?")) {
+        if (window.confirm(t("profileMenu.logoutConfirm"))) {
             logout();
             localStorage.removeItem("token");
             dispatch(authLogout());
@@ -64,63 +67,63 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
             <div className="menu-list">
                 <MenuItem
                     icon={<img src={liked} alt="like" width={25} />}
-                    label="Favorite Radio"
+                    label={t("profileMenu.favoriteRadio")}
                     arrow
                     onClick={() => navigate("/favorite-radios")}
                 />
 
                 <MenuItem
                     icon={<FaBookmark size={20} color="#ff4444" />}
-                    label="Favorite Shorts"
+                    label={t("profileMenu.favoriteShorts")}
                     arrow
                     onClick={() => navigate("/saved-shorts")}
                 />
 
                 <MenuItem
                     icon={<FaTv size={20} color="#ff4444" />}
-                    label="My Channels"
+                    label={t("profileMenu.myChannels")}
                     arrow
                     onClick={() => navigate("/all-channels", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<FaFilm size={20} color="#ff4444" />}
-                    label="My Movies"
+                    label={t("profileMenu.myMovies")}
                     arrow
                     onClick={() => navigate("/all-movies", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<FaMicrophone size={20} color="#ff4444" />}
-                    label="My Podcast"
+                    label={t("profileMenu.myPodcast")}
                     arrow
                     onClick={() => navigate("/all-podcast", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<FaBook size={20} color="#ff4444" />}
-                    label="My Books"
+                    label={t("profileMenu.myBooks")}
                     arrow
                     onClick={() => navigate("/all-books", { state: { filter: 'saved' } })}
                 />
 
                 <MenuItem
                     icon={<img src={subscription} alt="sub" width={25} />}
-                    label="Following"
+                    label={t("profileMenu.following")}
                     arrow
                     onClick={() => navigate("/subscriptions")}
                 />
 
                 <MenuItem
                     icon={<img src={down} alt="download" width={25} />}
-                    label="Downloads"
+                    label={t("profileMenu.downloads")}
                     arrow
                     onClick={() => navigate("/downloads")}
                 />
 
                 <MenuItem
                     icon={<img src={share} alt="share" width={25} />}
-                    label="Share App with Friends"
+                    label={t("profileMenu.shareApp")}
                     onClick={() => {
                         const shareData = {
                             title: 'JesusPod',
@@ -131,26 +134,26 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                             navigator.share(shareData).catch(err => console.log('Error sharing', err));
                         } else {
                             navigator.clipboard.writeText(window.location.origin);
-                            alert("Link copied to clipboard!");
+                            alert(t("radio.linkCopied"));
                         }
                     }}
                 />
 
                 <MenuItem
                     icon={<img src={privacy} alt="privacy" width={20} />}
-                    label="Privacy Policy"
+                    label={t("profileMenu.privacyPolicy")}
                     onClick={() => navigate("/privacy-policy")}
                 />
 
                 <MenuItem
                     icon={<img src={help} alt="help" width={25} />}
-                    label="Help Center"
+                    label={t("profileMenu.helpCenter")}
                     onClick={() => navigate("/help-center")}
                 />
 
                 <MenuItem
                     icon={<img src={exit} alt="logout" width={20} />}
-                    label="Logout"
+                    label={t("profileMenu.logout")}
                     red
                     onClick={handleLogout}
                 />
@@ -158,6 +161,7 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
         </div>
     );
 }
+
 
 function MenuItem({ icon, label, arrow = false, onClick, red = false }: MenuItemProps) {
     return (

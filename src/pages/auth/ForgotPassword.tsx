@@ -4,12 +4,14 @@ import { sendResetEmail } from "../../services/authService";
 import colors from "../../theme/colors";
 import { useNavigate } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function ForgotPassword() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState("");
     const [sent, setSent] = useState(false);
     const navigate = useNavigate();
-    usePageTitle("Forgot-password");
+    usePageTitle(t("auth.resetPasswordTitle"));
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
@@ -17,14 +19,14 @@ export default function ForgotPassword() {
             await sendResetEmail(email);
             setSent(true);
         } catch (err:any) {
-            alert("Failed: " + err.message);
+            alert(t("auth.failedAlert") + err.message);
         }
     };
 
     return (
         <div className="center-page" style={{ background: colors.mainBg }}>
             <div className="card" style={{ width: "100%", maxWidth: 420 }}>
-                <h2 style={{ textAlign: "center" }}>Reset Password</h2>
+                <h2 style={{ textAlign: "center" }}>{t("auth.resetPasswordTitle")}</h2>
                 {sent && (
                     <div
                         style={{
@@ -36,7 +38,7 @@ export default function ForgotPassword() {
                             fontWeight: 500,
                         }}
                     >
-                        ✔ Reset email sent. Check your inbox.
+                        {t("auth.resetEmailSent")}
                     </div>
                 )}
 
@@ -59,7 +61,7 @@ export default function ForgotPassword() {
                         type="submit"
                         style={{ background: colors.red }}
                     >
-                        Send reset email
+                        {t("auth.sendResetEmailButton")}
                     </button>
 
 
@@ -82,7 +84,7 @@ export default function ForgotPassword() {
                     }}
                 >
                     <FaArrowLeft size={14} />
-                    Back to Login
+                    {t("auth.backToLogin")}
                 </button>
             </div>
         </div>

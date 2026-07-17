@@ -2,8 +2,10 @@ import { useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./PrivacyPolicy.css";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function PrivacyPolicy() {
+    const { t } = useTranslation();
     const [active, setActive] = useState("");
     const [profileOpen, setProfileOpen] = useState(false);
 
@@ -18,7 +20,7 @@ export default function PrivacyPolicy() {
 
             <main className="privacy-container">
                 <div className="privacy-content-wrapper">
-                    <h1>Privacy Policy</h1>
+                    <h1>{t("privacy.title")}</h1>
                     <div className="policy-section">
                         <h2>1. Introduction</h2>
                         <p>

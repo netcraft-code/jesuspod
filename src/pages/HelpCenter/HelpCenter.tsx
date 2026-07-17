@@ -4,9 +4,11 @@ import Footer from "../../components/Footer/Footer";
 import "./HelpCenter.css";
 import { useSelector } from "react-redux";
 import emailjs from '@emailjs/browser';
+import { useTranslation } from "../../context/LanguageContext";
 
 
 export default function HelpCenter() {
+    const { t } = useTranslation();
     const [active, setActive] = useState("Help Center");
     const [profileOpen, setProfileOpen] = useState(false);
 
@@ -88,12 +90,12 @@ export default function HelpCenter() {
                     `}
                 </style>
                 <div className="help-header">
-                    <h1>Help Center</h1>
+                    <h1>{t("helpCenter.title")}</h1>
                 </div>
 
                 <form className="help-form" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="name">Name</label>
+                        <label htmlFor="name">{t("helpCenter.nameLabel")}</label>
                         <input
                             type="text"
                             id="name"
@@ -101,14 +103,14 @@ export default function HelpCenter() {
                             className="help-input"
                             value={formData.name}
                             onChange={handleChange}
-                            placeholder="Your Name"
+                            placeholder={t("helpCenter.namePlaceholder")}
                             disabled={!!user?.displayName || !!user?.email} // Disable if user logged in
                             readOnly={!!user?.displayName || !!user?.email}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t("helpCenter.emailLabel")}</label>
                         <input
                             type="email"
                             id="email"
@@ -116,21 +118,21 @@ export default function HelpCenter() {
                             className="help-input"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Your Email"
+                            placeholder={t("helpCenter.emailPlaceholder")}
                             disabled={!!user?.email}
                             readOnly={!!user?.email}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="message">Message</label>
+                        <label htmlFor="message">{t("helpCenter.messageLabel")}</label>
                         <textarea
                             id="message"
                             name="message"
                             className="help-textarea"
                             value={formData.message}
                             onChange={handleChange}
-                            placeholder="How can we help you?"
+                            placeholder={t("helpCenter.messagePlaceholder")}
                             disabled={status === 'sending'}
                         />
                     </div>
@@ -140,11 +142,11 @@ export default function HelpCenter() {
                         className="help-submit-button"
                         disabled={status === 'sending' || !formData.message.trim()}
                     >
-                        {status === 'sending' ? "Sending..." : "Submit Request"}
+                        {status === 'sending' ? t("helpCenter.sending") : t("helpCenter.submitRequest")}
                     </button>
 
-                    {status === 'success' && <p className="success-message">Message sent successfully!</p>}
-                    {status === 'error' && <p className="error-message">Failed to send message. Please try again.</p>}
+                    {status === 'success' && <p className="success-message">{t("helpCenter.successMessage")}</p>}
+                    {status === 'error' && <p className="error-message">{t("helpCenter.errorMessage")}</p>}
                 </form>
             </main>
 

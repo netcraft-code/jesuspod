@@ -17,6 +17,7 @@ import usePageTitle from "../../hooks/usePageTitle";
 import { images } from "../../assets/images";
 import PageInfo from "../../components/UI/PageInfo";
 import Banner from "../../components/Banner/Banner";
+import { useTranslation } from "../../context/LanguageContext";
 
 interface BookItem {
     id: string;
@@ -30,6 +31,7 @@ interface BookItem {
 }
 
 export default function BooksHome() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const loading = useSelector((state: any) => state.data.loading);
@@ -37,7 +39,7 @@ export default function BooksHome() {
     const [active, setActive] = useState<string>("Books");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
-    usePageTitle("Books")
+    usePageTitle(t("header.books"))
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.auth.user);
     const books = useSelector((state: RootState) => state.data.books) as BookItem[];
@@ -70,7 +72,7 @@ export default function BooksHome() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save books");
+            alert(t("books.pleaseLogin"));
             return;
         }
 
@@ -84,15 +86,15 @@ export default function BooksHome() {
         } else {
             // Revert
             dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
-            alert("Failed to save book");
+            alert(t("books.failedSave"));
         }
     };
 
 
     const handleSharePage = () => {
         const shareData = {
-            title: "Jesus Pod - Books",
-            text: "Check out the latest books on Jesus Pod!",
+            title: `Jesus Pod - ${t("header.books")}`,
+            text: `Check out the latest ${t("header.books")} on Jesus Pod!`,
             url: window.location.href,
         };
 
@@ -100,15 +102,15 @@ export default function BooksHome() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard!");
+            alert(t("books.linkCopied"));
         }
     };
 
     const handleCategoryShare = (categoryName: string) => {
         const shareUrl = `${window.location.origin}/all-books?category=${encodeURIComponent(categoryName)}`;
         const shareData = {
-            title: `${categoryName} Books`,
-            text: `Check out these ${categoryName} books on Jesus Pod!`,
+            title: `${categoryName} ${t("header.books")}`,
+            text: `Check out these ${categoryName} ${t("header.books")} on Jesus Pod!`,
             url: shareUrl,
         };
 
@@ -116,7 +118,7 @@ export default function BooksHome() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareData.url);
-            alert("Link copied to clipboard!");
+            alert(t("books.linkCopied"));
         }
     };
 
@@ -135,8 +137,8 @@ export default function BooksHome() {
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
-                            title="Strengthen Your Walk with Books"
-                            description="Deepen your understanding of God through a library of books covering every area of life. With ten focused categories; including Prayer, Revival, History, and Missions, you have the tools to build your faith in any season. These books are selected to give you biblical depth and practical wisdom for your daily journey with Christ."
+                            title={t("books.title")}
+                            description={t("books.description")}
                         />
                     </div>
 
@@ -147,12 +149,12 @@ export default function BooksHome() {
                             title="Share Podcast Page"
                         >
                             <img src={images.share} alt="share" />
-                            <span>Share</span>
+                            <span>{t("books.share")}</span>
                         </button>
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Search for books..."
+                            placeholder={t("books.searchPlaceholder")}
                             value={searchTerm}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 setSearchTerm(e.target.value)
@@ -166,7 +168,7 @@ export default function BooksHome() {
                 {/* Most Read Books */}
                 {filteredMostRead.length > 0 && (
                     <HomeSection
-                        title="Most Read Books"
+                        title={t("books.mostRead")}
                         onViewAll={() => navigate("/all-books")}
                         data={filteredMostRead}
                         loading={loading}
@@ -180,7 +182,7 @@ export default function BooksHome() {
                 {/* My Books (Moved & Renamed) */}
                 {filteredSaved.length > 0 && (
                     <HomeSection
-                        title="My Books"
+                        title={t("books.myBooks")}
                         onViewAll={() => navigate("/all-books?filter=saved")}
                         data={filteredSaved}
                         loading={loading}
@@ -188,7 +190,7 @@ export default function BooksHome() {
                         isBook={true}
                         onToggleSave={handleToggleSave}
                         user={user}
-                        emptyMessage="Start saving books to see them here ❤️"
+                        emptyMessage={t("books.emptyMessage")}
                     />
                 )}
 
@@ -224,7 +226,7 @@ export default function BooksHome() {
                 {/* Search for Books (Category Grid) */}
                 <div className="search-radio-section">
                     <div className="search-radio-header">
-                        <h2 className="sub-title">Books Categories</h2>
+                        <h2 className="sub-title">{t("books.categories")}</h2>
 
                     </div>
 

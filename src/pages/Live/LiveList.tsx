@@ -6,8 +6,10 @@ import Footer from "../../components/Footer/Footer";
 import LiveCard from "../../components/LiveSection/LiveCard";
 import "./Live.css";
 import PageInfo from "../../components/UI/PageInfo";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function LiveList() {
+    const { t } = useTranslation();
     const [active, setActive] = useState<string>("Live");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -78,21 +80,21 @@ export default function LiveList() {
 
             <div style={{ padding: '0 20px', marginTop: '20px' }}>
                 <PageInfo
-                    title="24/7 Christian TV Stations"
-                    description="Stay connected to the Word through live television broadcasts from around the world. This section gives you instant access to global Christian TV stations, featuring live ministry, prophetic sessions, and faith-based news any time of day. By bringing international stations into one place, we make it easy for you to watch anointed content from different continents directly within the app."
+                    title={t("live.title")}
+                    description={t("live.description")}
                 />
             </div>
 
             <div className="live-player-container">
                 {/* Left Sidebar */}
                 <div className="live-sidebar">
-                    <h3 className="sidebar-title">Live Channels</h3>
+                    <h3 className="sidebar-title">{t("live.sidebarTitle")}</h3>
 
                     <div className="search-section-sidebar">
                         <input
                             type="text"
                             className="search-input-sidebar"
-                            placeholder="Search..."
+                            placeholder={t("live.searchPlaceholder")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -105,7 +107,7 @@ export default function LiveList() {
                             </div>
                         ) : filteredChannels.length === 0 ? (
                             <div className="no-data-container">
-                                <p>No live channels found</p>
+                                <p>{t("live.noChannelsFound")}</p>
                             </div>
                         ) : (
                             filteredChannels.map((item) => (
@@ -142,7 +144,7 @@ export default function LiveList() {
                         </>
                     ) : (
                         <div className="no-video">
-                            <p>No live channel selected</p>
+                            <p>{t("live.noChannelSelected")}</p>
                         </div>
                     )}
                 </div>

@@ -13,14 +13,16 @@ import defaultAvatar from "../../assets/default-avatar.svg";
 import { updateProfile } from "firebase/auth";
 import { uploadUserImage } from "../../services/uploadService";
 import usePageTitle from "../../hooks/usePageTitle";
+import { useTranslation } from "../../context/LanguageContext";
 
 
 export default function Signup() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    usePageTitle("Signup");
+    usePageTitle(t("auth.signupButton"));
 
     const [form, setForm] = useState({
         username: "",
@@ -59,16 +61,16 @@ export default function Signup() {
             case "username":
                 setErrors((prev) => ({
                     ...prev,
-                    username: !value.trim() ? "Please enter username" : "",
+                    username: !value.trim() ? t("auth.enterUsernameError") : "",
                 }));
                 break;
             case "email":
                 setErrors((prev) => ({
                     ...prev,
                     email: !value.trim()
-                        ? "Please enter email"
+                        ? t("auth.enterEmailError")
                         : !validateEmailFormat(value)
-                            ? "Invalid email format"
+                            ? t("auth.invalidEmailError")
                             : "",
                 }));
                 break;
@@ -76,13 +78,13 @@ export default function Signup() {
                 setErrors((prev) => ({
                     ...prev,
                     password: !value.trim()
-                        ? "Please enter password"
+                        ? t("auth.enterPasswordError")
                         : value.length < 6
-                            ? "Password must be at least 6 characters"
+                            ? t("auth.passwordLengthError")
                             : "",
                     confirmPassword:
                         form.confirmPassword && form.confirmPassword !== value
-                            ? "Passwords do not match"
+                            ? t("auth.passwordsDoNotMatchError")
                             : "",
                 }));
                 break;
@@ -91,9 +93,9 @@ export default function Signup() {
                     ...prev,
                     confirmPassword:
                         !value.trim()
-                            ? "Please confirm password"
+                            ? t("auth.confirmPasswordError")
                             : value !== form.password
-                                ? "Passwords do not match"
+                                ? t("auth.passwordsDoNotMatchError")
                                 : "",
                 }));
                 break;
@@ -119,13 +121,13 @@ export default function Signup() {
         e.preventDefault();
 
         // Final validation
-        if (!form.username.trim()) return setErrors((prev) => ({ ...prev, username: "Please enter username" }));
-        if (!form.email.trim()) return setErrors((prev) => ({ ...prev, email: "Please enter email" }));
-        if (!validateEmailFormat(form.email)) return setErrors((prev) => ({ ...prev, email: "Invalid email format" }));
-        if (!form.password.trim()) return setErrors((prev) => ({ ...prev, password: "Please enter password" }));
-        if (form.password.length < 6) return setErrors((prev) => ({ ...prev, password: "Password must be at least 6 characters" }));
-        if (!form.confirmPassword.trim()) return setErrors((prev) => ({ ...prev, confirmPassword: "Please confirm password" }));
-        if (form.password !== form.confirmPassword) return setErrors((prev) => ({ ...prev, confirmPassword: "Passwords do not match" }));
+        if (!form.username.trim()) return setErrors((prev) => ({ ...prev, username: t("auth.enterUsernameError") }));
+        if (!form.email.trim()) return setErrors((prev) => ({ ...prev, email: t("auth.enterEmailError") }));
+        if (!validateEmailFormat(form.email)) return setErrors((prev) => ({ ...prev, email: t("auth.invalidEmailError") }));
+        if (!form.password.trim()) return setErrors((prev) => ({ ...prev, password: t("auth.enterPasswordError") }));
+        if (form.password.length < 6) return setErrors((prev) => ({ ...prev, password: t("auth.passwordLengthError") }));
+        if (!form.confirmPassword.trim()) return setErrors((prev) => ({ ...prev, confirmPassword: t("auth.confirmPasswordError") }));
+        if (form.password !== form.confirmPassword) return setErrors((prev) => ({ ...prev, confirmPassword: t("auth.passwordsDoNotMatchError") }));
 
         dispatch(authStart());
         setLoading(true);
@@ -225,7 +227,7 @@ export default function Signup() {
                         name="username"
                         value={form.username}
                         onChange={handleChange}
-                        placeholder="Full Name"
+                        placeholder={t("auth.fullNamePlaceholder")}
                     />
                     {errors.username && (
                         <p style={{ color: "red", fontSize: 13, marginTop: 0, marginBottom: 0 }}>
@@ -270,7 +272,7 @@ export default function Signup() {
                             name="confirmPassword"
                             value={form.confirmPassword}
                             onChange={handleChange}
-                            placeholder="Confirm Password"
+                            placeholder={t("auth.confirmPasswordPlaceholder")}
                             type={showConfirmPassword ? "text" : "password"}
                         />
                         <span
@@ -290,21 +292,21 @@ export default function Signup() {
                             cursor: isFormInvalid ? "not-allowed" : "pointer",
                         }}
                     >
-                        {loading ? "Creating..." : "Signup"}
+                        {loading ? t("auth.creatingButton") : t("auth.signupButton")}
                     </button>
                 </form>
 
                 {/* Or Google Signup */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "16px 0" }}>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
-                    <div className="small-muted">Or</div>
+                    <div className="small-muted">{t("auth.orSeparator")}</div>
                     <div style={{ flex: 1, height: 1, background: "#374151" }} />
                 </div>
 
                 <GoogleButton onClick={handleGoogle} />
 
                 <div style={{ textAlign: "center", marginTop: 6 }}>
-                    Already have an account? <Link to="/login" style={{ color: colors.red }}>Login</Link>
+                    {t("auth.alreadyHaveAccount")} <Link to="/login" style={{ color: colors.red }}>{t("auth.loginButton")}</Link>
                 </div>
             </div>
         </div>

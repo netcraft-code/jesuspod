@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "../../context/LanguageContext";
 import { collection, query, getDocs, doc, deleteDoc, orderBy } from "firebase/firestore";
 import { firestore } from "../../services/firebase";
 import Header from "../../components/Header/Header";
@@ -23,6 +24,7 @@ interface Download {
 }
 
 export default function Downloads() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const user = useSelector((state: any) => state.auth.user);
     const [active, setActive] = useState<string>("Podcast");
@@ -62,7 +64,7 @@ export default function Downloads() {
     };
 
     const handleDelete = async (downloadId: string) => {
-        if (!window.confirm("Are you sure you want to delete this download?")) {
+        if (!window.confirm(t("profilePages.deleteConfirm"))) {
             return;
         }
 
@@ -73,7 +75,7 @@ export default function Downloads() {
             setDownloads(downloads.filter((d) => d.id !== downloadId));
         } catch (error) {
             console.error("Error deleting download:", error);
-            alert("Failed to delete download");
+            alert(t("profilePages.deleteFailed"));
         } finally {
             setDeletingId(null);
         }
@@ -118,26 +120,26 @@ export default function Downloads() {
             <div className="container profile-page">
                 <div className="profile-header-section">
                     <button className="back-btn" onClick={() => navigate(-1)}>
-                        ← Back
+                        ← {t("profilePages.back")}
                     </button>
-                    <h1 className="profile-page-title">My Downloads</h1>
+                    <h1 className="profile-page-title">{t("profilePages.downloadsTitle")}</h1>
                     <p className="profile-page-subtitle">
-                        {downloads.length} episode{downloads.length !== 1 ? "s" : ""}
+                        {downloads.length} {downloads.length !== 1 ? t("profilePages.episodes") : t("profilePages.episode")}
                     </p>
                 </div>
 
                 {loading ? (
                     <div className="profile-loading">
                         <div className="spinner"></div>
-                        <p>Loading downloads...</p>
+                        <p>{t("profilePages.loadingDownloads")}</p>
                     </div>
                 ) : downloads.length === 0 ? (
                     <div className="profile-empty-state">
                         <div className="empty-icon">⬇️</div>
-                        <h2>No Downloads Yet</h2>
-                        <p>Download episodes to listen offline!</p>
+                        <h2>{t("profilePages.noDownloadsYet")}</h2>
+                        <p>{t("profilePages.downloadEpisodesOffline")}</p>
                         <button className="primary-btn" onClick={() => navigate("/podcast")}>
-                            Browse Podcasts
+                            {t("profilePages.browsePodcasts")}
                         </button>
                     </div>
                 ) : (
@@ -158,7 +160,7 @@ export default function Downloads() {
                                             </span>
                                         )}
                                         <span className="download-date">
-                                            Downloaded: {formatDate(download.downloadedAt?.toDate?.() || new Date())}
+                                            {t("profilePages.downloaded")}: {formatDate(download.downloadedAt?.toDate?.() || new Date())}
                                         </span>
                                     </div>
                                 </div>

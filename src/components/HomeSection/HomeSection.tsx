@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "../../context/LanguageContext";
 import Card from "../Cards/Card";
 import ChannelCard from "../../pages/Channels/ChannelCard";
 import BookCard from "../Cards/BookCard";
@@ -38,6 +39,7 @@ export default function HomeSection({
     showShare = false,
     onShare
 }: HomeSectionProps) {
+    const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const scrollLeft = () => {
@@ -58,7 +60,7 @@ export default function HomeSection({
                 <h1 className="home-section-title">{title}</h1>
                 {onViewAll && (
                     <span onClick={onViewAll} className="home-view-all">
-                        View All
+                        {t("common.viewAll")}
                     </span>
                 )}
             </div>

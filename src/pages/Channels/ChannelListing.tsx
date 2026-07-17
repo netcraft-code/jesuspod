@@ -16,9 +16,11 @@ import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 import PageInfo from "../../components/UI/PageInfo";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function ChannelListing() {
-    usePageTitle("Channels");
+    const { t } = useTranslation();
+    usePageTitle(t("header.channels"));
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const dispatch = useDispatch();
@@ -103,7 +105,7 @@ export default function ChannelListing() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save channels");
+            alert(t("channels.pleaseLogin"));
             return;
         }
 
@@ -117,7 +119,7 @@ export default function ChannelListing() {
         } else {
             // Revert if failed (optional, but good practice)
             dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
-            alert("Failed to save channel");
+            alert(t("channels.failedSave"));
         }
     };
 
@@ -136,7 +138,7 @@ export default function ChannelListing() {
         } else {
             // Fallback
             navigator.clipboard.writeText(shareLink);
-            alert("Channel link copied to clipboard!");
+            alert(t("channels.linkCopied"));
         }
     };
 
@@ -144,8 +146,8 @@ export default function ChannelListing() {
         // CHANGED: Point to /all-channels directly
         const shareUrl = `${window.location.origin}/all-channels?country=${encodeURIComponent(countryTitle)}`;
         const shareData = {
-            title: `${countryTitle} Channels`,
-            text: `Check out ${countryTitle} channels on JesusPOD`,
+            title: `${countryTitle} ${t("header.channels")}`,
+            text: `Check out ${countryTitle} ${t("header.channels")} on JesusPOD`,
             url: shareUrl,
         };
 
@@ -157,15 +159,15 @@ export default function ChannelListing() {
             }
         } else {
             navigator.clipboard.writeText(shareUrl);
-            alert("Link copied to clipboard!");
+            alert(t("channels.linkCopied"));
         }
     };
 
     const handleSharePage = async () => {
         const shareUrl = window.location.href;
         const shareData = {
-            title: "JesusPOD Channels",
-            text: "Watch live TV channels on JesusPOD!",
+            title: `JesusPOD ${t("header.channels")}`,
+            text: `Watch live TV ${t("header.channels")} on JesusPOD!`,
             url: shareUrl,
         };
 
@@ -175,7 +177,7 @@ export default function ChannelListing() {
                 logEvent(analytics, "Share_ChannelHome", {});
             } else {
                 await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
+                alert(t("channels.linkCopied"));
             }
         } catch (err) {
             console.error("Error sharing:", err);
@@ -197,8 +199,8 @@ export default function ChannelListing() {
                 <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
                     <div style={{ flex: '1', minWidth: '300px' }}>
                         <PageInfo
-                            title="Follow Christian YouTube Channels"
-                            description="Access a curated selection of Christian YouTube channels directly within the app. We have organized these channels by country, giving you easy access to international ministries and diverse teaching styles without having to search for them yourself. This variety allows you to explore how the Gospel is being preached across different cultures and find the content that best helps you grow."
+                            title={t("channels.title")}
+                            description={t("channels.description")}
                         />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -208,12 +210,12 @@ export default function ChannelListing() {
                             title="Share Channels Page"
                         >
                             <img src={images.share} alt="share" />
-                            <span>Share</span>
+                            <span>{t("channels.share")}</span>
                         </button>
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Search for channels..."
+                            placeholder={t("channels.searchPlaceholder")}
                             value={searchTerm}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 setSearchTerm(e.target.value)
@@ -227,7 +229,7 @@ export default function ChannelListing() {
                 {filteredTvChannels.length > 0 && (
                     <div style={{ marginBottom: '40px' }}>
                         <HomeSection
-                            title="TV Channels"
+                            title={t("channels.tvChannels")}
                             data={filteredTvChannels}
                             loading={loading}
                             cardVariant="channel"
@@ -245,7 +247,7 @@ export default function ChannelListing() {
                 {filteredMostWatched.length > 0 && (
                     <div style={{ marginBottom: '40px' }}>
                         <HomeSection
-                            title={`Most Watched Channels `}
+                            title={t("channels.mostWatched")}
                             data={filteredMostWatched}
                             loading={loading}
                             cardVariant="channel"
@@ -264,7 +266,7 @@ export default function ChannelListing() {
                 {/* 3. Channels to Love */}
                 {filteredSaved.length > 0 && (
                     <HomeSection
-                        title="Channels to Love"
+                        title={t("channels.channelsToLove")}
                         data={filteredSaved}
                         loading={loading}
                         cardVariant="channel"
@@ -272,7 +274,7 @@ export default function ChannelListing() {
                         onCardClick={handleCardClick}
                         onToggleSave={handleToggleSave}
                         user={user}
-                        emptyMessage="Start saving channels to see them here ❤️"
+                        emptyMessage={t("channels.emptyMessage")}
                     />
                 )}
 
@@ -280,7 +282,7 @@ export default function ChannelListing() {
                 {/* 4. Search for Channels (Country Grid) */}
                 <div className="search-radio-section" style={{ marginTop: 40 }}>
                     <div className="search-radio-header">
-                        <h2 className="sub-title">By Country</h2>
+                        <h2 className="sub-title">{t("channels.byCountry")}</h2>
                         {/* Removed Local Country Search */}
                     </div>
 

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "../../context/LanguageContext";
 import MovieCard from "./MovieCard";
 import SkeletonCard from "../Skeletons/SkeletonCard";
 import "./MoviesSection.css";
@@ -22,6 +23,7 @@ export default function MoviesSection({
     onToggleSave,
     user
 }: MoviesSectionProps) {
+    const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const scrollLeft = () => {
@@ -42,7 +44,7 @@ export default function MoviesSection({
                 <h1 className="movies-section-title">{title}</h1>
                 {onViewAll && (
                     <span onClick={onViewAll} className="movies-view-all">
-                        View All
+                        {t("common.viewAll")}
                     </span>
                 )}
             </div>

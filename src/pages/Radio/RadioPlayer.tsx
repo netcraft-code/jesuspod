@@ -14,6 +14,7 @@ import CircleImageCard from "../../components/Cards/CircleImageCard";
 import "./Radio.css";
 import { images } from "../../assets/images";
 import { FaPause, FaHeart, FaRegHeart } from "react-icons/fa";
+import { useTranslation } from "../../context/LanguageContext";
 
 /* ================= TYPES ================= */
 
@@ -43,6 +44,7 @@ interface CountryItem {
 /* ================= COMPONENT ================= */
 
 export default function RadioPlayer() {
+  const { t } = useTranslation();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   // const navigate = useNavigate();
@@ -76,7 +78,7 @@ export default function RadioPlayer() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [countrySearch, setCountrySearch] = useState<string>("");
-  const initialTitle = state?.type || paramType || "Radio Stations";
+  const initialTitle = state?.type || paramType || t("radio.searchTitle");
   const [playlistTitle, setPlaylistTitle] = useState<string>(initialTitle);
   const { play, forward10, repeateone, valumehigh, valumeslash, share } = images;
 
@@ -202,7 +204,7 @@ export default function RadioPlayer() {
 
   const toggleFavorite = async (): Promise<void> => {
     if (!user || !current) {
-      alert("Please login to save favorites");
+      alert(t("radio.pleaseLogin"));
       return;
     }
 
@@ -248,7 +250,7 @@ export default function RadioPlayer() {
 
     const shareData = {
       title: current.title,
-      text: `Listen to ${current.title} on JesusPOD Radio`,
+      text: t("radio.shareTextPre") + current.title + t("radio.shareTextPost"),
       url: shareUrl
     };
 
@@ -262,7 +264,7 @@ export default function RadioPlayer() {
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert("Link copied to clipboard!");
+        alert(t("radio.linkCopied"));
       }
     } catch (err) {
       console.error("Share failed", err);
@@ -277,7 +279,7 @@ export default function RadioPlayer() {
 
     const shareData = {
       title: item.title,
-      text: `Listen to ${item.title} on JesusPOD Radio`,
+      text: t("radio.shareTextPre") + item.title + t("radio.shareTextPost"),
       url: shareUrl
     };
 
@@ -291,7 +293,7 @@ export default function RadioPlayer() {
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert("Link copied to clipboard!");
+        alert(t("radio.linkCopied"));
       }
     } catch (err) {
       console.error("Share failed", err);
@@ -310,7 +312,7 @@ export default function RadioPlayer() {
     <div className="player-page">
       <Header active={active} setActive={setActive} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
       <div className="player-layout" style={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <p>Select a radio station to play</p>
+        <p>{t("radio.selectStation")}</p>
       </div>
       <Footer />
     </div>
@@ -388,7 +390,7 @@ export default function RadioPlayer() {
           {/* CONTROLS */}
           <div className="player-box">
             <h3 className="player-title">{current.title}</h3>
-            <p className="player-desc">Live Music Streaming</p>
+            <p className="player-desc">{t("radio.liveStreaming")}</p>
 
             <div className="player-controls">
 
@@ -468,12 +470,12 @@ export default function RadioPlayer() {
       {/* COUNTRY SECTION - AT BOTTOM OF PAGE */}
       <div className="player-country-section">
         <div className="player-country-header">
-          <h2 className="sub-title">Search For Radio</h2>
+          <h2 className="sub-title">{t("radio.searchTitle")}</h2>
 
           <input
             type="text"
             className="search-input"
-            placeholder="Search country..."
+            placeholder={t("radio.searchCountry")}
             value={countrySearch}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setCountrySearch(e.target.value)

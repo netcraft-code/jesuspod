@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store";
 import { setSelectedCountry } from "../../redux/dataSlice";
+import { useTranslation } from "../../context/LanguageContext";
 import "./style.css";
 
 interface CountryItem {
@@ -17,6 +18,7 @@ interface CountryMenuProps {
 }
 
 export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const countries = useSelector((state: RootState) => state.data.Countries) as CountryItem[];
   const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
@@ -40,7 +42,7 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
             <span className="pill-name">{currentSelection.title}</span>
           </>
         ) : (
-          <span className="pill-name">All Countries</span>
+          <span className="pill-name">{t("header.allCountries")}</span>
         )}
         <span className={`pill-arrow ${isOpen ? "open" : ""}`}>▼</span>
       </div>
@@ -54,7 +56,7 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
               onClick={() => handleCountrySelect(null)}
             >
               <div className="item-left">
-                <span className="dropdown-name">🌍 All Countries</span>
+                <span className="dropdown-name">🌍 {t("header.allCountries")}</span>
               </div>
               <div className={`radio-indicator ${!selectedCountry ? "checked" : ""}`}>
                 {!selectedCountry && <span className="checkmark">✓</span>}

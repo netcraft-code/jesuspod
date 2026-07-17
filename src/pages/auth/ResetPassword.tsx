@@ -4,8 +4,10 @@ import { resetPassword, verifyResetCode } from "../../services/authService";
 import colors from "../../theme/colors";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import usePageTitle from "../../hooks/usePageTitle";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function ResetPassword() {
+    const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const oobCode = searchParams.get("oobCode");
     const [newPassword, setNewPassword] = useState("");
@@ -13,12 +15,12 @@ export default function ResetPassword() {
     const [status, setStatus] = useState<"verifying" | "valid" | "invalid" | "success" | "error">("verifying");
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
-    usePageTitle("Reset-password");
+    usePageTitle(t("auth.resetPasswordTitle"));
 
     useEffect(() => {
         if (!oobCode) {
             setStatus("invalid");
-            setMessage("Invalid or missing reset code.");
+            setMessage(t("auth.invalidResetCode"));
             return;
         }
 
@@ -28,7 +30,7 @@ export default function ResetPassword() {
                 setStatus("valid");
             } catch (err: any) {
                 setStatus("invalid");
-                setMessage("The reset link is invalid or has expired.");
+                setMessage(t("auth.resetLinkExpired"));
             }
         };
 
@@ -38,12 +40,12 @@ export default function ResetPassword() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            alert("Passwords do not match.");
+            alert(t("auth.passwordsDoNotMatchError"));
             return;
         }
 
         if (newPassword.length < 6) {
-            alert("Password must be at least 6 characters.");
+            alert(t("auth.passwordLengthError"));
             return;
         }
 
@@ -51,11 +53,11 @@ export default function ResetPassword() {
             if (oobCode) {
                 await resetPassword(oobCode, newPassword);
                 setStatus("success");
-                setMessage("Your password has been reset successfully! You can now log in with your new password.");
+                setMessage(t("auth.passwordResetSuccessDesc"));
             }
         } catch (err: any) {
             setStatus("error");
-            setMessage("Failed to reset password: " + err.message);
+            setMessage(t("auth.failedToResetPassword") + err.message);
         }
     };
 
@@ -63,22 +65,22 @@ export default function ResetPassword() {
         <div className="center-page" style={{ background: colors.mainBg }}>
             <div className="card" style={{ width: "100%", maxWidth: 420 }}>
                 <h2 style={{ textAlign: "center", marginBottom: 20 }}>
-                    {status === "success" ? "Success!" : "Reset Password"}
+                    {status === "success" ? t("auth.success") : t("auth.resetPasswordTitle")}
                 </h2>
 
                 {status === "verifying" && (
                     <div style={{ textAlign: "center", padding: 20 }}>
                         <div className="spinner" style={{ marginBottom: 10 }}></div>
-                        Verifying reset link...
+                        {t("auth.verifyingResetLink")}
                     </div>
                 )}
 
                 {status === "invalid" && (
                     <div style={{ textAlign: "center", color: colors.red, padding: "20px 0" }}>
                         <FaExclamationTriangle size={50} style={{ marginBottom: 16, opacity: 0.8 }} />
-                        <h3 style={{ marginBottom: 8 }}>Link Expired</h3>
+                        <h3 style={{ marginBottom: 8 }}>{t("auth.linkExpiredTitle")}</h3>
                         <p style={{ color: "#666", fontSize: 14, lineHeight: "1.5" }}>
-                            {message || "This password reset link is invalid or has already been used."}
+                            {message || t("auth.linkExpiredDesc")}
                         </p>
                     </div>
                 )}
@@ -94,7 +96,7 @@ export default function ResetPassword() {
                             onClick={() => navigate("/login")}
                             style={{ background: "#28a745", width: "100%" }}
                         >
-                            Go to Login
+                            {t("auth.goToLoginButton")}
                         </button>
                     </div>
                 )}
@@ -115,7 +117,7 @@ export default function ResetPassword() {
                             </div>
                         )}
                         <p style={{ textAlign: "center", color: "#666", fontSize: 14, marginBottom: 20 }}>
-                            Please enter your new password below.
+                            {t("auth.enterNewPasswordDesc")}
                         </p>
                         <form
                             onSubmit={handleSubmit}
@@ -125,7 +127,7 @@ export default function ResetPassword() {
                                 <FaLock className="icon-left" />
                                 <input
                                     type="password"
-                                    placeholder="New Password"
+                                    placeholder={t("auth.newPasswordPlaceholder")}
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     className="input input-with-icon"
@@ -138,7 +140,7 @@ export default function ResetPassword() {
                                 <FaLock className="icon-left" />
                                 <input
                                     type="password"
-                                    placeholder="Confirm Password"
+                                    placeholder={t("auth.confirmPasswordPlaceholder")}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     className="input input-with-icon"
@@ -152,7 +154,7 @@ export default function ResetPassword() {
                                 type="submit"
                                 style={{ background: colors.red, marginTop: 8 }}
                             >
-                                Update Password
+                                {t("auth.updatePasswordButton")}
                             </button>
                         </form>
                     </>
@@ -177,7 +179,7 @@ export default function ResetPassword() {
                         }}
                     >
                         <FaArrowLeft size={14} />
-                        Back to Login
+                        {t("auth.backToLogin")}
                     </button>
                 )}
             </div>

@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import Tabs from "./Tabs";
 import ProfileButton from "./ProfileButton";
 import CountryMenu from "./CountryMenu";
+import LanguageMenu from "./LanguageMenu";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
+import { useTranslation } from "../../context/LanguageContext";
 
 /** 🔹 Props typing */
 interface HeaderProps {
@@ -29,6 +31,7 @@ export default function Header({
   profileOpen,
   setProfileOpen,
 }: HeaderProps) {
+  const { t } = useTranslation();
   const user = useSelector<RootState, User | null>(
     (state) => state.auth.user
   );
@@ -36,16 +39,18 @@ export default function Header({
   const navigate = useNavigate();
 
   const [countryOpen, setCountryOpen] = useState<boolean>(false);
+  const [languageOpen, setLanguageOpen] = useState<boolean>(false);
 
   const firstLetter =
     user?.displayName?.[0]?.toUpperCase() ||
     user?.email?.[0]?.toUpperCase() ||
     "";
 
-  const overlayActive = profileOpen || countryOpen;
+  const overlayActive = profileOpen || countryOpen || languageOpen;
 
   // REFS for click detection
   const countryRef = useRef<HTMLDivElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
   const profileButtonRef = useRef<HTMLDivElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +60,11 @@ export default function Header({
       // Close Country Menu if open and clicked outside
       if (countryOpen && countryRef.current && !countryRef.current.contains(event.target as Node)) {
         setCountryOpen(false);
+      }
+
+      // Close Language Menu if open and clicked outside
+      if (languageOpen && languageRef.current && !languageRef.current.contains(event.target as Node)) {
+        setLanguageOpen(false);
       }
 
       // Close Profile Menu if open and clicked outside both button and menu
@@ -75,7 +85,7 @@ export default function Header({
       // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [countryOpen, profileOpen, setCountryOpen, setProfileOpen]);
+  }, [countryOpen, languageOpen, profileOpen, setCountryOpen, setLanguageOpen, setProfileOpen]);
 
   return (
     <>
@@ -105,6 +115,10 @@ export default function Header({
         </div>
 
         <div className="header-right">
+          <div ref={languageRef} style={{ position: 'relative' }}>
+            <LanguageMenu isOpen={languageOpen} setIsOpen={setLanguageOpen} />
+          </div>
+
           <div ref={countryRef} style={{ position: 'relative' }}>
             <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
           </div>
@@ -131,7 +145,7 @@ export default function Header({
                 marginLeft: '12px'
               }}
             >
-              Sign In
+              {t("header.signIn")}
             </button>
           )}
         </div>
@@ -145,3 +159,4 @@ export default function Header({
     </>
   );
 }
+

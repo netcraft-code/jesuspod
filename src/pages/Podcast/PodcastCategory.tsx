@@ -7,8 +7,10 @@ import { useState } from "react";
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function PodcastCategory() {
+    const { t } = useTranslation();
     const { state } = useLocation();
     const [searchParams] = useSearchParams();
 
@@ -32,8 +34,8 @@ export default function PodcastCategory() {
     const handleShare = async () => {
         const shareUrl = `${window.location.origin}/podcast-category?category=${encodeURIComponent(category)}`;
         const shareData = {
-            title: `${category} Podcasts`,
-            text: `Check out these ${category} podcasts on JesusPOD!`,
+            title: `${category} ${t("header.podcast")}`,
+            text: `${t("podcastDetail.shareTextPre")}${category}${t("podcastDetail.shareTextPost")}`,
             url: shareUrl,
         };
 
@@ -45,7 +47,7 @@ export default function PodcastCategory() {
                 });
             } else {
                 await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
+                alert(t("podcastHome.linkCopied"));
             }
         } catch (err) {
             console.error("Error sharing:", err);
@@ -70,7 +72,7 @@ export default function PodcastCategory() {
                         title="Share Category"
                     >
                         <img src={images.share} alt="share" />
-                        <span>Share</span>
+                        <span>{t("podcastHome.share")}</span>
                     </button>
                 </div>
 

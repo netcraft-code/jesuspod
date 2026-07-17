@@ -12,8 +12,10 @@ import { toggleMovieSave } from "../../services/dataService";
 import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice";
 import { images } from "../../assets/images";
 import usePageTitle from "../../hooks/usePageTitle";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function MovieDetail() {
+    const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -24,7 +26,7 @@ export default function MovieDetail() {
     const user = useSelector((state: RootState) => state.auth.user);
     const movie = movies.find((m: any) => m.id === id);
 
-    usePageTitle(movie ? movie.name : "Movie Detail");
+    usePageTitle(movie ? movie.name : t("movies.notFound"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -35,8 +37,8 @@ export default function MovieDetail() {
             <div className="main-content">
                 <Header active={active} setActive={setActive} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
                 <div className="movie-detail-container">
-                    <h2>Movie not found</h2>
-                    <button className="btn-secondary" onClick={() => navigate("/movies")}>Back to Movies</button>
+                    <h2>{t("movies.notFound")}</h2>
+                    <button className="btn-secondary" onClick={() => navigate("/movies")}>{t("movies.backToMovies")}</button>
                 </div>
                 <Footer />
             </div>
@@ -57,7 +59,7 @@ export default function MovieDetail() {
 
     const handleToggleSave = async () => {
         if (!user?.uid) {
-            alert("Please login to save movies");
+            alert(t("movies.pleaseLogin"));
             return;
         }
 
@@ -67,7 +69,7 @@ export default function MovieDetail() {
             dispatch(refreshSavedMovies(user.uid) as any);
         } else {
             dispatch(toggleMovieSaveState({ movieId: movie.id, userId: user.uid }));
-            alert("Failed to save movie");
+            alert(t("movies.failedSave"));
         }
     };
 
@@ -83,7 +85,7 @@ export default function MovieDetail() {
             navigator.share(shareData).catch((err) => console.log("Share cancelled", err));
         } else {
             navigator.clipboard.writeText(shareUrl);
-            alert("Link copied to clipboard!");
+            alert(t("movies.linkCopied"));
         }
     };
 
@@ -108,7 +110,7 @@ export default function MovieDetail() {
 
                         <div className="movie-detail-actions">
                             <button className="btn-primary" onClick={handleWatchNow}>
-                                Watch Now
+                                {t("movies.watchNow")}
                             </button>
                             <button className={`btn-secondary ${isSaved ? 'active' : ''}`} onClick={handleToggleSave}>
                                 <svg
@@ -121,11 +123,11 @@ export default function MovieDetail() {
                                 >
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                 </svg>
-                                {isSaved ? "Liked" : "Like"}
+                                {isSaved ? t("movies.liked") : t("movies.like")}
                             </button>
                             <button className="btn-secondary" onClick={handleShare}>
                                 <img src={images.share} alt="share" style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }} />
-                                Share
+                                {t("movies.share")}
                             </button>
                         </div>
                     </div>
@@ -133,9 +135,9 @@ export default function MovieDetail() {
 
                 <div className="recommended-section">
                     <div className="recommended-header">
-                        <h2 className="recommended-title">Recommended Movies</h2>
+                        <h2 className="recommended-title">{t("movies.recommended")}</h2>
                         <button className="view-all-link" onClick={() => navigate("/all-movies", { state: { category: movie.category } })}>
-                            View All
+                            {t("common.viewAll")}
                         </button>
                     </div>
                     <div className="recommended-scroll-wrapper">
@@ -148,7 +150,7 @@ export default function MovieDetail() {
                                     isSaved={item.star?.includes(user?.uid)}
                                     onToggleSave={(i, s) => {
                                         if (!user?.uid) {
-                                            alert("Please login to save movies");
+                                            alert(t("movies.pleaseLogin"));
                                             return;
                                         }
                                         dispatch(toggleMovieSaveState({ movieId: i.id, userId: user.uid }));
