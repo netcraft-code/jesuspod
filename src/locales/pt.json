@@ -187,7 +187,8 @@
     "byCountry": "Por país",
     "pleaseLogin": "Por favor, faça login para salvar canais",
     "failedSave": "Falha ao salvar o canal",
-    "linkCopied": "Link copiado para a área de transferência!"
+    "linkCopied": "Link copiado para a área de transferência!",
+    "allChannels": "Todos os canais"
   },
   "movies": {
     "title": "Assistir a filmes cheios de fé",
@@ -207,7 +208,12 @@
     "liked": "Curtido",
     "recommended": "Filmes recomendados",
     "notFound": "Filme não encontrado",
-    "backToMovies": "Voltar para Filmes"
+    "backToMovies": "Voltar para Filmes",
+    "allMovies": "Todos os filmes",
+    "moviesToLove": "Filmes para amar",
+    "noMoviesFound": "Nenhum filme encontrado.",
+    "shareTextPre": "Assista ",
+    "shareTextPost": " no JesusPOD"
   },
   "books": {
     "title": "Fortaleça sua caminhada com livros",
@@ -227,7 +233,13 @@
     "recommended": "Livros recomendados",
     "notFound": "Livro não encontrado",
     "backToBooks": "Voltar para Livros",
-    "unknownAuthor": "Autor desconhecido"
+    "unknownAuthor": "Autor desconhecido",
+    "allBooks": "Todos os livros",
+    "booksToLove": "Livros para amar",
+    "noBooksFound": "Nenhum livro encontrado.",
+    "searchPlaceholderAll": "Buscar livros por título e autor...",
+    "shareTextPre": "Assista ",
+    "shareTextPost": " no JesusPOD"
   },
   "shorts": {
     "savedTitle": "Shorts Salvos",

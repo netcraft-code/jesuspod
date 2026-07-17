@@ -187,7 +187,8 @@
     "byCountry": "Por país",
     "pleaseLogin": "Por favor inicie sesión para guardar canales",
     "failedSave": "Error al guardar el canal",
-    "linkCopied": "¡Enlace copiado al portapapeles!"
+    "linkCopied": "¡Enlace copiado al portapapeles!",
+    "allChannels": "Todos los canales"
   },
   "movies": {
     "title": "Ver películas llenas de fe",

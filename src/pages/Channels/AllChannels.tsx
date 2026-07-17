@@ -13,7 +13,10 @@ import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 
+import { useTranslation } from "../../context/LanguageContext";
+
 export default function AllChannels() {
+    const { t } = useTranslation();
     const [search, setSearch] = useState<string>("");
     const [tvChannels, setTvChannels] = useState<any[]>([]);
     const [active, setActive] = useState<string>("Channels");
@@ -89,7 +92,7 @@ export default function AllChannels() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save channels");
+            alert(t("channels.pleaseLogin"));
             return;
         }
 
@@ -103,7 +106,7 @@ export default function AllChannels() {
         } else {
             // Revert if failed (optional, but good practice)
             dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
-            alert("Failed to save channel");
+            alert(t("channels.failedSave"));
         }
     };
 
@@ -122,7 +125,7 @@ export default function AllChannels() {
         } else {
             // Fallback
             navigator.clipboard.writeText(shareLink);
-            alert("Channel link copied to clipboard!");
+            alert(t("channels.linkCopied"));
         }
     };
 
@@ -142,10 +145,10 @@ export default function AllChannels() {
                 <div className="top-bar">
                     <h2 className="sub-title">
                         {filterState === 'saved'
-                            ? "Channels to Love"
+                            ? t("channels.channelsToLove")
                             : filterState === 'tv'
-                                ? "TV Channels"
-                                : (countryFromState ? `All Channels (${countryFromState})` : "All Channels")
+                                ? t("channels.tvChannels")
+                                : (countryFromState ? `${t("channels.allChannels")} (${countryFromState})` : t("channels.allChannels"))
                         }
                     </h2>
                     <button
@@ -154,14 +157,14 @@ export default function AllChannels() {
                             const shareUrl = window.location.href;
                             if (navigator.share) {
                                 navigator.share({
-                                    title: "JesusPOD Channels",
+                                    title: `JesusPOD ${t("header.channels")}`,
                                     url: shareUrl,
                                 }).then(() => {
                                     logEvent(analytics, "Share_AllChannels", { filter: filterState || countryFromState || "all" });
                                 });
                             } else {
                                 navigator.clipboard.writeText(shareUrl);
-                                alert("Link copied to clipboard!");
+                                alert(t("channels.linkCopied"));
                             }
                         }}
                         style={{ marginLeft: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
@@ -172,7 +175,7 @@ export default function AllChannels() {
                     <input
                         className="search-input"
                         type="text"
-                        placeholder="Search channels..."
+                        placeholder={t("channels.searchPlaceholder")}
                         value={search}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setSearch(e.target.value)

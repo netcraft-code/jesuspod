@@ -9,13 +9,14 @@ import { trackMoviePlay } from "../../services/movieAnalytics";
 import { useSelector, useDispatch } from "react-redux";
 import { refreshSavedMovies, toggleMovieSaveState } from "../../redux/dataSlice";
 import { toggleMovieSave } from "../../services/dataService";
+import { useTranslation } from "../../context/LanguageContext";
 import type { RootState } from "../../redux/store";
-
 import usePageTitle from "../../hooks/usePageTitle";
 import { images } from "../../assets/images";
 
 export default function AllMovies() {
-    usePageTitle("All Movies");
+    const { t } = useTranslation();
+    usePageTitle(t("movies.allMovies"));
     const [search, setSearch] = useState<string>("");
     const [active, setActive] = useState<string>("Movies");
     const [profileOpen, setProfileOpen] = useState<boolean>(false);
@@ -68,7 +69,7 @@ export default function AllMovies() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save movies");
+            alert(t("movies.pleaseLogin"));
             return;
         }
 
@@ -82,22 +83,22 @@ export default function AllMovies() {
         } else {
             // Revert if failed
             dispatch(toggleMovieSaveState({ movieId: item.id, userId: user.uid }));
-            alert("Failed to save movie");
+            alert(t("movies.failedSave"));
         }
     };
 
     const handleShare = async () => {
         let shareUrl = window.location.origin + "/all-movies";
-        let title = "All Movies";
+        let title = t("movies.allMovies");
 
         if (activeCategory && filterState !== 'saved') {
             shareUrl += `?category=${encodeURIComponent(activeCategory)}`;
-            title = `${activeCategory} Movies`;
+            title = `${activeCategory} ${t("movies.allMovies")}`;
         }
 
         const shareData = {
             title: title,
-            text: `Check out ${title} on JesusPOD`,
+            text: `${t("movies.shareTextPre")}${title}${t("movies.shareTextPost")}`,
             url: shareUrl,
         };
 
@@ -106,7 +107,7 @@ export default function AllMovies() {
                 await navigator.share(shareData);
             } else {
                 await navigator.clipboard.writeText(shareUrl);
-                alert("Link copied to clipboard!");
+                alert(t("movies.linkCopied"));
             }
         } catch (err) {
             console.error("Error sharing:", err);
@@ -129,8 +130,8 @@ export default function AllMovies() {
                 <div className="top-bar">
                     <h2 className="sub-title">
                         {filterState === 'saved'
-                            ? "Movies to Love"
-                            : (activeCategory ? `${activeCategory} Movies` : "All Movies")
+                            ? t("movies.moviesToLove")
+                            : (activeCategory ? `${activeCategory} ${t("movies.allMovies")}` : t("movies.allMovies"))
                         }
                     </h2>
 
@@ -140,7 +141,7 @@ export default function AllMovies() {
                             <button
                                 className="share-btn"
                                 onClick={handleShare}
-                                title="Share this category"
+                                title={t("movies.share")}
                                 style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                             >
                                 <img src={images.share} alt="share" style={{ width: 24, height: 24 }} />
@@ -149,7 +150,7 @@ export default function AllMovies() {
                         <input
                             className="search-input"
                             type="text"
-                            placeholder="Search movies..."
+                            placeholder={t("movies.searchPlaceholder")}
                             value={search}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 setSearch(e.target.value)
@@ -174,7 +175,7 @@ export default function AllMovies() {
                             </div>
                         ))
                     ) : (
-                        <div style={{ color: '#aaa', marginTop: 20 }}>No movies found.</div>
+                        <div style={{ color: '#aaa', marginTop: 20 }}>{t("movies.noMoviesFound")}</div>
                     )}
                 </div>
             </main>

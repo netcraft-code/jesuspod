@@ -15,7 +15,10 @@ import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 
+import { useTranslation } from "../../context/LanguageContext";
+
 export default function AllBooks() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -81,7 +84,7 @@ export default function AllBooks() {
 
     const handleToggleSave = async (item: any, isSaved: boolean) => {
         if (!user?.uid) {
-            alert("Please login to save books");
+            alert(t("books.pleaseLogin"));
             return;
         }
 
@@ -92,7 +95,7 @@ export default function AllBooks() {
             dispatch(refreshSavedBooks(user.uid) as any);
         } else {
             dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
-            alert("Failed to save book");
+            alert(t("books.failedSave"));
         }
     };
 
@@ -111,8 +114,8 @@ export default function AllBooks() {
                 <div className="top-bar">
                     <h2 className="sub-title">
                         {filterState === 'saved'
-                            ? "Books to Love"
-                            : (countryFromState ? `${countryFromState} Books` : (activeCategory ? `${activeCategory} Books` : "All Books"))
+                            ? t("books.booksToLove")
+                            : (countryFromState ? `${countryFromState} ${t("books.allBooks")}` : (activeCategory ? `${activeCategory} ${t("books.allBooks")}` : t("books.allBooks")))
                         }
                     </h2>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -122,14 +125,14 @@ export default function AllBooks() {
                                 const shareUrl = window.location.href;
                                 if (navigator.share) {
                                     navigator.share({
-                                        title: "JesusPOD Books",
+                                        title: `JesusPOD ${t("header.books") || t("books.allBooks")}`,
                                         url: shareUrl,
                                     }).then(() => {
                                         logEvent(analytics, "Share_AllBooks", { filter: filterState || activeCategory || "all" });
                                     });
                                 } else {
                                     navigator.clipboard.writeText(shareUrl);
-                                    alert("Link copied to clipboard!");
+                                    alert(t("books.linkCopied"));
                                 }
                             }}
                             style={{
@@ -158,7 +161,7 @@ export default function AllBooks() {
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Search books by title and author..."
+                            placeholder={t("books.searchPlaceholderAll")}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

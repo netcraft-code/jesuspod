@@ -187,7 +187,8 @@
     "byCountry": "By Country",
     "pleaseLogin": "Please login to save channels",
     "failedSave": "Failed to save channel",
-    "linkCopied": "Link copied to clipboard!"
+    "linkCopied": "Link copied to clipboard!",
+    "allChannels": "All Channels"
   },
   "movies": {
     "title": "Watch Faith-Filled Movies",

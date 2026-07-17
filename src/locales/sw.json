@@ -187,7 +187,8 @@
     "byCountry": "Kwa Nchi",
     "pleaseLogin": "Tafadhali ingia ili kuhifadhi vitu",
     "failedSave": "Imeshindwa kuhifadhi kituo",
-    "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili!"
+    "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili!",
+    "allChannels": "Vituo Vyote"
   },
   "movies": {
     "title": "Tazama Filamu zenye Imani",
@@ -207,7 +208,12 @@
     "liked": "Imependwa",
     "recommended": "Filamu Zinazopendekezwa",
     "notFound": "Filamu haikupatikana",
-    "backToMovies": "Rudi kwenye Filamu"
+    "backToMovies": "Rudi kwenye Filamu",
+    "allMovies": "Filamu Zote",
+    "moviesToLove": "Filamu za Kupenda",
+    "noMoviesFound": "Hakuna filamu zilizopatikana.",
+    "shareTextPre": "Tazama ",
+    "shareTextPost": " kwenye JesusPOD"
   },
   "books": {
     "title": "Imarisha Kutembea Kwako na Vitabu",
@@ -227,7 +233,13 @@
     "recommended": "Vitabu Vinavyopendekezwa",
     "notFound": "Kitabu hakikupatikana",
     "backToBooks": "Rudi kwenye Vitabu",
-    "unknownAuthor": "Mwandishi Asiyejulikana"
+    "unknownAuthor": "Mwandishi Asiyejulikana",
+    "allBooks": "Vitabu Vyote",
+    "booksToLove": "Vitabu vya Kupenda",
+    "noBooksFound": "Hakuna vitabu vilivyopatikana.",
+    "searchPlaceholderAll": "Tafuta vitabu kwa kichwa na mwandishi...",
+    "shareTextPre": "Tazama ",
+    "shareTextPost": " kwenye JesusPOD"
   },
   "shorts": {
     "savedTitle": "Video Fupi Zilizohifadhiwa",
