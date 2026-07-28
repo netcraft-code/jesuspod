@@ -5,6 +5,7 @@ import { fetchInitialData } from "./redux/dataSlice";
 import AllRoutes from "./routes/AllRoutes";
 import type { AppDispatch, RootState } from "./redux/store";
 import ScrollToTop from "./components/ScrollToTop";
+import AIChat from "./components/AIChat/AIChat";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,6 +29,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <AllRoutes />
+      <AIChat />
     </>
   );
 

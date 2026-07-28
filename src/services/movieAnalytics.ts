@@ -101,7 +101,7 @@ export const getMostWatchedMovies = async (
             .map((doc) => doc.data().movieId)
             .filter((id) => id !== undefined && id !== null && id !== "");
 
-        console.log("🎬 Movie IDs:", movieIds);
+        // console.log("🎬 Movie IDs:", movieIds);
 
         if (movieIds.length === 0) {
             console.log("⚠️ No analytics data found");
