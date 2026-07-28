@@ -25,6 +25,6 @@ export const googleProvider = new GoogleAuthProvider();
 // AI Chat Search Backend Endpoint (Local and Production URL config)
 export const AI_CHAT_API_URL = window.location.hostname === "localhost"
   ? "http://127.0.0.1:5001/new-jesuspod/us-central1/chatWithAI"
-  : "https://chatwithai-53ifvdv3fa-uc.a.run.app";
+  : "https://us-central1-new-jesuspod.cloudfunctions.net/chatWithAI";
 
 export default app;
