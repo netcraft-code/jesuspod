@@ -1,5 +1,5 @@
-import React from "react";
-import { FaBookmark, FaTv, FaBook, FaFilm, FaMicrophone } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaBookmark, FaTv, FaBook, FaFilm, FaMicrophone, FaGlobe } from "react-icons/fa";
 
 import defaultAvatar from "../../assets/default-avatar.svg";
 import { images } from "../../assets/images";
@@ -34,7 +34,15 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, language, setLanguage } = useTranslation();
+    const [langOpen, setLangOpen] = useState(false);
+
+    const languages = [
+        { code: "en", label: "English", flag: "🇺🇸" },
+        { code: "es", label: "Español", flag: "🇪🇸" },
+        { code: "pt", label: "Português", flag: "🇵🇹" },
+        { code: "sw", label: "Swahili", flag: "🇹🇿" }
+    ] as const;
 
     const handleLogout = () => {
         if (window.confirm(t("profileMenu.logoutConfirm"))) {
@@ -120,6 +128,41 @@ export default function ProfileMenu({ user }: ProfileMenuProps) {
                     arrow
                     onClick={() => navigate("/downloads")}
                 />
+
+                <MenuItem
+                    icon={<FaGlobe size={20} color="#ff4444" />}
+                    label={`${t("profileMenu.language") || "Language"}: ${languages.find(l => l.code === language)?.label || "English"}`}
+                    arrow={!langOpen}
+                    onClick={() => setLangOpen(!langOpen)}
+                />
+
+                {langOpen && (
+                    <div className="language-submenu" style={{ paddingLeft: "45px", display: "flex", flexDirection: "column", gap: "6px", marginTop: "-4px", marginBottom: "8px" }}>
+                        {languages.map((lang) => (
+                            <div
+                                key={lang.code}
+                                onClick={() => setLanguage(lang.code as any)}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    padding: "6px 12px",
+                                    borderRadius: "6px",
+                                    cursor: "pointer",
+                                    backgroundColor: language === lang.code ? "rgba(255, 68, 68, 0.1)" : "transparent",
+                                    color: language === lang.code ? "#ff4444" : "#aaa",
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <span style={{ fontSize: "16px" }}>{lang.flag}</span>
+                                    <span style={{ fontSize: "14px" }}>{lang.label}</span>
+                                </div>
+                                {language === lang.code && <span style={{ color: "#ff4444", fontWeight: "bold" }}>✓</span>}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <MenuItem
                     icon={<img src={share} alt="share" width={25} />}
