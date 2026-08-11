@@ -107,6 +107,27 @@ export default function Header({
         </div>
 
         <div className="header-right">
+          {/* AI SEARCH TRIGGER */}
+          <div 
+            onClick={() => window.dispatchEvent(new Event("open-ai-chat"))}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "#1b1b1f",
+              padding: "10px 14px",
+              borderRadius: "14px",
+              cursor: "pointer",
+              transition: "0.2s",
+              border: "1px solid rgba(255, 43, 43, 0.2)"
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = "#252529")}
+            onMouseOut={(e) => (e.currentTarget.style.background = "#1b1b1f")}
+          >
+            <span style={{ fontSize: "16px" }}>🔍</span>
+            <span style={{ color: "white", fontSize: "14px", fontWeight: 500 }}>AI Search</span>
+          </div>
+
           <div ref={countryRef} style={{ position: 'relative' }}>
             <CountryMenu isOpen={countryOpen} setIsOpen={setCountryOpen} />
           </div>

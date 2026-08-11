@@ -72,6 +72,7 @@ export default function ChannelCard({
                     src={item.imageUrl || item.thumbnail}
                     alt={item.title}
                     className="channel-img"
+                    loading="lazy"
                 />
 
                 {/* SAVE ICON */}

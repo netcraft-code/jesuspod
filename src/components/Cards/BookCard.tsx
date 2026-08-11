@@ -58,6 +58,7 @@ export default function BookCard({
                         src={item.imageUrl || item.thumbnail}
                         alt={item.title}
                         className="book-img"
+                        loading="lazy"
                     />
                 </div>
             </div>

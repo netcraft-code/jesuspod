@@ -74,6 +74,7 @@ export default function Card({
           src={item.imageUrl || item.thumbnail}
           alt={item.title}
           className="radio-img"
+          loading="lazy"
         />
 
         {/* OVERLAYS */}

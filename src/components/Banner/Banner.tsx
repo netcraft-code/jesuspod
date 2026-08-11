@@ -81,6 +81,7 @@ useEffect(() => {
                             src={item.imageUrl}
                             alt="Banner"
                             className="banner-image"
+                            fetchPriority={index === 0 ? "high" : "auto"}
                             onError={(e: any) => e.target.style.display = 'none'}
                         />
                         <div className="banner-gradient"></div>

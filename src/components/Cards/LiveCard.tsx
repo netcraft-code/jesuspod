@@ -14,6 +14,7 @@ export default function LiveCard({ title, imageUrl, onClick }: LiveCardProps) {
                     src={imageUrl}
                     alt={title}
                     className="live-card-home-image"
+                    loading="lazy"
                 />
                 <div className="live-badge-home">
                     <span className="live-dot-home"></span>

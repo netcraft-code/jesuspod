@@ -9,7 +9,7 @@ import "./AIChat.css";
 interface MatchItem {
   id: string;
   title: string;
-  category: "podcast" | "radio" | "channel" | "short";
+  category: "podcast" | "radio" | "channel" | "short" | "movie" | "book";
   image?: string;
   url?: string;
 }
@@ -36,13 +36,20 @@ export default function AIChat() {
     {
       id: "welcome",
       sender: "bot",
-      text: "Hello! I am your JesusPod AI Assistant. How can I help you find content today? You can search naturally for podcasts, radio stations, channels, and short videos.",
+      text: "Hello! I am your JesusPod AI Assistant. How can I help you find content today? You can search naturally for podcasts, radio stations, channels, short videos, movies, and books.",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+
+  // Listen for open-ai-chat event from Header
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true);
+    window.addEventListener("open-ai-chat", handleOpenChat);
+    return () => window.removeEventListener("open-ai-chat", handleOpenChat);
+  }, []);
 
   // Scroll to bottom of chat
   useEffect(() => {
@@ -107,6 +114,10 @@ export default function AIChat() {
       }
     } else if (item.category === "short") {
       navigate(`/shorts`);
+    } else if (item.category === "movie") {
+      navigate(`/movie/${item.id}`);
+    } else if (item.category === "book") {
+      navigate(`/book/${item.id}`);
     }
   };
 

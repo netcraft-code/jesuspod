@@ -34,6 +34,7 @@ export default function CircleImageCard({
         <img
           src={imageUrl || localImage}
           alt={title}
+          loading="lazy"
         />
       </div>
       <p className="country-title">{title}</p>

@@ -313,6 +313,8 @@
 .ai-match-category.radio { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
 .ai-match-category.channel { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 .ai-match-category.short { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.ai-match-category.movie { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.ai-match-category.book { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
 
 .ai-match-title {
   margin: 0;
