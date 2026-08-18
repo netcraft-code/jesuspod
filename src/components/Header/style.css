@@ -307,23 +307,18 @@
 
 /* RESPONSIVE TWEAKS */
 @media (max-width: 768px) {
-  .logo {
-    display: none;
-    /* Often hidden on very small screens if tabs take priority, or make tabs slide under */
+  .header-left {
+    display: none !important;
   }
 
   .main-header {
-    padding: 10px;
-    gap: 10px;
+    padding: 10px 16px;
+    gap: 12px;
   }
 
   .header-middle {
-    margin-left: 0;
-  }
-
-  .country-selected span {
-    display: none;
-    /* hide text keep flag maybe? */
+    flex: 0 0 auto !important;
+    margin-left: 0 !important;
   }
 }
 
@@ -699,5 +694,54 @@
     background: #0d0d0d;
     border: 1px solid #333;
     padding: 10px;
+  }
+}
+
+/* ------------------------
+   AI SEARCH BUTTON & RESPONSIVE TWEAKS
+-------------------------*/
+.ai-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1b1b1f;
+  padding: 10px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid rgba(255, 43, 43, 0.2);
+}
+
+.ai-search-btn:hover {
+  background: #252529;
+}
+
+.ai-search-text {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .header-middle {
+    flex: 0 0 auto !important;
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .ai-search-text {
+    display: none !important;
+  }
+  .ai-search-btn {
+    padding: 8px 10px !important;
+    gap: 0 !important;
+  }
+  .pill-name {
+    display: none !important;
+  }
+  .country-pill {
+    padding: 8px 10px !important;
+    gap: 6px !important;
   }
 }

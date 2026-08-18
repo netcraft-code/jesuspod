@@ -37,13 +37,13 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
     <div className="country-wrapper">
       <div className="country-pill" onClick={() => setIsOpen(!isOpen)}>
         {currentSelection ? (
-          <>
-            <img src={currentSelection.imageUrl} alt={currentSelection.title} className="pill-flag" />
-            <span className="pill-name">{currentSelection.title}</span>
-          </>
+          <img src={currentSelection.imageUrl} alt={currentSelection.title} className="pill-flag" />
         ) : (
-          <span className="pill-name">{t("header.allCountries")}</span>
+          <span className="pill-globe">🌍</span>
         )}
+        <span className="pill-name">
+          {currentSelection ? currentSelection.title : t("header.allCountries")}
+        </span>
         <span className={`pill-arrow ${isOpen ? "open" : ""}`}>▼</span>
       </div>
 
