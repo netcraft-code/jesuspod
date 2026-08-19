@@ -28,6 +28,11 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
     ? countries.find(c => c.title.toLowerCase() === selectedCountry.toLowerCase())
     : null;
 
+  // Sort countries alphabetically by their title
+  const sortedCountries = [...(countries || [])].sort((a, b) =>
+    a.title.localeCompare(b.title)
+  );
+
   const handleCountrySelect = (countryTitle: string | null) => {
     dispatch(setSelectedCountry(countryTitle));
     setIsOpen(false);
@@ -63,8 +68,8 @@ export default function CountryMenu({ isOpen, setIsOpen }: CountryMenuProps) {
               </div>
             </div>
 
-            {/* Individual Countries */}
-            {countries.map((country) => (
+            {/* Individual Countries sorted alphabetically */}
+            {sortedCountries.map((country) => (
               <div
                 key={country.id}
                 className={`dropdown-item ${selectedCountry?.toLowerCase() === country.title.toLowerCase() ? "active" : ""}`}
