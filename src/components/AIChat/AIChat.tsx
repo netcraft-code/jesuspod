@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { IoChatbubbleEllipsesOutline, IoCloseOutline, IoSend } from "react-icons/io5";
+import { IoChatbubbleEllipses, IoCloseOutline, IoSend } from "react-icons/io5";
 import { FiChevronRight, FiCpu } from "react-icons/fi";
 import { AI_CHAT_API_URL } from "../../services/firebase";
 import "./AIChat.css";
@@ -129,7 +129,7 @@ export default function AIChat() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle AI Search Chat"
       >
-        {isOpen ? <IoCloseOutline size={28} /> : <IoChatbubbleEllipsesOutline size={26} />}
+        {isOpen ? <IoCloseOutline size={28} /> : <IoChatbubbleEllipses size={26} />}
       </button>
 
       {/* Chat Window */}
