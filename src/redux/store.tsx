@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "data"], // ✅ ab dono persist honge
+  whitelist: ["auth"], // Only persist auth session in localStorage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

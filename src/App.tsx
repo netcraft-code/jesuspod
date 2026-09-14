@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserFromToken } from "./redux/authSlice";
-import { fetchInitialData } from "./redux/dataSlice";
+import {
+  fetchInitialData,
+  refreshSavedBooks,
+  refreshSavedChannels,
+  refreshSavedMovies,
+  refreshSavedRadios,
+  refreshSavedPodcasts
+} from "./redux/dataSlice";
 import AllRoutes from "./routes/AllRoutes";
 import type { AppDispatch, RootState } from "./redux/store";
 import ScrollToTop from "./components/ScrollToTop";
@@ -17,13 +24,20 @@ export default function App() {
     if (token) {
       dispatch(fetchUserFromToken());  // Refresh par user load
     }
+    // Fetch initial data ONCE on app mount
+    dispatch(fetchInitialData() as any);
   }, []);
 
-  // Fetch data when user is loaded or on app mount
+  // When user is loaded, fetch only user's saved items in background without re-fetching all collections
   useEffect(() => {
-    const userId = user?.uid;
-    dispatch(fetchInitialData(userId) as any);
-  }, [user]);
+    if (user?.uid) {
+      dispatch(refreshSavedBooks(user.uid) as any);
+      dispatch(refreshSavedChannels(user.uid) as any);
+      dispatch(refreshSavedMovies(user.uid) as any);
+      dispatch(refreshSavedRadios(user.uid) as any);
+      dispatch(refreshSavedPodcasts(user.uid) as any);
+    }
+  }, [user?.uid]);
 
   return (
     <>

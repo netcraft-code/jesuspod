@@ -61,23 +61,25 @@ export default function Home() {
   const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
 
   useEffect(() => {
-    // If we've already shown it, force false immediately (safety)
+    // If we've already shown it, force false immediately
     if (hasShownSplash) {
       setShowSplash(false);
       return;
     }
 
-    // If data is done loading, hide splash
+    // If data is done loading, hide splash immediately
     if (!isLoading) {
-      // Small buffer to ensure smooth transition (500ms minimum or immediate)
-      // User asked for "as soon as data is fetched", but instant might be jarring if data is cached.
-      // We will use a safe minimal delay to prevent flicker if isLoading toggles fast.
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-        hasShownSplash = true; // Mark as shown for navigation
-      }, 800);
-      return () => clearTimeout(timer);
+      setShowSplash(false);
+      hasShownSplash = true;
     }
+
+    // Safety timer: Never block screen for more than 1.5s
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      hasShownSplash = true;
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [isLoading]);
 
 
@@ -191,7 +193,7 @@ export default function Home() {
       <main className="radio-container">
 
         {/* ================= BANNER ================= */}
-       <Banner bannerType="home" />
+        <Banner bannerType="home" />
 
         <PageInfo
           title={t("home.title")}

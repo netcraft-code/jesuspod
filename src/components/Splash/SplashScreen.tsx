@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./SplashScreen.css";
 
 interface SplashScreenProps {
@@ -7,7 +7,7 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ isVisible }: SplashScreenProps) {
     const [loadingText, setLoadingText] = useState("Initializing...");
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState(25);
 
     const messages = [
         "Establishing Secure Connection...",
@@ -22,18 +22,18 @@ export default function SplashScreen({ isVisible }: SplashScreenProps) {
         const msgInterval = setInterval(() => {
             msgIndex = (msgIndex + 1) % messages.length;
             setLoadingText(messages[msgIndex]);
-        }, 1100);
+        }, 600);
 
-        // Progress counter (0 to 100 over 4.5s approx)
+        // Smooth fast progress counter (0 to 100 in ~700ms)
         const progressInterval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(progressInterval);
                     return 100;
                 }
-                return prev + 1;
+                return prev + 15;
             });
-        }, 40); // 40ms * 100 = 4000ms
+        }, 70);
 
         return () => {
             clearInterval(msgInterval);
@@ -41,16 +41,16 @@ export default function SplashScreen({ isVisible }: SplashScreenProps) {
         };
     }, []);
 
-    if (!isVisible) return null;
-
-    // Generate some stars for background
-    const stars = Array.from({ length: 50 }).map((_, i) => (
+    // Generate static stars once (avoid continuous re-computation)
+    const stars = useMemo(() => Array.from({ length: 40 }).map((_, i) => (
         <div key={i} className="star" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 2}s`
+            left: `${(i * 19) % 100}%`,
+            top: `${(i * 23) % 100}%`,
+            animationDelay: `${(i % 5) * 0.4}s`
         }}></div>
-    ));
+    )), []);
+
+    if (!isVisible) return null;
 
     const strokeDashoffset = 440 - (440 * progress) / 100;
 
