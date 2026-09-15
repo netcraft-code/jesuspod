@@ -278,36 +278,11 @@ export default function PodcastDetail() {
     return () => window.removeEventListener("scroll", handleWindowScroll);
   }, [loading, hasMore]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const episodesRef = useRef(episodes);
+  episodesRef.current = episodes;
 
-    const onTimeUpdate = () => {
-      if (!audioRef.current) return;
-      setCurrentTime(audioRef.current.currentTime);
-    };
-
-    const onLoaded = () => setDuration(audio.duration || 0);
-    const onEnded = () => setIsPlaying(false);
-    const onWaiting = () => setIsAudioLoading(true);
-    const onPlaying = () => setIsAudioLoading(false);
-
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onLoaded);
-    audio.addEventListener("ended", onEnded);
-    audio.addEventListener("waiting", onWaiting);
-    audio.addEventListener("playing", onPlaying);
-    audio.addEventListener("canplay", onPlaying);
-
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onLoaded);
-      audio.removeEventListener("ended", onEnded);
-      audio.removeEventListener("waiting", onWaiting);
-      audio.removeEventListener("playing", onPlaying);
-      audio.removeEventListener("canplay", onPlaying);
-    };
-  }, [currentEpisode]);
+  const currentEpisodeRef = useRef(currentEpisode);
+  currentEpisodeRef.current = currentEpisode;
 
   const playEpisode = (episode: any) => {
     const audioUrl =
@@ -316,7 +291,7 @@ export default function PodcastDetail() {
 
     if (!audioUrl) return;
 
-    if (currentEpisode?.guid?.[0]?._ === episode?.guid?.[0]?._) {
+    if (currentEpisodeRef.current?.guid?.[0]?._ === episode?.guid?.[0]?._) {
       if (isPlaying) {
         audioRef.current?.pause();
         setIsPlaying(false);
@@ -346,6 +321,65 @@ export default function PodcastDetail() {
       }
     }, 0);
   };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTimeUpdate = () => {
+      if (!audioRef.current) return;
+      setCurrentTime(audioRef.current.currentTime);
+    };
+
+    const onLoaded = () => setDuration(audio.duration || 0);
+
+    const onEnded = () => {
+      const list = episodesRef.current;
+      const current = currentEpisodeRef.current;
+
+      if (list && list.length > 0 && current) {
+        const currentIndex = list.findIndex((item) => {
+          if (current?.guid?.[0]?._ && item?.guid?.[0]?._) {
+            return item.guid[0]._ === current.guid[0]._;
+          }
+          const itemUrl =
+            item?.enclosure?.[0]?.$?.url || item?.["media:content"]?.[0]?.$?.url;
+          const currUrl =
+            current?.enclosure?.[0]?.$?.url ||
+            current?.["media:content"]?.[0]?.$?.url;
+          if (currUrl && itemUrl) {
+            return itemUrl === currUrl;
+          }
+          return item?.title?.[0] === current?.title?.[0];
+        });
+
+        if (currentIndex !== -1 && currentIndex + 1 < list.length) {
+          playEpisode(list[currentIndex + 1]);
+          return;
+        }
+      }
+      setIsPlaying(false);
+    };
+
+    const onWaiting = () => setIsAudioLoading(true);
+    const onPlaying = () => setIsAudioLoading(false);
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("loadedmetadata", onLoaded);
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("waiting", onWaiting);
+    audio.addEventListener("playing", onPlaying);
+    audio.addEventListener("canplay", onPlaying);
+
+    return () => {
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("loadedmetadata", onLoaded);
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("waiting", onWaiting);
+      audio.removeEventListener("playing", onPlaying);
+      audio.removeEventListener("canplay", onPlaying);
+    };
+  }, [currentEpisode]);
 
   const checkSubscriptionStatus = async (overrideId?: string) => {
     const channelIdToQuery = overrideId || fetchedChannel?.id || channel?._id || channel?.id;

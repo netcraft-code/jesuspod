@@ -124,8 +124,8 @@ export default function AIChat() {
   return (
     <div className="ai-chat-container">
       {/* Floating Toggle Button */}
-      <button 
-        className="ai-chat-toggle" 
+      <button
+        className="ai-chat-toggle"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle AI Search Chat"
       >
@@ -155,6 +155,22 @@ export default function AIChat() {
 
           {/* Messages Area */}
           <div className="ai-chat-messages">
+            {/* Suggestions on top (matching mobile app ListHeaderComponent) */}
+            {messages.length === 1 && !isLoading && (
+              <div className="ai-chat-suggestions">
+                <p>Try asking:</p>
+                {SUGGESTIONS.map((suggestion, idx) => (
+                  <button 
+                    key={idx}
+                    className="ai-suggestion-chip"
+                    onClick={() => handleSend(suggestion)}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {messages.map((msg) => (
               <div key={msg.id} className={`ai-message ${msg.sender}`}>
                 <div className="ai-message-bubble">
@@ -164,16 +180,16 @@ export default function AIChat() {
                   {msg.matches && msg.matches.length > 0 && (
                     <div className="ai-matches-container">
                       {msg.matches.map((match) => (
-                        <div 
+                        <div
                           key={match.id}
                           className="ai-match-card"
                           onClick={() => handleMatchClick(match)}
                           style={{ cursor: 'pointer' }}
                         >
                           {match.image && (
-                            <img 
-                              src={match.image} 
-                              alt={match.title} 
+                            <img
+                              src={match.image}
+                              alt={match.title}
                               className="ai-match-thumb"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1438243142297-b996b24c0aa1?q=80&w=200&auto=format&fit=crop";
@@ -198,22 +214,6 @@ export default function AIChat() {
               </div>
             ))}
 
-            {/* Suggestions on welcome screen */}
-            {messages.length === 1 && !isLoading && (
-              <div className="ai-chat-suggestions">
-                <p>Try asking:</p>
-                {SUGGESTIONS.map((suggestion, idx) => (
-                  <button 
-                    key={idx}
-                    className="ai-suggestion-chip"
-                    onClick={() => handleSend(suggestion)}
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            )}
-
             {/* Loading Indicator */}
             {isLoading && (
               <div className="ai-chat-loading">
@@ -236,8 +236,8 @@ export default function AIChat() {
               onKeyDown={(e) => e.key === "Enter" && handleSend(messageText)}
               disabled={isLoading}
             />
-            <button 
-              className="ai-chat-send-btn" 
+            <button
+              className="ai-chat-send-btn"
               onClick={() => handleSend(messageText)}
               disabled={!messageText.trim() || isLoading}
             >
