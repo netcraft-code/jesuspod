@@ -16,7 +16,7 @@
     "craftedBy": "Crafted By"
   },
   "home": {
-    "title": "All Your Favorite Christian Content in One Place",
+    "title": "Free Christian Podcasts, Movies, Radio and Books",
     "description": "Are you looking for a way to grow your faith without searching the whole internet? JesusPod brings together the world’s best Christian resources into a single app designed for your spiritual growth. Instead of hopping between different sites, you can find everything you need to stay encouraged and connected to the Word in one secure place.",
     "popularTrending": "Popular & Trending",
     "live": "Live",
@@ -27,7 +27,7 @@
     "books": "Books"
   },
   "radio": {
-    "title": "Listen to Global Radio Stations",
+    "title": "Free Christian Radio Online",
     "description": "Tune into 24/7 Christian radio stations from around the world. Beyond music, these stations feature talk shows and live question-and-answer sessions all rooted in the Gospel. By organizing these stations by country, JesusPod allows you to hear biblical perspectives from different regions, ensuring you have constant access to the Word no matter where you are.",
     "share": "Share",
     "searchPlaceholder": "Search for radios...",
@@ -162,7 +162,7 @@
     "noChannelSelected": "No live channel selected"
   },
   "podcastHome": {
-    "title": "Subscribe to Christian Podcasts",
+    "title": "Free Christian Podcasts",
     "description": "Follow your favorite podcasters and get daily updates across ten specific categories. Whether you are looking for Bible study, family advice, or leadership training, you can subscribe to specific shows to stay consistent with your growth. Our library includes both well-known ministries and new voices to ensure your feed is always filled with the Word.",
     "share": "Share",
     "searchPlaceholder": "Search podcasts...",
@@ -177,7 +177,7 @@
     "mySavedPodcasts": "My Saved Podcasts"
   },
   "channels": {
-    "title": "Follow Christian YouTube Channels",
+    "title": "YouTube Channels from Around the World",
     "description": "Access a curated selection of Christian YouTube channels directly within the app. We have organized these channels by country, giving you easy access to international ministries and diverse teaching styles without having to search for them yourself. This variety allows you to explore how the Gospel is being preached across different cultures and find the content that best helps you grow.",
     "share": "Share",
     "searchPlaceholder": "Search for channels...",
@@ -192,7 +192,7 @@
     "allChannels": "All Channels"
   },
   "movies": {
-    "title": "Watch Faith-Filled Movies",
+    "title": "Watch Free Christian Movies",
     "description": "Enjoy a wide selection of films curated to strengthen your walk with Christ. Our movie library includes various genres from dramas and thrillers to Westerns and children’s programs, all centered on the Gospel. Whether you are looking for a classic story or a new release, every film is chosen to provide a safe and inspiring viewing experience for your entire household.",
     "share": "Share",
     "searchPlaceholder": "Search for movies...",
@@ -217,7 +217,7 @@
     "shareTextPost": " on JesusPOD"
   },
   "books": {
-    "title": "Strengthen Your Walk with Books",
+    "title": "Read Free Christian Books",
     "description": "Deepen your understanding of God through a library of books covering every area of life. With ten focused categories; including Prayer, Revival, History, and Missions, you have the tools to build your faith in any season. These books are selected to give you biblical depth and practical wisdom for your daily journey with Christ.",
     "share": "Share",
     "searchPlaceholder": "Search for books...",

@@ -9,307 +9,334 @@ import HomeSection from "../../components/HomeSection/HomeSection";
 import usePageTitle from "../../hooks/usePageTitle";
 import CircleImageCard from "../../components/Cards/CircleImageCard";
 import "../Radio/Radio.css"; // Reuse Radio CSS for grid
-import { toggleChannelSave, fetchTelevisionChannels } from "../../services/dataService";
-import { refreshSavedChannels, toggleChannelSaveState } from "../../redux/dataSlice";
+import {
+  toggleChannelSave,
+  fetchTelevisionChannels,
+} from "../../services/dataService";
+import {
+  refreshSavedChannels,
+  toggleChannelSaveState,
+} from "../../redux/dataSlice";
 import { trackChannelPlay } from "../../services/channelAnalytics";
 import { images } from "../../assets/images";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 import PageInfo from "../../components/UI/PageInfo";
 import { useTranslation } from "../../context/LanguageContext";
+import { Helmet } from "react-helmet-async";
 
 export default function ChannelListing() {
-    const { t } = useTranslation();
-    usePageTitle(t("header.channels"));
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const dispatch = useDispatch();
-    const user = useSelector((state: RootState) => state.auth.user);
+  const { t } = useTranslation();
+  usePageTitle(t("header.channels"));
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
 
-    const [active, setActive] = useState("Channels");
-    const [profileOpen, setProfileOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [tvChannels, setTvChannels] = useState<any[]>([]);
+  const [active, setActive] = useState("Channels");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tvChannels, setTvChannels] = useState<any[]>([]);
 
-    const countries = useSelector((state: RootState) => state.data.Countries);
-    // Sort countries alphabetically
-    const sortedCountries = [...(countries || [])].sort((a: any, b: any) =>
-        (a.title || "").localeCompare(b.title || "")
-    );
-    const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
-    const loading = useSelector((state: RootState) => state.data.loading);
+  const countries = useSelector((state: RootState) => state.data.Countries);
+  // Sort countries alphabetically
+  const sortedCountries = [...(countries || [])].sort((a: any, b: any) =>
+    (a.title || "").localeCompare(b.title || ""),
+  );
+  const selectedCountry = useSelector(
+    (state: RootState) => state.data.selectedCountry,
+  );
+  const loading = useSelector((state: RootState) => state.data.loading);
 
-    // Analytics data
-    const allMostWatchedChannels = useSelector((state: RootState) => state.data.mostWatchedChannels) || [];
-    const savedChannels = useSelector((state: RootState) => state.data.savedChannels) || [];
+  // Analytics data
+  const allMostWatchedChannels =
+    useSelector((state: RootState) => state.data.mostWatchedChannels) || [];
+  const savedChannels =
+    useSelector((state: RootState) => state.data.savedChannels) || [];
 
-    // Filter Most Watched based on selected country
-    const mostWatchedChannels = selectedCountry
-        ? allMostWatchedChannels.filter((c: any) => c.type?.toLowerCase() === selectedCountry.toLowerCase())
-        : allMostWatchedChannels;
+  // Filter Most Watched based on selected country
+  const mostWatchedChannels = selectedCountry
+    ? allMostWatchedChannels.filter(
+        (c: any) => c.type?.toLowerCase() === selectedCountry.toLowerCase(),
+      )
+    : allMostWatchedChannels;
 
-    // --- GLOBAL SEARCH FILTERING ---
-    const filteredMostWatched = mostWatchedChannels.filter((item: any) =>
-        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // --- GLOBAL SEARCH FILTERING ---
+  const filteredMostWatched = mostWatchedChannels.filter((item: any) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
+  const filteredSaved = savedChannels.filter((item: any) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
+  const filteredTvChannels = tvChannels.filter((item: any) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
-    const filteredSaved = savedChannels.filter((item: any) =>
-        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // Fetch TV Channels on mount and handle URL params
+  useState(() => {
+    const getTvData = async () => {
+      const data = await fetchTelevisionChannels();
+      setTvChannels(data);
+    };
+    getTvData();
 
-    const filteredTvChannels = tvChannels.filter((item: any) =>
-        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Handle country query param
+    const countryParam = searchParams.get("country");
+    if (countryParam) {
+      // Scroll to country section or just filter?
+      // Since the logic currently is to filter on "See All" page, maybe we should redirect there or filter locally?
+      // The requirement says "related country wise data show krega".
+      // In RadioList it navigates to radio-player. Here let's navigate to AllChannels with filter.
+      navigate("/all-channels", { state: { country: countryParam } });
+    }
+  });
 
-    // Fetch TV Channels on mount and handle URL params
-    useState(() => {
-        const getTvData = async () => {
-            const data = await fetchTelevisionChannels();
-            setTvChannels(data);
-        };
-        getTvData();
+  // Handlers
+  // Handlers
+  const handleCardClick = (item: any) => {
+    // Track play
+    trackChannelPlay(item.id, item.title, item.type || "Unknown");
 
-        // Handle country query param
-        const countryParam = searchParams.get("country");
-        if (countryParam) {
-            // Scroll to country section or just filter?
-            // Since the logic currently is to filter on "See All" page, maybe we should redirect there or filter locally?
-            // The requirement says "related country wise data show krega". 
-            // In RadioList it navigates to radio-player. Here let's navigate to AllChannels with filter.
-            navigate("/all-channels", { state: { country: countryParam } });
-        }
-    });
+    if (item.channelLink) {
+      window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
+    } else if (item.url) {
+      window.open(item.url, "_blank");
+    }
+  };
 
-    // Handlers
-    // Handlers
-    const handleCardClick = (item: any) => {
-        // Track play
-        trackChannelPlay(item.id, item.title, item.type || "Unknown");
+  const handleCountrySelect = (countryName: string | null) => {
+    if (countryName) {
+      navigate(`/all-channels?country=${encodeURIComponent(countryName)}`);
+    } else {
+      navigate("/all-channels?country=Global");
+    }
+  };
 
-        if (item.channelLink) {
-            window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
-        } else if (item.url) {
-            window.open(item.url, "_blank");
-        }
+  const handleToggleSave = async (item: any, isSaved: boolean) => {
+    if (!user?.uid) {
+      alert(t("channels.pleaseLogin"));
+      return;
+    }
+
+    // Optimistic Update
+    dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
+
+    const success = await toggleChannelSave(item.id, user.uid, isSaved);
+    if (success) {
+      // Refresh saved channels list (background sync)
+      dispatch(refreshSavedChannels(user.uid) as any);
+    } else {
+      // Revert if failed (optional, but good practice)
+      dispatch(
+        toggleChannelSaveState({ channelId: item.id, userId: user.uid }),
+      );
+      alert(t("channels.failedSave"));
+    }
+  };
+
+  const handleShare = async (item: any) => {
+    const shareLink = item.url || item.channelLink || window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: item.title,
+          text: `Check out ${item.title} on JesusPOD`,
+          url: shareLink,
+        });
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+    } else {
+      // Fallback
+      navigator.clipboard.writeText(shareLink);
+      alert(t("channels.linkCopied"));
+    }
+  };
+
+  const handleCountryShare = async (countryTitle: string) => {
+    // CHANGED: Point to /all-channels directly
+    const shareUrl = `${window.location.origin}/all-channels?country=${encodeURIComponent(countryTitle)}`;
+    const shareData = {
+      title: `${countryTitle} ${t("header.channels")}`,
+      text: `Check out ${countryTitle} ${t("header.channels")} on JesusPOD`,
+      url: shareUrl,
     };
 
-    const handleCountrySelect = (countryName: string | null) => {
-        if (countryName) {
-            navigate(`/all-channels?country=${encodeURIComponent(countryName)}`);
-        } else {
-            navigate("/all-channels?country=Global");
-        }
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      alert(t("channels.linkCopied"));
+    }
+  };
+
+  const handleSharePage = async () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: `JesusPOD ${t("header.channels")}`,
+      text: `Watch live TV ${t("header.channels")} on JesusPOD!`,
+      url: shareUrl,
     };
 
-    const handleToggleSave = async (item: any, isSaved: boolean) => {
-        if (!user?.uid) {
-            alert(t("channels.pleaseLogin"));
-            return;
-        }
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        logEvent(analytics, "Share_ChannelHome", {});
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert(t("channels.linkCopied"));
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
 
-        // Optimistic Update
-        dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
+  return (
+    <div className="home-wrapper">
+      <Helmet>
+        <title>Christian YouTube Channels by Country | JesusPOD</title>
 
-        const success = await toggleChannelSave(item.id, user.uid, isSaved);
-        if (success) {
-            // Refresh saved channels list (background sync)
-            dispatch(refreshSavedChannels(user.uid) as any);
-        } else {
-            // Revert if failed (optional, but good practice)
-            dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
-            alert(t("channels.failedSave"));
-        }
-    };
+        <meta
+          name="description"
+          content="Explore free Christian YouTube channels by country. Discover international ministries, Bible teaching and worship in one place on JesusPOD."
+        />
+      </Helmet>
 
-    const handleShare = async (item: any) => {
-        const shareLink = item.url || item.channelLink || window.location.href;
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: item.title,
-                    text: `Check out ${item.title} on JesusPOD`,
-                    url: shareLink,
-                });
-            } catch (err) {
-                console.error("Share failed:", err);
-            }
-        } else {
-            // Fallback
-            navigator.clipboard.writeText(shareLink);
-            alert(t("channels.linkCopied"));
-        }
-    };
+      <Header
+        active={active}
+        setActive={setActive}
+        profileOpen={profileOpen}
+        setProfileOpen={setProfileOpen}
+      />
 
-    const handleCountryShare = async (countryTitle: string) => {
-        // CHANGED: Point to /all-channels directly
-        const shareUrl = `${window.location.origin}/all-channels?country=${encodeURIComponent(countryTitle)}`;
-        const shareData = {
-            title: `${countryTitle} ${t("header.channels")}`,
-            text: `Check out ${countryTitle} ${t("header.channels")} on JesusPOD`,
-            url: shareUrl,
-        };
+      <main
+        className="radio-container"
+        style={{ minHeight: "80vh", paddingBottom: 40 }}
+      >
+        {/* Header Row: Page Info + Search/Share */}
+        <div
+          className="page-header-row"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ flex: "1", minWidth: "300px" }}>
+            <PageInfo
+              title={t("channels.title")}
+              description={t("channels.description")}
+            />
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              className="share-btn"
+              onClick={handleSharePage}
+              title="Share Channels Page"
+            >
+              <img src={images.share} alt="share" />
+              <span>{t("channels.share")}</span>
+            </button>
+            <input
+              type="text"
+              className="search-input"
+              placeholder={t("channels.searchPlaceholder")}
+              value={searchTerm}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchTerm(e.target.value)
+              }
+              style={{ width: "100%", maxWidth: "300px" }}
+            />
+          </div>
+        </div>
 
-        if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                console.error("Share failed:", err);
-            }
-        } else {
-            navigator.clipboard.writeText(shareUrl);
-            alert(t("channels.linkCopied"));
-        }
-    };
+        {/* 1. Television Channels (Moved to Top) */}
+        {filteredTvChannels.length > 0 && (
+          <div style={{ marginBottom: "40px" }}>
+            <HomeSection
+              title={t("channels.tvChannels")}
+              data={filteredTvChannels}
+              loading={loading}
+              cardVariant="channel"
+              onViewAll={() => navigate("/all-channels?filter=tv")}
+              onCardClick={handleCardClick}
+              user={user}
+              showFav={false}
+              showShare={true}
+              onShare={handleShare}
+            />
+          </div>
+        )}
 
-    const handleSharePage = async () => {
-        const shareUrl = window.location.href;
-        const shareData = {
-            title: `JesusPOD ${t("header.channels")}`,
-            text: `Watch live TV ${t("header.channels")} on JesusPOD!`,
-            url: shareUrl,
-        };
+        {/* 1. Most Watched Channels */}
+        {filteredMostWatched.length > 0 && (
+          <div style={{ marginBottom: "40px" }}>
+            <HomeSection
+              title={t("channels.mostWatched")}
+              data={filteredMostWatched}
+              loading={loading}
+              cardVariant="channel"
+              onViewAll={() => navigate("/all-channels")}
+              onCardClick={handleCardClick}
+              onToggleSave={handleToggleSave}
+              user={user}
+            />
+          </div>
+        )}
 
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-                logEvent(analytics, "Share_ChannelHome", {});
-            } else {
-                await navigator.clipboard.writeText(shareUrl);
-                alert(t("channels.linkCopied"));
-            }
-        } catch (err) {
-            console.error("Error sharing:", err);
-        }
-    };
+        {/* 3. Channels to Love */}
+        {filteredSaved.length > 0 && (
+          <HomeSection
+            title={t("channels.channelsToLove")}
+            data={filteredSaved}
+            loading={loading}
+            cardVariant="channel"
+            onViewAll={() => navigate("/all-channels?filter=saved")}
+            onCardClick={handleCardClick}
+            onToggleSave={handleToggleSave}
+            user={user}
+            emptyMessage={t("channels.emptyMessage")}
+          />
+        )}
 
-    return (
-        <div className="home-wrapper">
-            <Header
-                active={active}
-                setActive={setActive}
-                profileOpen={profileOpen}
-                setProfileOpen={setProfileOpen}
+        {/* 4. Search for Channels (Country Grid) */}
+        <div className="search-radio-section" style={{ marginTop: 40 }}>
+          <div className="search-radio-header">
+            <h2 className="sub-title">{t("channels.byCountry")}</h2>
+            {/* Removed Local Country Search */}
+          </div>
+
+          {/* Country Grid */}
+          <div className="country-grid">
+            {/* Global Button */}
+            <CircleImageCard
+              title="Global"
+              imageUrl="https://flagcdn.com/w80/un.png" // Placeholder or from assets
+              onClick={() => handleCountrySelect(null)}
+              onShare={() => handleCountryShare("Global")}
             />
 
-            <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
-
-                {/* Header Row: Page Info + Search/Share */}
-                <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
-                    <div style={{ flex: '1', minWidth: '300px' }}>
-                        <PageInfo
-                            title={t("channels.title")}
-                            description={t("channels.description")}
-                        />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <button
-                            className="share-btn"
-                            onClick={handleSharePage}
-                            title="Share Channels Page"
-                        >
-                            <img src={images.share} alt="share" />
-                            <span>{t("channels.share")}</span>
-                        </button>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder={t("channels.searchPlaceholder")}
-                            value={searchTerm}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setSearchTerm(e.target.value)
-                            }
-                            style={{ width: '100%', maxWidth: '300px' }}
-                        />
-                    </div>
-                </div>
-
-                {/* 1. Television Channels (Moved to Top) */}
-                {filteredTvChannels.length > 0 && (
-                    <div style={{ marginBottom: '40px' }}>
-                        <HomeSection
-                            title={t("channels.tvChannels")}
-                            data={filteredTvChannels}
-                            loading={loading}
-                            cardVariant="channel"
-                            onViewAll={() => navigate("/all-channels?filter=tv")}
-                            onCardClick={handleCardClick}
-                            user={user}
-                            showFav={false}
-                            showShare={true}
-                            onShare={handleShare}
-                        />
-                    </div>
-                )}
-
-                {/* 1. Most Watched Channels */}
-                {filteredMostWatched.length > 0 && (
-                    <div style={{ marginBottom: '40px' }}>
-                        <HomeSection
-                            title={t("channels.mostWatched")}
-                            data={filteredMostWatched}
-                            loading={loading}
-                            cardVariant="channel"
-                            onViewAll={() => navigate("/all-channels")}
-                            onCardClick={handleCardClick}
-                            onToggleSave={handleToggleSave}
-                            user={user}
-                        />
-                    </div>
-                )}
-
-
-
-
-
-                {/* 3. Channels to Love */}
-                {filteredSaved.length > 0 && (
-                    <HomeSection
-                        title={t("channels.channelsToLove")}
-                        data={filteredSaved}
-                        loading={loading}
-                        cardVariant="channel"
-                        onViewAll={() => navigate("/all-channels?filter=saved")}
-                        onCardClick={handleCardClick}
-                        onToggleSave={handleToggleSave}
-                        user={user}
-                        emptyMessage={t("channels.emptyMessage")}
-                    />
-                )}
-
-
-                {/* 4. Search for Channels (Country Grid) */}
-                <div className="search-radio-section" style={{ marginTop: 40 }}>
-                    <div className="search-radio-header">
-                        <h2 className="sub-title">{t("channels.byCountry")}</h2>
-                        {/* Removed Local Country Search */}
-                    </div>
-
-                    {/* Country Grid */}
-                    <div className="country-grid">
-                        {/* Global Button */}
-                        <CircleImageCard
-                            title="Global"
-                            imageUrl="https://flagcdn.com/w80/un.png" // Placeholder or from assets
-                            onClick={() => handleCountrySelect(null)}
-                            onShare={() => handleCountryShare("Global")}
-                        />
-
-                        {sortedCountries.map((country: any) => (
-                            <CircleImageCard
-                                key={country.id}
-                                title={country.title === "Espanol" ? "Español" : country.title}
-                                imageUrl={country.imageUrl}
-                                onClick={() => handleCountrySelect(country.title)}
-                                onShare={() => handleCountryShare(country.title)}
-                            />
-                        ))}
-                    </div>
-                </div>
-
-            </main>
-            <Footer />
+            {sortedCountries.map((country: any) => (
+              <CircleImageCard
+                key={country.id}
+                title={country.title === "Espanol" ? "Español" : country.title}
+                imageUrl={country.imageUrl}
+                onClick={() => handleCountrySelect(country.title)}
+                onShare={() => handleCountryShare(country.title)}
+              />
+            ))}
+          </div>
         </div>
-    );
+      </main>
+      <Footer />
+    </div>
+  );
 }

@@ -14,6 +14,7 @@ import { logEvent } from "firebase/analytics";
 import { analytics } from "../../services/firebase";
 import PageInfo from "../../components/UI/PageInfo";
 import { useTranslation } from "../../context/LanguageContext";
+import { Helmet } from "react-helmet-async";
 
 /** 🔹 Radio item type */
 interface RadioItem {
@@ -38,34 +39,38 @@ export default function RadioList() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  usePageTitle("Radio")
+  usePageTitle("Radio");
   // ✅ Use filtered radio selector
   const radio = useSelector(getFilteredRadio);
 
   // ✅ Get ALL radios (unfiltered) for country navigation
   const allRadios = useSelector((state: RootState) => state.data.radio);
 
-  const selectedCountry = useSelector((state: RootState) => state.data.selectedCountry);
+  const selectedCountry = useSelector(
+    (state: RootState) => state.data.selectedCountry,
+  );
 
-  const countries = [...useSelector<RootState, CountryItem[]>(
-    (state) => state.data.Countries
-  )].sort((a, b) => a.title.localeCompare(b.title));
+  const countries = [
+    ...useSelector<RootState, CountryItem[]>((state) => state.data.Countries),
+  ].sort((a, b) => a.title.localeCompare(b.title));
 
   // Analytics data from Redux with fallback to empty arrays
-  const allMostListenedRadios = useSelector((state: RootState) => state.data.mostListenedRadios) || [];
+  const allMostListenedRadios =
+    useSelector((state: RootState) => state.data.mostListenedRadios) || [];
   // const topUSARadios = useSelector((state: RootState) => state.data.topUSARadios) || [];
-  const savedRadios = useSelector((state: RootState) => state.data.savedRadios) || [];
+  const savedRadios =
+    useSelector((state: RootState) => state.data.savedRadios) || [];
 
   // Filter ONLY Most Listener Radio based on selected country
   const mostListenedRadios = selectedCountry
-    ? allMostListenedRadios.filter((r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase())
+    ? allMostListenedRadios.filter(
+        (r: any) => r.type?.toLowerCase() === selectedCountry.toLowerCase(),
+      )
     : allMostListenedRadios;
-
-
 
   // --- GLOBAL SEARCH FILTERING ---
   const filteredMostListened = mostListenedRadios.filter((item: RadioItem) =>
-    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // const filteredTopUSA = topUSARadios.filter((item: RadioItem) =>
@@ -73,7 +78,7 @@ export default function RadioList() {
   // );
 
   const filteredSaved = savedRadios.filter((item: RadioItem) =>
-    item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // const filteredCountries = countries.filter((c) =>
@@ -128,13 +133,13 @@ export default function RadioList() {
     // console.log("📻 Radio type/country:", item.type);
 
     const sameTypeList = radio.filter(
-      (r: RadioItem) => r.type?.toLowerCase() === item.type?.toLowerCase()
+      (r: RadioItem) => r.type?.toLowerCase() === item.type?.toLowerCase(),
     );
 
     // console.log("📋 Filtered playlist:", sameTypeList.length, "radios");
     // console.log("📋 Playlist items:", sameTypeList);
 
-    navigate(`/radio-player?type=${encodeURIComponent(item.type || 'Radio')}`, {
+    navigate(`/radio-player?type=${encodeURIComponent(item.type || "Radio")}`, {
       state: {
         current: item,
         list: sameTypeList,
@@ -145,6 +150,15 @@ export default function RadioList() {
 
   return (
     <div className="radio-page">
+      <Helmet>
+        <title>Christian Radio Online | Listen Free on JesusPOD</title>
+
+        <meta
+          name="description"
+          content="Listen to Christian radio stations from around the world for free. Explore worship, teaching and live broadcasts by station or country."
+        />
+      </Helmet>
+
       {/* HEADER */}
       <Header
         active={active}
@@ -153,17 +167,35 @@ export default function RadioList() {
         setProfileOpen={setProfileOpen}
       />
 
-      <main className="radio-container" style={{ minHeight: '80vh', paddingBottom: 40 }}>
-
+      <main
+        className="radio-container"
+        style={{ minHeight: "80vh", paddingBottom: 40 }}
+      >
         {/* Header Row: Page Info + Search/Share */}
-        <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1', minWidth: '300px' }}>
+        <div
+          className="page-header-row"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ flex: "1", minWidth: "300px" }}>
             <PageInfo
               title={t("radio.title")}
               description={t("radio.description")}
             />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginTop: "20px",
+            }}
+          >
             <button
               className="share-btn"
               onClick={handleShare}
@@ -180,11 +212,10 @@ export default function RadioList() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchTerm(e.target.value)
               }
-              style={{ width: '100%', maxWidth: '300px' }}
+              style={{ width: "100%", maxWidth: "300px" }}
             />
           </div>
         </div>
-
 
         {/* ================= MOST LISTENER ================= */}
         {filteredMostListened.length > 0 && (
@@ -207,7 +238,6 @@ export default function RadioList() {
         )}
 
         <div className="search-radio-section">
-
           <div className="search-radio-header">
             <h2 className="sub-title">{t("radio.byCountry")}</h2>
             {/* Removed Local Search Input */}
@@ -222,7 +252,7 @@ export default function RadioList() {
                 onClick={() => {
                   // Country title ko type ke basis pe filter - USE UNFILTERED DATA
                   const sameTypeList = allRadios.filter(
-                    (r) => r.type?.toLowerCase() === item.title.toLowerCase()
+                    (r) => r.type?.toLowerCase() === item.title.toLowerCase(),
                   );
 
                   // Pehla matching radio ko current banaye
@@ -230,22 +260,22 @@ export default function RadioList() {
                   if (!currentRadio) return; // agar koi match nahi
 
                   // Navigate to radio-player
-                  navigate(`/radio-player?type=${encodeURIComponent(item.title)}`, {
-                    state: {
-                      current: currentRadio,
-                      list: sameTypeList,
-                      type: item.title, // country title as type
+                  navigate(
+                    `/radio-player?type=${encodeURIComponent(item.title)}`,
+                    {
+                      state: {
+                        current: currentRadio,
+                        list: sameTypeList,
+                        type: item.title, // country title as type
+                      },
                     },
-                  });
+                  );
                 }}
                 onShare={() => handleShareCountry(item)}
               />
             ))}
           </div>
-
-
         </div>
-
       </main>
       <Footer />
     </div>

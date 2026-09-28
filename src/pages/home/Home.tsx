@@ -8,18 +8,29 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "../../context/LanguageContext";
 import type { RootState } from "../../redux/store";
 import {
-  getFilteredRadio, getFilteredChannels, toggleBookSaveState, refreshSavedBooks,
-  toggleChannelSaveState, refreshSavedChannels, toggleMovieSaveState, refreshSavedMovies
+  getFilteredRadio,
+  getFilteredChannels,
+  toggleBookSaveState,
+  refreshSavedBooks,
+  toggleChannelSaveState,
+  refreshSavedChannels,
+  toggleMovieSaveState,
+  refreshSavedMovies,
 } from "../../redux/dataSlice";
 import HomeSection from "../../components/HomeSection/HomeSection";
 import LiveSection from "../../components/LiveSection/LiveSection";
 import MoviesSection from "../../components/MoviesSection/MoviesSection";
 import Banner from "../../components/Banner/Banner";
-import { toggleBookSave, toggleChannelSave, toggleMovieSave } from "../../services/dataService";
+import {
+  toggleBookSave,
+  toggleChannelSave,
+  toggleMovieSave,
+} from "../../services/dataService";
 import SplashScreen from "../../components/Splash/SplashScreen"; // Import Splash
 import PageInfo from "../../components/UI/PageInfo";
 import { trackMoviePlay } from "../../services/movieAnalytics";
 import { trackBookRead } from "../../services/booksAnalytics";
+import { Helmet } from "react-helmet-async";
 
 /** 🔹 Radio / Podcast common type */
 interface MediaItem {
@@ -34,7 +45,6 @@ interface BookItem extends MediaItem {
   url?: string;
 }
 
-// Track if splash has been shown in this session (resets on refresh)
 // Track if splash has been shown in this session (resets on refresh)
 let hasShownSplash = false;
 
@@ -55,10 +65,11 @@ export default function Home() {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth?.user);
   const isLoading = useSelector<RootState, boolean>(
-    (state) => state.data.loading
+    (state) => state.data.loading,
   );
   const podcasts = useSelector((state: RootState) => state.data.podcasts) || [];
-  const mostListenedPodcasts = useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
+  const mostListenedPodcasts =
+    useSelector((state: RootState) => state.data.mostListenedPodcasts) || [];
 
   useEffect(() => {
     // If we've already shown it, force false immediately
@@ -82,7 +93,6 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [isLoading]);
 
-
   const navigate = useNavigate();
   usePageTitle(t("header.all"));
 
@@ -90,14 +100,9 @@ export default function Home() {
   const radioList = useSelector(getFilteredRadio);
 
   /** BOOKS */
-  const books = useSelector<RootState, BookItem[]>(
-    (state) => state.data.books
-  );
+  const books = useSelector<RootState, BookItem[]>((state) => state.data.books);
 
   /** PODCAST */
-
-
-
   // const channels = useSelector<RootState, MediaItem[]>(
   //   (state) => state.data.channels
   // );
@@ -106,19 +111,15 @@ export default function Home() {
 
   /** LOADING */
 
-
   /** LIVE VIDEOS */
   const liveVideos = useSelector<RootState, any[]>(
-    (state) => state.data.liveVideos
+    (state) => state.data.liveVideos,
   );
 
   /** MOVIES */
-  const movies = useSelector<RootState, any[]>(
-    (state) => state.data.movies
-  );
+  const movies = useSelector<RootState, any[]>((state) => state.data.movies);
 
   /** ANALYTICS DATA (Popular & Trending) */
-
   const handleBookClick = (book: BookItem) => {
     trackBookRead(book.id, book.title, book.type || "Unknown");
     navigate(`/book/${book.id}`);
@@ -132,15 +133,20 @@ export default function Home() {
 
     // console.log("item", item);
 
-    if (item.entityType === 'Book' || (!item.entityType && item.author)) {
+    if (item.entityType === "Book" || (!item.entityType && item.author)) {
       dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
       await toggleBookSave(item.id, user.uid, isSaved);
       dispatch(refreshSavedBooks(user.uid) as any);
       return;
     }
 
-    if (item.entityType === 'Channel' || (!item.entityType && (item.channelLink || item.subscribers))) {
-      dispatch(toggleChannelSaveState({ channelId: item.id, userId: user.uid }));
+    if (
+      item.entityType === "Channel" ||
+      (!item.entityType && (item.channelLink || item.subscribers))
+    ) {
+      dispatch(
+        toggleChannelSaveState({ channelId: item.id, userId: user.uid }),
+      );
       await toggleChannelSave(item.id, user.uid, isSaved);
       dispatch(refreshSavedChannels(user.uid) as any);
       return;
@@ -148,13 +154,12 @@ export default function Home() {
 
     // Check for Movie specific properties (movieUrl) or explicit type
     // Avoid checking just 'category' as Books also have categories
-    if (item.entityType === 'Movie' || (!item.entityType && item.movieUrl)) {
+    if (item.entityType === "Movie" || (!item.entityType && item.movieUrl)) {
       dispatch(toggleMovieSaveState({ movieId: item.id, userId: user.uid }));
       await toggleMovieSave(item.id, user.uid, isSaved);
       dispatch(refreshSavedMovies(user.uid) as any);
       return;
     }
-
 
     dispatch(toggleBookSaveState({ bookId: item.id, userId: user.uid }));
 
@@ -177,10 +182,19 @@ export default function Home() {
     // }
   };
 
-
   return (
     <div className="home-wrapper">
+      <Helmet>
+        <title>JesusPOD | Free Christian Podcasts, Movies, Radio & Books</title>
+
+        <meta
+          name="description"
+          content="Explore free Christian podcasts, full movies, radio stations, books and video channels from around the world in one place on JesusPOD."
+        />
+      </Helmet>
+
       <SplashScreen isVisible={showSplash} />
+
       <Header
         active={active}
         setActive={setActive}
@@ -188,17 +202,11 @@ export default function Home() {
         setProfileOpen={setProfileOpen}
       />
 
-
-
       <main className="radio-container">
-
         {/* ================= BANNER ================= */}
         <Banner bannerType="home" />
 
-        <PageInfo
-          title={t("home.title")}
-          description={t("home.description")}
-        />
+        <PageInfo title={t("home.title")} description={t("home.description")} />
 
         {/* ================= POPULAR & TRENDING ================= */}
         {mostListenedPodcasts.length > 0 && (
@@ -214,6 +222,7 @@ export default function Home() {
             }
           />
         )}
+
         {/* ================= LIVE ================= */}
         <LiveSection
           title={t("home.live")}
@@ -230,12 +239,10 @@ export default function Home() {
                 },
               });
             } else {
-              console.warn('No video ID or URL found for channel:', item);
+              console.warn("No video ID or URL found for channel:", item);
             }
           }}
         />
-
-
 
         {/* ================= RADIO ================= */}
         <HomeSection
@@ -246,7 +253,7 @@ export default function Home() {
           onCardClick={(item) => {
             const sameTypeList = radioList.filter(
               (r: MediaItem) =>
-                r.type?.toLowerCase() === item.type?.toLowerCase()
+                r.type?.toLowerCase() === item.type?.toLowerCase(),
             );
 
             navigate("/radio-player", {
@@ -258,7 +265,6 @@ export default function Home() {
             });
           }}
         />
-
 
         {/* ================= MOVIES ================= */}
         <MoviesSection
@@ -274,11 +280,12 @@ export default function Home() {
           user={user}
         />
 
-
         {/* ================= PODCAST ================= */}
         <HomeSection
           title={t("home.podcast")}
-          data={podcasts.slice(20, 100).map((p: any) => ({ ...p, entityType: 'Podcast' }))}
+          data={podcasts
+            .slice(20, 100)
+            .map((p: any) => ({ ...p, entityType: "Podcast" }))}
           loading={isLoading}
           onViewAll={() => navigate("/podcast")}
           onCardClick={(item) =>
@@ -286,8 +293,8 @@ export default function Home() {
               state: { channel: item },
             })
           }
-        // onToggleSave={handleToggleSave}
-        // user={user}
+          // onToggleSave={handleToggleSave}
+          // user={user}
         />
 
         {/* ================= VIDEO CHANNELS ================= */}
@@ -299,7 +306,10 @@ export default function Home() {
           onViewAll={() => navigate("/channel-listing")}
           onCardClick={(item) => {
             if (item.channelLink) {
-              window.open(`https://youtube.com/channel/${item.channelLink}`, "_blank");
+              window.open(
+                `https://youtube.com/channel/${item.channelLink}`,
+                "_blank",
+              );
             } else if (item.url) {
               window.open(item.url, "_blank");
             } else {
@@ -309,7 +319,6 @@ export default function Home() {
           onToggleSave={handleToggleSave}
           user={user}
         />
-
 
         {/* ================= BOOKS ================= */}
         <HomeSection
@@ -322,11 +331,9 @@ export default function Home() {
           user={user}
           onToggleSave={handleToggleSave}
         />
-
-
       </main>
+
       <Footer />
     </div>
   );
 }
-
