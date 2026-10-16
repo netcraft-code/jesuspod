@@ -14,6 +14,7 @@ import type { ShortItemProps } from "../../types/shorts";
 import { formatCount } from "../../services/shortsService";
 import "./ShortItem.css";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "../../context/LanguageContext";
 
 export default function ShortItem({
   item,
@@ -161,15 +162,16 @@ export default function ShortItem({
   };
 
   const videoId = getVideoId();
+  const { t } = useTranslation();
 
   return (
     <div className="short-item">
       <Helmet>
-        <title>Short Christian Videos on JesusPOD</title>
+        {/* <title>Short Christian Videos on JesusPOD</title> */}
 
         <meta
           name="description"
-          content="Watch free short Christian videos on Acts2. Explore brief moments of teaching, worship and encouragement on JesusPOD."
+          content={t("shorts.meta_description")}
         />
       </Helmet>
 

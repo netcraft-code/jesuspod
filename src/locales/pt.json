@@ -1,22 +1,34 @@
 {
   "header": {
-    "all": "Todos",
+    "all": "JesusPOD | Podcasts, filmes, rádio e livros cristãos gratuitos",
     "live": "Ao Vivo",
-    "podcast": "Podcasts",
+    "podcast": "Podcasts Cristãos | Ouça de graça no JesusPOD",
+    "radio": "Rádio Cristã Online | Ouça de graça no JesusPOD",
+    "channels": "Canais cristãos no YouTube por país | JesusPOD",
+    "movies": "Filmes Cristãos Gratuitos | Assista a Filmes Completos no JesusPOD",
+    "books": "Livros Cristãos Gratuitos | Leia no JesusPOD",
+    "acts2": "Atos 2 | Vídeos Cristãos Curtos no Jesus POD",
+    "signIn": "Entrar",
+    "allCountries": "Todos os países"
+  },
+  "header_btn": {
+    "all": "All",
+    "live": "Ao vivo",
+    "podcast": "Podcast",
     "radio": "Rádio",
     "channels": "Canais",
     "movies": "Filmes",
     "books": "Livros",
-    "acts2": "Atos2",
-    "signIn": "Entrar",
-    "allCountries": "Todos os países"
+    "acts2": "Atos 2",
+    "signIn": "Sign In",
+    "allCountries": "All Countries"
   },
   "footer": {
     "allRightsReserved": "Todos os Direitos Reservados",
     "craftedBy": "Criado Por"
   },
   "home": {
-    "title": "Todo o Seu Conteúdo Cristão Favorito em um Só Lugar",
+    "title": "Podcasts, filmes, rádio e livros cristãos gratuitos",
     "description": "Você está procurando uma maneira de crescer em sua fé sem precisar pesquisar em toda a internet? O JesusPod reúne os melhores recursos cristãos do mundo em um único aplicativo projetado para o seu crescimento espiritual. Em vez de pular de site em site, você pode encontrar tudo o que precisa para se manter encorajado e conectado à Palavra em um só lugar seguro.",
     "popularTrending": "Popular & Tendências",
     "live": "Ao Vivo",
@@ -24,10 +36,11 @@
     "movies": "Filmes",
     "podcast": "Podcasts",
     "videoChannels": "Canais de Vídeo",
-    "books": "Livros"
+    "books": "Livros",
+    "meta_description":"Explore podcasts cristãos gratuitos, filmes completos, estações de rádio, livros e canais de vídeo de todo o mundo em um só lugar no JesusPOD."
   },
   "radio": {
-    "title": "Ouça Estações de Rádio Globais",
+    "title": "Rádio Cristã Online Gratuita",
     "description": "Sintonize estações de rádio cristãs 24 horas por dia, 7 dias por semana, de todo o mundo. Além da música, essas estações apresentam programas de entrevistas e sessões de perguntas e respostas ao vivo, tudo enraizado no Evangelho. Ao organizar essas estações por país, o JesusPod permite que você ouça perspectivas bíblicas de diferentes regiões, garantindo que você tenha acesso constante à Palavra, não importa onde esteja.",
     "share": "Compartilhar",
     "searchPlaceholder": "Buscar rádios...",
@@ -42,7 +55,8 @@
     "searchTitle": "Buscar rádio",
     "searchCountry": "Buscar país...",
     "shareTextPre": "Ouça ",
-    "shareTextPost": " no JesusPOD Radio"
+    "shareTextPost": " no JesusPOD Radio",
+    "meta_description":"Ouça estações de rádio cristãs de todo o mundo gratuitamente. Explore músicas de adoração, ensinamentos e transmissões ao vivo por estação ou país."
   },
   "profileMenu": {
     "language": "Idioma",
@@ -162,7 +176,7 @@
     "noChannelSelected": "Nenhum canal ao vivo selecionado"
   },
   "podcastHome": {
-    "title": "Inscrever-se em podcasts cristãos",
+    "title": "Podcasts cristãos gratuitos",
     "description": "Siga seus podcasters favoritos e receba atualizações diárias em dez categorias específicas. Quer esteja procurando estudo bíblico, conselhos familiares ou treinamento de liderança, você pode se inscrever em programas específicos para manter a consistência em seu crescimento. Nossa biblioteca inclui tanto ministérios conhecidos quanto novas vozes para garantir que seu feed esteja sempre cheio da Palavra.",
     "share": "Compartilhar",
     "searchPlaceholder": "Buscar podcasts...",
@@ -174,10 +188,11 @@
     "failedSave": "Falha ao salvar o podcast",
     "linkCopied": "Link copiado para a área de transferência!",
     "allPodcasts": "Todos os Podcasts",
-    "mySavedPodcasts": "Meus Podcasts Salvos"
+    "mySavedPodcasts": "Meus Podcasts Salvos",
+    "meta_description":"Explore podcasts cristãos gratuitos que abordam o ensino bíblico, a oração, a família e a fé. Encontre programas de ministérios de todo o mundo no JesusPOD."
   },
   "channels": {
-    "title": "Seguir canais cristãos do YouTube",
+    "title": "Canais cristãos no YouTube de todo o mundo",
     "description": "Acesse uma seleção com curadoria de canais cristãos do YouTube diretamente no aplicativo. Organizamos esses canais por país, facilitando o acesso a ministérios internacionais e diversos estilos de ensino sem precisar procurá-los. Essa variedade permite explorar como o Evangelho está sendo pregado em diferentes culturas e encontrar o conteúdo que melhor ajuda você a crescer.",
     "share": "Compartilhar",
     "searchPlaceholder": "Buscar canais...",
@@ -189,10 +204,11 @@
     "pleaseLogin": "Por favor, faça login para salvar canais",
     "failedSave": "Falha ao salvar o canal",
     "linkCopied": "Link copiado para a área de transferência!",
-    "allChannels": "Todos os canais"
+    "allChannels": "Todos os canais",
+    "meta_description":"Explore canais cristãos gratuitos no YouTube por país. Descubra ministérios internacionais, ensino bíblico e adoração em um só lugar no JesusPOD."
   },
   "movies": {
-    "title": "Assistir a filmes cheios de fé",
+    "title": "Assista a filmes cristãos grátis",
     "description": "Desfrute de uma ampla seleção de filmes selecionados para fortalecer sua caminhada com Cristo. Nossa biblioteca de filmes inclui vários gêneros, de dramas e thrillers a faroestes e programas infantis, todos centrados no Evangelho. Quer esteja procurando uma história clássica ou um novo lançamento, cada filme é escolhido para proporcionar uma experiência de visualização segura e inspiradora para toda a sua família.",
     "share": "Compartilhar",
     "searchPlaceholder": "Buscar filmes...",
@@ -214,10 +230,11 @@
     "moviesToLove": "Filmes para amar",
     "noMoviesFound": "Nenhum filme encontrado.",
     "shareTextPre": "Assista ",
-    "shareTextPost": " no JesusPOD"
+    "shareTextPost": " no JesusPOD",
+    "meta_description":"Assista a filmes cristãos completos gratuitamente no JesusPOD. Explore dramas de fé, filmes para a família e histórias inspiradoras na biblioteca de filmes."
   },
   "books": {
-    "title": "Fortaleça sua caminhada com livros",
+    "title": "Leia livros cristãos gratuitos",
     "description": "Aprofunde seu entendimento de Deus através de uma biblioteca de livros que cobrem todas as áreas da vida. Com dez categorias focadas, incluindo Oração, Avivamento, História e Missões, você tem as ferramentas para edificar sua fé em qualquer época. Esses livros são selecionados para oferecer profundidade bíblica e sabedoria prática para sua jornada diária com Cristo.",
     "share": "Compartilhar",
     "searchPlaceholder": "Buscar livros...",
@@ -240,7 +257,8 @@
     "noBooksFound": "Nenhum livro encontrado.",
     "searchPlaceholderAll": "Buscar livros por título e autor...",
     "shareTextPre": "Assista ",
-    "shareTextPost": " no JesusPOD"
+    "shareTextPost": " no JesusPOD",
+    "meta_description":"Leia livros cristãos gratuitamente no JesusPOD. Explore títulos sobre oração, a Bíblia, fé e a vida cristã de diversos autores."
   },
   "shorts": {
     "savedTitle": "Shorts Salvos",
@@ -253,7 +271,8 @@
     "browseShorts": "Explorar Shorts",
     "backToList": "Voltar para a lista",
     "loading": "Carregando shorts...",
-    "noShorts": "Nenhum short disponível"
+    "noShorts": "Nenhum short disponível",
+    "meta_description":"Assista a vídeos cristãos curtos e gratuitos sobre Atos 2. Explore breves momentos de ensino, adoração e encorajamento no Jesus POD."
   },
   "podcastDetail": {
     "showLess": "Mostrar menos",
@@ -288,4 +307,3 @@
     "untitled": "Sem título"
   }
 }
-

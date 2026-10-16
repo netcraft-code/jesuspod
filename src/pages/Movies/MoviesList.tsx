@@ -137,11 +137,11 @@ export default function MoviesList() {
   return (
     <div className="home-wrapper">
       <Helmet>
-        <title>Free Christian Movies | Watch Full Films on JesusPOD</title>
+        {/* <title>Free Christian Movies | Watch Full Films on JesusPOD</title> */}
 
         <meta
           name="description"
-          content="Watch full Christian movies for free on JesusPOD. Browse faith-filled dramas, family films and inspiring stories in the movie library."
+          content={t("movies.meta_description")}
         />
       </Helmet>
 

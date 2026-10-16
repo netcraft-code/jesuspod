@@ -39,7 +39,7 @@ export default function RadioList() {
   const [active, setActive] = useState<string>("Radio");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  usePageTitle("Radio");
+  usePageTitle(t("header.radio"));
   // ✅ Use filtered radio selector
   const radio = useSelector(getFilteredRadio);
 
@@ -151,11 +151,11 @@ export default function RadioList() {
   return (
     <div className="radio-page">
       <Helmet>
-        <title>Christian Radio Online | Listen Free on JesusPOD</title>
+        {/* <title>Christian Radio Online | Listen Free on JesusPOD</title> */}
 
         <meta
           name="description"
-          content="Listen to Christian radio stations from around the world for free. Explore worship, teaching and live broadcasts by station or country."
+          content={t("radio.meta_description")}
         />
       </Helmet>
 

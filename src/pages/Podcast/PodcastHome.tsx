@@ -139,11 +139,11 @@ export default function PodcastHome() {
   return (
     <div className="main-content">
       <Helmet>
-        <title>Christian Podcasts | Listen Free on JesusPOD</title>
+        {/* <title>Christian Podcasts | Listen Free on JesusPOD</title> */}
 
         <meta
           name="description"
-          content="Explore free Christian podcasts covering Bible teaching, prayer, family, and faith. Find shows from ministries around the world on JesusPOD."
+          content={t("podcastHome.meta_description")}
         />
       </Helmet>
 

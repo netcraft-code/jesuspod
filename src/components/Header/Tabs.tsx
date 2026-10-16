@@ -17,14 +17,14 @@ const tabs: string[] = [
 ];
 
 const tabKeyMap: Record<string, string> = {
-  "All": "header.all",
-  "Live": "header.live",
-  "Podcast": "header.podcast",
-  "Radio": "header.radio",
-  "Channels": "header.channels",
-  "Movies": "header.movies",
-  "Books": "header.books",
-  "Acts2": "header.acts2",
+  "All": "header_btn.all",
+  "Live": "header_btn.live",
+  "Podcast": "header_btn.podcast",
+  "Radio": "header_btn.radio",
+  "Channels": "header_btn.channels",
+  "Movies": "header_btn.movies",
+  "Books": "header_btn.books",
+  "Acts2": "header_btn.acts2",
 };
 
 /* 🔹 Props typing */

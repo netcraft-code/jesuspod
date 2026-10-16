@@ -185,11 +185,11 @@ export default function Home() {
   return (
     <div className="home-wrapper">
       <Helmet>
-        <title>JesusPOD | Free Christian Podcasts, Movies, Radio & Books</title>
+        {/* <title>JesusPOD | Free Christian Podcasts, Movies, Radio & Books</title> */}
 
         <meta
           name="description"
-          content="Explore free Christian podcasts, full movies, radio stations, books and video channels from around the world in one place on JesusPOD."
+          content={t("home.meta_description")}
         />
       </Helmet>
 

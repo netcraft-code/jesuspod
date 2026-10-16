@@ -1,22 +1,34 @@
 {
   "header": {
-    "all": "Zote",
+    "all": "JesusPOD | Podikasti, Filamu, Redio na Vitabu vya Kikristo vya Bure",
     "live": "Mubashara",
-    "podcast": "Podcast",
-    "radio": "Redio",
-    "channels": "Vituo",
-    "movies": "Filamu",
-    "books": "Vitabu",
-    "acts2": "Matendo2",
+    "podcast": "Podikasti za Kikristo | Sikiliza Bure kwenye JesusPOD",
+    "radio": "Redio ya Kikristo Mtandaoni | Sikiliza Bure kwenye JesusPOD",
+    "channels": "Chaneli za YouTube za Kikristo kulingana na Nchi | JesusPOD",
+    "movies": "Filamu za Kikristo za Bure | Tazama Filamu Kamili kwenye JesusPOD",
+    "books": "Vitabu vya Kikristo vya Bure | Soma kwenye JesusPOD",
+    "acts2": "Matendo ya Mitume 2 | Video Fupi za Kikristo kuhusu Yesu POD",
     "signIn": "Ingia",
     "allCountries": "Nchi Zote"
+  },
+  "header_btn": {
+    "all": "Vyote",
+    "live": "Moja kwa moja",
+    "podcast": "Podikasti",
+    "radio": "Redio",
+    "channels": "Chaneli",
+    "movies": "Filamu",
+    "books": "Vitabu",
+    "acts2": "Matendo ya Mitume 2",
+    "signIn": "Sign In",
+    "allCountries": "All Countries"
   },
   "footer": {
     "allRightsReserved": "Haki Zote Zimehifadhiwa",
     "craftedBy": "Imeundwa Na"
   },
   "home": {
-    "title": "Maudhui Yako Yote Unayoyapenda ya Kikristo Mahali Pamoja",
+    "title": "Podikasti, Filamu, Redio na Vitabu vya Kikristo vya Bure",
     "description": "Je, unatafuta njia ya kukuza imani yako bila kutafuta kwenye mtandao mzima? JesusPod inaleta pamoja rasilimali bora zaidi za Kikristo duniani kwenye programu moja iliyoundwa kwa ajili ya ukuaji wako wa kiroho. Badala ya kuruka kati ya tovuti tofauti, unaweza kupata kila kitu unachohitaji ili kukaa na moyo na kushikamana na Neno mahali pamoja salama.",
     "popularTrending": "Maarufu na Zinazovuma",
     "live": "Mubashara",
@@ -24,10 +36,11 @@
     "movies": "Filamu",
     "podcast": "Podcast",
     "videoChannels": "Vituo vya Video",
-    "books": "Vitabu"
+    "books": "Vitabu",
+    "meta_description":"Gundua podikasti za Kikristo za bure, filamu kamili, vituo vya redio, vitabu na chaneli za video kutoka kote duniani katika sehemu moja kwenye JesusPOD."
   },
   "radio": {
-    "title": "Sikiliza Vituo vya Redio vya Ulimwenguni",
+    "title": "Redio ya Kikristo ya Mtandaoni Isiyolipishwa",
     "description": "Sikiliza vituo vya redio vya Kikristo vya 24/7 kutoka kote ulimwenguni. Zaidi ya muziki, vituo hivi vina vipindi vya mazungumzo na vipindi vya maswali na majibu ya moja kwa moja vyote vikiwa na mizizi katika Injili. Kwa kupanga vituo hivi kulingana na nchi, JesusPod inakuruhusu kusikia mitazamo ya kibiblia kutoka maeneo tofauti, ikihakikisha una ufikiaji wa kila mara wa Neno bila kujali uko wapi.",
     "share": "Shiriki",
     "searchPlaceholder": "Tafuta redio...",
@@ -42,7 +55,8 @@
     "searchTitle": "Tafuta Redio",
     "searchCountry": "Tafuta nchi...",
     "shareTextPre": "Sikiliza ",
-    "shareTextPost": " kwenye Redio ya JesusPOD"
+    "shareTextPost": " kwenye Redio ya JesusPOD",
+    "meta_description":"Sikiliza vituo vya redio vya Kikristo kutoka kote duniani bila malipo. Gundua vipindi vya ibada, mafundisho na matangazo ya moja kwa moja kulingana na kituo au nchi."
   },
   "profileMenu": {
     "language": "Lugha",
@@ -162,7 +176,7 @@
     "noChannelSelected": "Hakuna kituo cha live kilichochaguliwa"
   },
   "podcastHome": {
-    "title": "Jiunge na Podcasts za Kikristo",
+    "title": "Podikasti za Kikristo za Bure",
     "description": "Wafuate watayarishaji wa podcasts uwapendao na upate sasisho za kila siku kwenye kategoria kumi maalum. Iwe unatafuta kujifunza Biblia, ushauri wa kifamilia, au mafunzo ya uongozi, unaweza kujiunga na vipindi maalum ili kuendelea kukua. Maktaba yetu inajumuisha huduma zinazojulikana na sauti mpya ili kuhakikisha kuwa mpasho wako umejaa Neno kila wakati.",
     "share": "Shiriki",
     "searchPlaceholder": "Tafuta podcasts...",
@@ -174,10 +188,11 @@
     "failedSave": "Imeshindwa kuhifadhi podcast",
     "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili!",
     "allPodcasts": "Podcasts Zote",
-    "mySavedPodcasts": "Podcasts Zangu Zilizohifadhiwa"
+    "mySavedPodcasts": "Podcasts Zangu Zilizohifadhiwa",
+    "meta_description":"Gundua podikasti za Kikristo zisizolipishwa zinazohusu mafundisho ya Biblia, maombi, familia, na imani. Pata vipindi kutoka kwa huduma mbalimbali duniani kote kupitia JesusPOD."
   },
   "channels": {
-    "title": "Fuata Vituo vya YouTube vya Kikristo",
+    "title": "Chaneli za YouTube za Kikristo kutoka kote duniani",
     "description": "Fikia uteuzi ulioratibiwa wa vituo vya YouTube vya Kikristo moja kwa moja ndani ya programu. Tumepanga vituo hivi kwa nchi, kukupa ufikiaji rahisi wa huduma za kimataifa na mitindo anuwai ya ufundishaji bila kulazimika kuvitafuta wenyewe. Aina hii inakuhimiza kuchunguza jinsi Injili inavyohubiriwa katika tamaduni tofauti na kupata maudhui yanayokusaidia kukua vizuri.",
     "share": "Shiriki",
     "searchPlaceholder": "Tafuta vituo...",
@@ -189,10 +204,11 @@
     "pleaseLogin": "Tafadhali ingia ili kuhifadhi vitu",
     "failedSave": "Imeshindwa kuhifadhi kituo",
     "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili!",
-    "allChannels": "Vituo Vyote"
+    "allChannels": "Vituo Vyote",
+    "meta_description":"Gundua chaneli za bure za Kikristo za YouTube kulingana na nchi. Pata huduma za kimataifa, mafundisho ya Biblia na ibada katika sehemu moja kupitia JesusPOD."
   },
   "movies": {
-    "title": "Tazama Filamu zenye Imani",
+    "title": "Tazama Filamu za Kikristo Bure",
     "description": "Furahia uteuzi mpana wa filamu zilizoratibiwa ili kuimarisha uhusiano wako na Kristo. Maktaba yetu ya filamu inajumuisha aina mbalimbali kutoka tamthilia na filamu za kusisimua hadi za Western na programu za watoto, zote zikilenga Injili. Iwe unatafuta hadithi ya asili au toleo jipya, kila filamu imechaguliwa ili kutoa uzoefu salama na wa kutia moyo kwa familia yako yote.",
     "share": "Shiriki",
     "searchPlaceholder": "Tafuta filamu...",
@@ -214,10 +230,11 @@
     "moviesToLove": "Filamu za Kupenda",
     "noMoviesFound": "Hakuna filamu zilizopatikana.",
     "shareTextPre": "Tazama ",
-    "shareTextPost": " kwenye JesusPOD"
+    "shareTextPost": " kwenye JesusPOD",
+    "meta_description":"Tazama filamu kamili za Kikristo bila malipo kwenye JesusPOD. Vinjari tamthilia zenye kuimarisha imani, filamu za kifamilia na hadithi zenye kutia moyo katika maktaba ya filamu."
   },
   "books": {
-    "title": "Imarisha Kutembea Kwako na Vitabu",
+    "title": "Soma vitabu vya Kikristo vya bure",
     "description": "Ongeza uelewa wako juu ya Mungu kupitia maktaba ya vitabu inayofunika kila nyanja ya maisha. Tukiwa na kategoria kumi maalum; pamoja na Maombi, Uamsho, Historia, na Misheni, una zana za kujenga imani yako katika msimu wowote. Vitabu hivi vimechaguliwa ili kukupa kina cha kibiblia na hekima ya vitendo kwa safari yako ya kila siku na Kristo.",
     "share": "Shiriki",
     "searchPlaceholder": "Tafuta vitabu...",
@@ -240,7 +257,8 @@
     "noBooksFound": "Hakuna vitabu vilivyopatikana.",
     "searchPlaceholderAll": "Tafuta vitabu kwa kichwa na mwandishi...",
     "shareTextPre": "Tazama ",
-    "shareTextPost": " kwenye JesusPOD"
+    "shareTextPost": " kwenye JesusPOD",
+    "meta_description":"Soma vitabu vya Kikristo bure kwenye JesusPOD. Gundua machapisho kuhusu maombi, Biblia, imani, na maisha ya Kikristo kutoka kwa waandishi mbalimbali."
   },
   "shorts": {
     "savedTitle": "Video Fupi Zilizohifadhiwa",
@@ -253,7 +271,8 @@
     "browseShorts": "Vinjari Video Fupi",
     "backToList": "Rudi kwenye orodha",
     "loading": "Inapakia video fupi...",
-    "noShorts": "Hakuna video fupi zinazopatikana"
+    "noShorts": "Hakuna video fupi zinazopatikana",
+    "meta_description":"Tazama video fupi za Kikristo bila malipo kuhusu Matendo ya Mitume 2. Gundua vipindi vifupi vya mafundisho, ibada na kutiana moyo kwenye Jesus POD."
   },
   "podcastDetail": {
     "showLess": "Onyesha kidogo",
@@ -288,4 +307,3 @@
     "untitled": "Bila Kichwa"
   }
 }
-

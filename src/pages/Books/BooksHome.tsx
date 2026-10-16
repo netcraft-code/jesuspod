@@ -133,11 +133,11 @@ export default function BooksHome() {
   return (
     <div className="main-content">
       <Helmet>
-        <title>Free Christian Books | Read on JesusPOD</title>
+        {/* <title>Free Christian Books | Read on JesusPOD</title> */}
 
         <meta
           name="description"
-          content="Read Christian books for free on JesusPOD. Explore titles about prayer, the Bible, faith and Christian living from a range of authors."
+          content={t("books.meta_description")}
         />
       </Helmet>
 

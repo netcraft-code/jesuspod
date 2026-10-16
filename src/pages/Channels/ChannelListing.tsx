@@ -200,11 +200,9 @@ export default function ChannelListing() {
   return (
     <div className="home-wrapper">
       <Helmet>
-        <title>Christian YouTube Channels by Country | JesusPOD</title>
-
         <meta
           name="description"
-          content="Explore free Christian YouTube channels by country. Discover international ministries, Bible teaching and worship in one place on JesusPOD."
+          content={t("channels.meta_description")}
         />
       </Helmet>
 

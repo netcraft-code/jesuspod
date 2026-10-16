@@ -1,5 +1,17 @@
 {
   "header": {
+    "all": "JesusPOD | Free Christian Podcasts, Movies, Radio & Books",
+    "live": "Live",
+    "podcast": "Christian Podcasts | Listen Free on JesusPOD",
+    "radio": "Christian Radio Online | Listen Free on JesusPOD",
+    "channels": "Christian YouTube Channels by Country | JesusPOD",
+    "movies": "Free Christian Movies | Watch Full Films on JesusPOD",
+    "books": "Free Christian Books | Read on JesusPOD",
+    "acts2": "Acts2 | Short Christian Videos on JesusPOD",
+    "signIn": "Sign In",
+    "allCountries": "All Countries"
+  },
+  "header_btn": {
     "all": "All",
     "live": "Live",
     "podcast": "Podcast",
@@ -24,7 +36,8 @@
     "movies": "Movies",
     "podcast": "Podcast",
     "videoChannels": "Video Channels",
-    "books": "Books"
+    "books": "Books",
+    "meta_description":"Explore free Christian podcasts, full movies, radio stations, books and video channels from around the world in one place on JesusPOD."
   },
   "radio": {
     "title": "Free Christian Radio Online",
@@ -42,7 +55,8 @@
     "searchTitle": "Search For Radio",
     "searchCountry": "Search country...",
     "shareTextPre": "Listen to ",
-    "shareTextPost": " on JesusPOD Radio"
+    "shareTextPost": " on JesusPOD Radio",
+    "meta_description":"Listen to Christian radio stations from around the world for free. Explore worship, teaching and live broadcasts by station or country."
   },
   "profileMenu": {
     "language": "Language",
@@ -174,10 +188,11 @@
     "failedSave": "Failed to save podcast",
     "linkCopied": "Link copied to clipboard!",
     "allPodcasts": "All Podcasts",
-    "mySavedPodcasts": "My Saved Podcasts"
+    "mySavedPodcasts": "My Saved Podcasts",
+    "meta_description":"Explore free Christian podcasts covering Bible teaching, prayer, family, and faith. Find shows from ministries around the world on JesusPOD."
   },
   "channels": {
-    "title": "YouTube Channels from Around the World",
+    "title": "Christian YouTube Channels from Around the World",
     "description": "Access a curated selection of Christian YouTube channels directly within the app. We have organized these channels by country, giving you easy access to international ministries and diverse teaching styles without having to search for them yourself. This variety allows you to explore how the Gospel is being preached across different cultures and find the content that best helps you grow.",
     "share": "Share",
     "searchPlaceholder": "Search for channels...",
@@ -189,7 +204,8 @@
     "pleaseLogin": "Please login to save channels",
     "failedSave": "Failed to save channel",
     "linkCopied": "Link copied to clipboard!",
-    "allChannels": "All Channels"
+    "allChannels": "All Channels",
+    "meta_description":"Explore free Christian YouTube channels by country. Discover international ministries, Bible teaching and worship in one place on JesusPOD."
   },
   "movies": {
     "title": "Watch Free Christian Movies",
@@ -214,7 +230,8 @@
     "moviesToLove": "Movies to Love",
     "noMoviesFound": "No movies found.",
     "shareTextPre": "Check out ",
-    "shareTextPost": " on JesusPOD"
+    "shareTextPost": " on JesusPOD",
+    "meta_description":"Watch full Christian movies for free on JesusPOD. Browse faith-filled dramas, family films and inspiring stories in the movie library."
   },
   "books": {
     "title": "Read Free Christian Books",
@@ -240,7 +257,8 @@
     "noBooksFound": "No books found.",
     "searchPlaceholderAll": "Search books by title and author...",
     "shareTextPre": "Check out ",
-    "shareTextPost": " on JesusPOD"
+    "shareTextPost": " on JesusPOD",
+    "meta_description":"Read Christian books for free on JesusPOD. Explore titles about prayer, the Bible, faith and Christian living from a range of authors."
   },
   "shorts": {
     "savedTitle": "Saved Shorts",
@@ -253,7 +271,8 @@
     "browseShorts": "Browse Shorts",
     "backToList": "Back to list",
     "loading": "Loading shorts...",
-    "noShorts": "No shorts available"
+    "noShorts": "No shorts available",
+    "meta_description":"Watch free short Christian videos on Acts2. Explore brief moments of teaching, worship and encouragement on JesusPOD."
   },
   "podcastDetail": {
     "showLess": "Show Less",

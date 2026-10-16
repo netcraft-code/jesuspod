@@ -13,13 +13,6 @@ export default function Footer() {
         </div>
         <div className="footer-center" style={{ textAlign: "center" }}>
           <div className="footer-logo">JesusPOD</div>
-          <span>
-            {t("footer.craftedBy")}{" "}
-            <a target="_blank" href="http://netcraftglobal.com">
-              NetCraft Global
-            </a>{" "}
-            ❤️
-          </span>
           {/* Optional: Add links or logo here if needed */}
         </div>
         <div className="footer-right">
@@ -52,4 +45,3 @@ export default function Footer() {
     </footer>
   );
 }
-
